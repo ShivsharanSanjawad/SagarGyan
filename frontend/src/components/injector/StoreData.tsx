@@ -94,7 +94,7 @@ export const StoreData: React.FC = () => {
                     multiple
                     onChange={handleFileChange}
                     className="sr-only"
-                    accept=".csv,.xlsx,.nc,.json,.txt,.zip"
+                    accept=".csv,.xlsx,.nc,.json,.txt,.zip,.gz"
                   />
                 </label>
                 <p className="text-xs text-gray-500 mt-2 text-center">

@@ -1,37 +1,20 @@
-const express = require('express');
+import express from "express";
+import multer from "multer";
+
 const router = express.Router();
-const { Pool } = require('pg');
 
-const pool = new Pool({
-  host: process.env.PGHOST,
-  port: process.env.PGPORT,
-  user: process.env.PGUSER,
-  password: process.env.PGPASSWORD,
-  database: process.env.PGDATABASE
-});
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
-router.get('/', async (req, res) => {
-  try {
-    const result = await pool.query('SELECT * FROM dataset');
-    res.json(result.rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database query failed' });
+router.post("/ingestdata", upload.any(), (req, res) => {
+  if (!req.files || req.files.length === 0) {
+    return res.status(400).json({ message: "No files uploaded" });
   }
+  req.files.forEach(file => {
+    console.log("Received file:", file.originalname);
+  });
+
+  res.json({ message: "Files received", files: req.files.map(f => f.originalname) });
 });
 
-router.post('/', async (req, res) => {
-  const { datasetID, format, name } = req.body;
-  try {
-    await pool.query(
-      'INSERT INTO dataset (datasetID, format, name) VALUES ($1, $2, $3)',
-      [datasetID, format, name]
-    );
-    res.status(201).json({ message: 'Dataset added!' });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Insert failed' });
-  }
-});
-
-module.exports = router;
+export default router;

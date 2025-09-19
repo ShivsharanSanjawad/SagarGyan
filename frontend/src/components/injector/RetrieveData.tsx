@@ -22,9 +22,7 @@ export const RetrieveData: React.FC = () => {
         <p className="text-gray-600">Search and access oceanographic datasets</p>
       </div>
 
-      {/* Search and Filters */}
-      <Card>
-        <CardContent className="p-6">
+        <CardContent className="p-3">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="md:col-span-2">
               <div className="relative">
@@ -51,8 +49,6 @@ export const RetrieveData: React.FC = () => {
             </div>
           </div>
         </CardContent>
-      </Card>
-
       {/* Results */}
       <Card>
         <CardHeader>

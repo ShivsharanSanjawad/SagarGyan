@@ -80,11 +80,10 @@ export const Projects: React.FC = () => {
       </div>
 
       {/* Search and Filters */}
-      <Card>
         <CardContent className="p-4">
           <div className="flex items-center space-x-4">
             <div className="relative flex-1">
-              <Search className="h-4 w-4 absolute left-3 top-3 text-gray-400" />
+              <Search className="h-5 w-4 absolute left-3 top-3 text-gray-400" />
               <Input
                 placeholder="Search projects by name, organization, or description..."
                 value={searchTerm}
@@ -97,7 +96,6 @@ export const Projects: React.FC = () => {
             </Button>
           </div>
         </CardContent>
-      </Card>
 
       {/* Project Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

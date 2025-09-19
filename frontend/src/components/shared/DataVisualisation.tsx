@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/Button';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, ScatterChart, Scatter, ResponsiveContainer } from 'recharts';
 import { BarChart3, Activity, Globe, Layers } from 'lucide-react';
+//import Interactive3DView from './interactive';
 
 export const DataVisualization: React.FC = () => {
   const [activeView, setActiveView] = useState('individual');
@@ -37,45 +38,58 @@ export const DataVisualization: React.FC = () => {
         <p className="text-gray-600">Interactive charts and marine data analysis</p>
       </div>
 
-      {/* View Selector */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-wrap gap-2">
+        <CardContent className="p-0">
+          <div className="flex w-full">
             <Button
-              variant={activeView === 'individual' ? 'primary' : 'outline'}
+              variant="ghost"
+              className={`flex-1 rounded-none border-b-2 flex items-center justify-center ${
+                activeView === 'individual'
+                  ? 'border-sky-500 text-sky-600 font-semibold'
+                  : 'border-transparent text-gray-600 hover:text-sky-500'
+              }`}
               onClick={() => setActiveView('individual')}
-              size="sm"
             >
               <BarChart3 className="h-4 w-4 mr-2" />
               Individual
             </Button>
             <Button
-              variant={activeView === 'cross-domain' ? 'primary' : 'outline'}
+              variant="ghost"
+              className={`flex-1 rounded-none border-b-2 flex items-center justify-center ${
+                activeView === 'cross-domain'
+                  ? 'border-sky-500 text-sky-600 font-semibold'
+                  : 'border-transparent text-gray-600 hover:text-sky-500'
+              }`}
               onClick={() => setActiveView('cross-domain')}
-              size="sm"
             >
               <Layers className="h-4 w-4 mr-2" />
               Cross-Domain
             </Button>
             <Button
-              variant={activeView === 'real-time' ? 'primary' : 'outline'}
+              variant="ghost"
+              className={`flex-1 rounded-none border-b-2 flex items-center justify-center ${
+                activeView === 'real-time'
+                  ? 'border-sky-500 text-sky-600 font-semibold'
+                  : 'border-transparent text-gray-600 hover:text-sky-500'
+              }`}
               onClick={() => setActiveView('real-time')}
-              size="sm"
             >
               <Activity className="h-4 w-4 mr-2" />
               Real-time
             </Button>
             <Button
-              variant={activeView === '3d' ? 'primary' : 'outline'}
+              variant="ghost"
+              className={`flex-1 rounded-none border-b-2 flex items-center justify-center ${
+                activeView === '3d'
+                  ? 'border-sky-500 text-sky-600 font-semibold'
+                  : 'border-transparent text-gray-600 hover:text-sky-500'
+              }`}
               onClick={() => setActiveView('3d')}
-              size="sm"
             >
               <Globe className="h-4 w-4 mr-2" />
               3D Interactive
             </Button>
           </div>
         </CardContent>
-      </Card>
 
       {/* Individual View */}
       {activeView === 'individual' && (
@@ -308,7 +322,7 @@ export const DataVisualization: React.FC = () => {
               <Globe className="h-24 w-24 mx-auto mb-6 animate-spin" />
               <h3 className="text-2xl font-bold mb-4">3D Ocean Model</h3>
               <p className="mb-6">Interactive visualization of oceanographic data</p>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
                 <div className="bg-white bg-opacity-20 rounded-lg p-4">
                   <h4 className="font-semibold mb-2">Temperature Layers</h4>
@@ -323,7 +337,7 @@ export const DataVisualization: React.FC = () => {
                   <p className="text-sm opacity-90">3D ocean floor mapping</p>
                 </div>
               </div>
-              
+
               <Button variant="outline" className="mt-6 bg-white bg-opacity-20 border-white text-white hover:bg-white hover:text-blue-600">
                 Launch 3D Viewer
               </Button>

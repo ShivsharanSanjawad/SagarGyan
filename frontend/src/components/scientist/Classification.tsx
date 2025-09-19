@@ -29,33 +29,44 @@ export const Classification: React.FC = () => {
       </div>
 
       {/* Module Selector */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex space-x-2">
-            <Button
-              variant={activeModule === 'edna' ? 'primary' : 'outline'}
-              onClick={() => setActiveModule('edna')}
-              size="sm"
-            >
-              eDNA Analysis
-            </Button>
-            <Button
-              variant={activeModule === 'taxonomy' ? 'primary' : 'outline'}
-              onClick={() => setActiveModule('taxonomy')}
-              size="sm"
-            >
-              Taxonomy
-            </Button>
-            <Button
-              variant={activeModule === 'otolith' ? 'primary' : 'outline'}
-              onClick={() => setActiveModule('otolith')}
-              size="sm"
-            >
-              Otolith Analysis
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <CardContent className="p-0 p-2">
+        <div className="flex w-full">
+          <Button
+            variant="ghost"
+            className={`flex-1 rounded-none border-b-2 ${
+              activeModule === 'edna'
+                ? 'border-sky-500 text-sky-600 font-semibold'
+                : 'border-transparent text-gray-600 hover:text-sky-500'
+            }`}
+            onClick={() => setActiveModule('edna')}
+          >
+            eDNA Analysis
+          </Button>
+          <Button
+            variant="ghost"
+            className={`flex-1 rounded-none border-b-2 ${
+              activeModule === 'taxonomy'
+                ? 'border-sky-500 text-sky-600 font-semibold'
+                : 'border-transparent text-gray-600 hover:text-sky-500'
+            }`}
+            onClick={() => setActiveModule('taxonomy')}
+          >
+            Taxonomy
+          </Button>
+          <Button
+            variant="ghost"
+            className={`flex-1 rounded-none border-b-2 ${
+              activeModule === 'otolith'
+                ? 'border-sky-500 text-sky-600 font-semibold'
+                : 'border-transparent text-gray-600 hover:text-sky-500'
+            }`}
+            onClick={() => setActiveModule('otolith')}
+          >
+            Otolith Analysis
+          </Button>
+        </div>
+      </CardContent>
+
 
       {/* eDNA Module */}
       {activeModule === 'edna' && (
@@ -91,22 +102,6 @@ export const Classification: React.FC = () => {
                   <span className="text-green-800">{uploadedFile.name}</span>
                 </div>
               )}
-
-              <div className="space-y-2">
-                <CustomInput
-                  label="Sample ID"
-                  placeholder="Enter sample identifier"
-                />
-                <CustomInput
-                  label="Location"
-                  placeholder="Collection location"
-                />
-                <CustomInput
-                  label="Depth (m)"
-                  type="number"
-                  placeholder="0"
-                />
-              </div>
 
               <Button className="w-full bg-blue-800 text-white " disabled={!uploadedFile}>
                 <Microscope className="h-4 w-4 mr-2" />
@@ -227,30 +222,8 @@ export const Classification: React.FC = () => {
                   </p>
                 </div>
               </div>
-
-              <div className="space-y-2">
-                <CustomInput
-                  label="Fish Length (cm)"
-                  type="number"
-                  placeholder="0"
-                />
-                <CustomInput
-                  label="Age Estimate (years)"
-                  type="number"
-                  placeholder="0"
-                />
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Scale</label>
-                  <select className="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500">
-                    <option>1:1 (Actual size)</option>
-                    <option>2:1 (2x magnification)</option>
-                    <option>5:1 (5x magnification)</option>
-                    <option>10:1 (10x magnification)</option>
-                  </select>
-                </div>
-              </div>
-
-              <Button className="w-full">
+                     
+            <Button className="w-full">
                 <Microscope className="h-4 w-4 mr-2" />
                 Analyze Otolith
               </Button>

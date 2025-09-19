@@ -59,7 +59,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
   return (
     <div className="w-64 bg-slate-900 text-white min-h-screen flex flex-col">
       <div className="p-6">
-        <h1 className="text-xl font-bold text-sky-400">SagarDnyan</h1>
+        <h1 className="text-xl font-bold text-sky-400">SagarGyaan</h1>
         <p className="text-sm text-gray-400 mt-1">Oceanographic Data Platform</p>
       </div>
       

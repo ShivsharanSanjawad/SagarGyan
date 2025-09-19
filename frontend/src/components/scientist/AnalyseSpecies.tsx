@@ -47,40 +47,55 @@ export const AnalyseSpecies: React.FC = () => {
       </div>
 
       {/* Analysis Type Selector */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex space-x-2">
-            <Button
-              variant={analysisType === 'image' ? 'primary' : 'outline'}
-              onClick={() => setAnalysisType('image')}
-              size="sm"
-            >
-              Image Analysis
-            </Button>
-            <Button
-              variant={analysisType === 'morphometric' ? 'primary' : 'outline'}
-              onClick={() => setAnalysisType('morphometric')}
-              size="sm"
-            >
-              Morphometric Data
-            </Button>
-            <Button
-              variant={analysisType === 'dna' ? 'primary' : 'outline'}
-              onClick={() => setAnalysisType('dna')}
-              size="sm"
-            >
-              DNA Sequence
-            </Button>
-            <Button
-              variant={analysisType === 'search' ? 'primary' : 'outline'}
-              onClick={() => setAnalysisType('search')}
-              size="sm"
-            >
-              Database Search
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+        <CardContent className="p-0 pb-2">
+        <div className="flex w-full">
+          <Button
+            variant="ghost"
+            className={`flex-1 rounded-none border-b-2 ${
+              analysisType === 'image'
+                ? 'border-sky-500 text-sky-600 font-semibold'
+                : 'border-transparent text-gray-600 hover:text-sky-500'
+            }`}
+            onClick={() => setAnalysisType('image')}>
+            Image Analysis
+          </Button>
+          <Button
+            variant="ghost"
+            className={`flex-1 rounded-none border-b-2 ${
+              analysisType === 'morphometric'
+                ? 'border-sky-500 text-sky-600 font-semibold'
+                : 'border-transparent text-gray-600 hover:text-sky-500'
+            }`}
+            onClick={() => setAnalysisType('morphometric')}
+          >
+            Morphometric Data
+          </Button>
+          <Button
+            variant="ghost"
+            className={`flex-1 rounded-none border-b-2 ${
+              analysisType === 'dna'
+                ? 'border-sky-500 text-sky-600 font-semibold'
+                : 'border-transparent text-gray-600 hover:text-sky-500'
+            }`}
+            onClick={() => setAnalysisType('dna')}
+          >
+            DNA Sequence
+          </Button>
+          <Button
+            variant="ghost"
+            className={`flex-1 rounded-none border-b-2 ${
+              analysisType === 'search'
+                ? 'border-sky-500 text-sky-600 font-semibold'
+                : 'border-transparent text-gray-600 hover:text-sky-500'
+            }`}
+            onClick={() => setAnalysisType('search')}
+          >
+            Database Search
+          </Button>
+        </div>
+      </CardContent>
+
+     
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Input Panel */}

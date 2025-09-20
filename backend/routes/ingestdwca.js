@@ -9,7 +9,6 @@ dotenv.config();
 
 const router = express.Router();
 
-// PostgreSQL pool using .env variables
 const pool = new Pool({
   user: process.env.PGUSER,
   host: process.env.PGHOST,
@@ -34,8 +33,6 @@ async function makeEntry(buffer, filename) {
 
   try {
     const zip = new AdmZip(buffer);
-
-    // Read eml.xml (optional)
     const emlEntry = zip.getEntry("eml.xml");
     if (emlEntry) {
       information = zip.readAsText(emlEntry);
@@ -44,7 +41,6 @@ async function makeEntry(buffer, filename) {
       console.log("→ eml.xml not found");
     }
 
-    // Read meta.xml (mandatory in DwC-A, but just log for now)
     const metaEntry = zip.getEntry("meta.xml");
     if (metaEntry) {
       console.log("→ meta.xml found");
@@ -52,13 +48,11 @@ async function makeEntry(buffer, filename) {
       console.log("→ meta.xml not found");
     }
 
-    // Read occurrence.txt (optional, just log for now)
     const occEntry = zip.getEntry("occurrence.txt");
     if (occEntry) {
       console.log("→ occurrence.txt found");
     }
 
-    // Insert dataset info into Postgres
     await pool.query(
       `INSERT INTO dataset (datasetID, format, name, information) 
        VALUES ($1, $2, $3, $4)`,

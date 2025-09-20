@@ -249,14 +249,6 @@ export const Classification: React.FC = () => {
                     <span className="font-mono">-</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Area:</span>
-                    <span className="font-mono">-</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Perimeter:</span>
-                    <span className="font-mono">-</span>
-                  </div>
-                  <div className="flex justify-between">
                     <span>Circularity:</span>
                     <span className="font-mono">-</span>
                   </div>

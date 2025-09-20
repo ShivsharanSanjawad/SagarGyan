@@ -3,7 +3,7 @@ import { useAuth } from '../../context/authContext';
 import { Button } from '../ui/Button';
 import { CustomInput } from '../ui/CustomInput';
 import { Card, CardContent } from '../ui/card';
-import { Waves } from 'lucide-react';
+import { Waves, Cloud } from 'lucide-react';
 
 export const LoginForm: React.FC = () => {
   const { login } = useAuth();
@@ -177,6 +177,11 @@ export const LoginForm: React.FC = () => {
             </div>
           </CardContent>
         </Card>
+
+        <div className="mt-6 flex items-center justify-center text-gray-500 text-sm">
+  <Cloud className="h-4 w-4 mr-2" />
+  <span>Powered by scalable cloud infrastructure</span>
+</div>
       </div>
     </div>
   );

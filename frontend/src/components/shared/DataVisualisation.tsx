@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/Button';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, ScatterChart, Scatter, ResponsiveContainer } from 'recharts';
-import { BarChart3, Activity, Globe, Layers } from 'lucide-react';
+import { BarChart3, Globe, Layers } from 'lucide-react';
 import Interactive3DView from './interactive';
 
 export const DataVisualization: React.FC = () => {
@@ -22,13 +22,6 @@ export const DataVisualization: React.FC = () => {
     { region: 'Bay of Bengal', temp: 28.1, salinity: 34.8, fishCount: 220 },
     { region: 'Indian Ocean', temp: 27.3, salinity: 35.0, fishCount: 180 },
     { region: 'Coastal Waters', temp: 25.8, salinity: 34.5, fishCount: 280 },
-  ];
-
-  const realTimeData = [
-    { time: '00:00', temp: 26.2, salinity: 35.1 },
-    { time: '06:00', temp: 26.8, salinity: 35.0 },
-    { time: '12:00', temp: 28.1, salinity: 34.9 },
-    { time: '18:00', temp: 27.5, salinity: 35.1 },
   ];
 
   return (
@@ -63,18 +56,6 @@ export const DataVisualization: React.FC = () => {
             >
               <Layers className="h-4 w-4 mr-2" />
               Cross-Domain
-            </Button>
-            <Button
-              variant="ghost"
-              className={`flex-1 rounded-none border-b-2 flex items-center justify-center ${
-                activeView === 'real-time'
-                  ? 'border-sky-500 text-sky-600 font-semibold'
-                  : 'border-transparent text-gray-600 hover:text-sky-500'
-              }`}
-              onClick={() => setActiveView('real-time')}
-            >
-              <Activity className="h-4 w-4 mr-2" />
-              Real-time
             </Button>
             <Button
               variant="ghost"
@@ -238,80 +219,6 @@ export const DataVisualization: React.FC = () => {
         </div>
       )}
 
-      {/* Real-time View */}
-      {activeView === 'real-time' && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse" />
-                  Live Temperature
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={200}>
-                  <LineChart data={realTimeData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="time" />
-                    <YAxis />
-                    <Tooltip />
-                    <Line type="monotone" dataKey="temp" stroke="#ef4444" strokeWidth={3} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse" />
-                  Live Salinity
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={200}>
-                  <LineChart data={realTimeData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="time" />
-                    <YAxis />
-                    <Tooltip />
-                    <Line type="monotone" dataKey="salinity" stroke="#3b82f6" strokeWidth={3} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Real-time Monitoring Dashboard</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="text-center p-4 bg-gradient-to-r from-red-400 to-red-600 text-white rounded-lg">
-                  <p className="text-2xl font-bold">27.5°C</p>
-                  <p className="text-sm opacity-90">Current Temp</p>
-                </div>
-                <div className="text-center p-4 bg-gradient-to-r from-blue-400 to-blue-600 text-white rounded-lg">
-                  <p className="text-2xl font-bold">35.1</p>
-                  <p className="text-sm opacity-90">Salinity (psu)</p>
-                </div>
-                <div className="text-center p-4 bg-gradient-to-r from-green-400 to-green-600 text-white rounded-lg">
-                  <p className="text-2xl font-bold">7.8</p>
-                  <p className="text-sm opacity-90">pH Level</p>
-                </div>
-                <div className="text-center p-4 bg-gradient-to-r from-purple-400 to-purple-600 text-white rounded-lg">
-                  <p className="text-2xl font-bold">8.2</p>
-                  <p className="text-sm opacity-90">Dissolved O2</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
-// Replace your 3D view section with this clean version:
 {/* 3D Interactive View */}
 {activeView === '3d' && (
   <Card>
@@ -342,7 +249,6 @@ export const DataVisualization: React.FC = () => {
   </Card>
 )}
 
-// Alternative minimal version (if you want just the viewer):
 {/* 3D Interactive View - Minimal */}
 {activeView === '3d' && (
   <Card>

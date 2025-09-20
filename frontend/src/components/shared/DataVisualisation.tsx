@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/Button';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, ScatterChart, Scatter, ResponsiveContainer } from 'recharts';
 import { BarChart3, Activity, Globe, Layers } from 'lucide-react';
-//import Interactive3DView from './interactive';
+import Interactive3DView from './interactive';
 
 export const DataVisualization: React.FC = () => {
   const [activeView, setActiveView] = useState('individual');
@@ -311,39 +311,48 @@ export const DataVisualization: React.FC = () => {
         </div>
       )}
 
-      {/* 3D Interactive View */}
-      {activeView === '3d' && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Interactive 3D Ocean Visualization</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="bg-gradient-to-b from-sky-200 to-blue-600 rounded-lg p-12 text-center text-white">
-              <Globe className="h-24 w-24 mx-auto mb-6 animate-spin" />
-              <h3 className="text-2xl font-bold mb-4">3D Ocean Model</h3>
-              <p className="mb-6">Interactive visualization of oceanographic data</p>
+// Replace your 3D view section with this clean version:
+{/* 3D Interactive View */}
+{activeView === '3d' && (
+  <Card>
+    <CardHeader>
+      <CardTitle>Interactive 3D Segmentation Visualization</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <div className="space-y-6">
+        <Interactive3DView activeView={activeView} />
+        
+        {/* Info cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-blue-50 rounded-lg p-4">
+            <h4 className="font-semibold mb-2 text-blue-800">PLY Point Cloud</h4>
+            <p className="text-sm text-blue-600">Native PLY file format support with vertex colors</p>
+          </div>
+          <div className="bg-green-50 rounded-lg p-4">
+            <h4 className="font-semibold mb-2 text-green-800">Interactive Controls</h4>
+            <p className="text-sm text-green-600">Mouse drag to rotate, scroll to zoom</p>
+          </div>
+          <div className="bg-purple-50 rounded-lg p-4">
+            <h4 className="font-semibold mb-2 text-purple-800">Real-time Rendering</h4>
+            <p className="text-sm text-purple-600">WebGL-powered Three.js visualization</p>
+          </div>
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+)}
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-                <div className="bg-white bg-opacity-20 rounded-lg p-4">
-                  <h4 className="font-semibold mb-2">Temperature Layers</h4>
-                  <p className="text-black">View temperature gradients across depth</p>
-                </div>
-                <div className="bg-white bg-opacity-20 rounded-lg p-4">
-                  <h4 className="font-semibold mb-2">Current Patterns</h4>
-                  <p className="text-sm opacity-90">Visualize ocean current flows</p>
-                </div>
-                <div className="bg-white bg-opacity-20 rounded-lg p-4">
-                  <h4 className="font-semibold mb-2">Bathymetry</h4>
-                  <p className="text-sm opacity-90">3D ocean floor mapping</p>
-                </div>
-              </div>
-
-              <Button variant="outline" className="mt-6 bg-white bg-opacity-20 border-white text-white hover:bg-white hover:text-blue-600">
-                Launch 3D Viewer
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+// Alternative minimal version (if you want just the viewer):
+{/* 3D Interactive View - Minimal */}
+{activeView === '3d' && (
+  <Card>
+    <CardHeader>
+      <CardTitle>Interactive 3D Segmentation Visualization</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <Interactive3DView activeView={activeView} />
+    </CardContent>
+  </Card>
       )}
     </div>
   );

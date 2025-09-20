@@ -29,49 +29,75 @@ export const StoreData: React.FC = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsUploading(true);
-    setUploadProgress(0);
+  e.preventDefault();
+  setIsUploading(true);
+  setUploadProgress(0);
 
-    // Simulate upload progress
-    const interval = setInterval(() => {
-      setUploadProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsUploading(false);
-          alert("Data uploaded successfully!");
-          setFormData({
-            projectName: "",
-            datasetName: "",
-            latitude: "",
-            longitude: "",
-          });
-          setFiles([]);
-          return 100;
-        }
-        return prev + 10;
-      });
-    }, 200);
-
-    // Actual upload call
-    const form = new FormData();
-    form.append("projectName", formData.projectName);
-    form.append("datasetName", formData.datasetName);
-    form.append("latitude", formData.latitude);
-    form.append("longitude", formData.longitude);
-    files.forEach((file) => form.append("files", file));
-
-    await fetch("http://localhost:3000/api/ingestdata", {
-      method: "POST",
-      body: form,
+  // Simulate upload progress
+  const interval = setInterval(() => {
+    setUploadProgress((prev) => {
+      if (prev >= 100) {
+        clearInterval(interval);
+        setIsUploading(false);
+        alert("Data uploaded successfully!");
+        setFormData({
+          projectName: "",
+          datasetName: "",
+          latitude: "",
+          longitude: "",
+        });
+        setFiles([]);
+        return 100;
+      }
+      return prev + 10;
     });
-  };
+  }, 200);
+
+  // Actual upload call
+  const form = new FormData();
+  form.append("projectName", formData.projectName);
+  form.append("datasetName", formData.datasetName);
+  form.append("latitude", formData.latitude);
+  form.append("longitude", formData.longitude);
+  files.forEach((file) => form.append("files", file));
+
+  let endpoint = "http://localhost:3000/api/ingestdata";
+  if (files.length > 0) {
+    const ext = files[0].name.split(".").pop()?.toLowerCase();
+    switch (ext) {
+      case "csv":
+      case "xlsx":
+        endpoint = "http://localhost:3000/api/ingestcsv";
+        break;
+      case "zip":
+      case "gz":
+        endpoint = "http://localhost:3000/api/ingestdwca";
+        break;
+      case "json":
+        endpoint = "http://localhost:3000/api/ingestjson";
+        break;
+      case "nc":
+        endpoint = "http://localhost:3000/api/ingestnetcdf";
+        break;
+      case "txt":
+        endpoint = "http://localhost:3000/api/ingesttxt";
+        break;
+      default:
+        endpoint = "http://localhost:3000/api/ingestdata"; 
+    }
+  }
+
+  await fetch(endpoint, {
+    method: "POST",
+    body: form,
+  });
+};
 
   return (
       <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Retrieve Data</h1>
-        <p className="text-gray-600">Search and access oceanographic datasets</p>
+        <h1 className="text-2xl font-bold text-gray-900">Store Data</h1>
+        <p className="text-gray-600">Upload and Store oceanographic datasets</p>
       </div>
 
       <form
@@ -94,11 +120,11 @@ export const StoreData: React.FC = () => {
                     multiple
                     onChange={handleFileChange}
                     className="sr-only"
-                    accept=".csv,.xlsx,.nc,.json,.txt,.zip,.gz"
+                    accept=".csv,.xlsx,.nc,.json,.txt,.zip,.gz,.png"
                   />
                 </label>
                 <p className="text-xs text-gray-500 mt-2 text-center">
-                  CSV, Excel, NetCDF, JSON, TXT (Max: 500MB)
+                  CSV, Excel, NetCDF, JSON, TXT, Zip
                 </p>
               </div>
 

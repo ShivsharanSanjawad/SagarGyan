@@ -40,31 +40,44 @@ export const Analytics: React.FC = () => {
         <p className="text-gray-600">Analyze your uploaded oceanographic data</p>
       </div>
 
-      {/* Tab Navigation */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex space-x-2">
-            <Button
-              variant={activeView === 'sst' ? 'primary' : 'outline'}
-              onClick={() => setActiveView('sst')}
-            >
-              SST Maps
-            </Button>
-            <Button
-              variant={activeView === 'uploads' ? 'primary' : 'outline'}
-              onClick={() => setActiveView('uploads')}
-            >
-              Upload Analytics
-            </Button>
-            <Button
-              variant={activeView === 'correlation' ? 'primary' : 'outline'}
-              onClick={() => setActiveView('correlation')}
-            >
-              Data Correlation
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+          <CardContent className="p-2">
+      <div className="flex w-full">
+        <Button
+          variant="ghost"
+          className={`flex-1 rounded-none border-b-2 ${
+            activeView === 'sst'
+              ? 'border-sky-500 text-sky-600 font-semibold'
+              : 'border-transparent text-gray-600 hover:text-sky-500'
+          }`}
+          onClick={() => setActiveView('sst')}
+        >
+          SST Maps
+        </Button>
+        <Button
+          variant="ghost"
+          className={`flex-1 rounded-none border-b-2 ${
+            activeView === 'uploads'
+              ? 'border-sky-500 text-sky-600 font-semibold'
+              : 'border-transparent text-gray-600 hover:text-sky-500'
+          }`}
+          onClick={() => setActiveView('uploads')}
+        >
+          Upload Analytics
+        </Button>
+        <Button
+          variant="ghost"
+          className={`flex-1 rounded-none border-b-2 ${
+            activeView === 'correlation'
+              ? 'border-sky-500 text-sky-600 font-semibold'
+              : 'border-transparent text-gray-600 hover:text-sky-500'
+          }`}
+          onClick={() => setActiveView('correlation')}
+        >
+          Data Correlation
+        </Button>
+      </div>
+    </CardContent>
+
 
       {/* SST Maps View */}
       {activeView === 'sst' && (

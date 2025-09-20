@@ -1,20 +1,7 @@
 import React from 'react';
 import { useAuth } from '../../context/authContext';
-import { 
-  BarChart3, 
-  Users, 
-  Database, 
-  Settings, 
-  Upload,
-  Search,
-  Eye,
-  Activity,
-  Microscope,
-  Brain,
-  FileSearch,
-  Folder,
-  LogOut
-} from 'lucide-react';
+import { BarChart3, Users, Database, Settings, Upload,Search,Eye,Activity,
+  Microscope,Brain,FileSearch,Folder,LogOut} from 'lucide-react';
 import { clsx } from 'clsx';
 
 interface SidebarProps {
@@ -32,7 +19,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
         { id: 'users', label: 'User Management', icon: Users },
         { id: 'system', label: 'System Management', icon: Activity },
         { id: 'settings', label: 'Settings', icon: Settings },
-        { id: 'docs', label: 'API Docs', icon: Settings },
+        { id: 'docs', label: 'API Docs', icon: Folder },
       ];
     } else if (user?.role === 'injector') {
       return [
@@ -58,7 +45,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
   const menuItems = getMenuItems();
 
   return (
-    <div className="w-64 bg-slate-900 text-white min-h-screen flex flex-col">
+    <div className="w-64 bg-slate-800 text-white min-h-screen flex flex-col">
       <div className="p-6">
         <h1 className="text-xl font-bold text-sky-400">SagarGyaan</h1>
         <p className="text-sm text-gray-400 mt-1">Oceanographic Data Platform</p>
@@ -84,8 +71,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
                     activeTab === item.id 
                       ? 'bg-sky-600 text-white' 
                       : 'text-gray-300 hover:bg-slate-800 hover:text-white'
-                  )}
-                >
+                  )}>
                   <Icon size={18} />
                   <span className="text-sm">{item.label}</span>
                 </button>
@@ -98,8 +84,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
       <div className="p-4 border-t border-slate-800">
         <button
           onClick={logout}
-          className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-slate-800 hover:text-white transition-colors"
-        >
+          className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-slate-800 hover:text-white transition-colors">
           <LogOut size={18} />
           <span className="text-sm">Logout</span>
         </button>

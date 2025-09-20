@@ -14,24 +14,6 @@ export const AnalyseSpecies: React.FC = () => {
     class_name: string;
     confidence: number;
   }
-  const baseAnalysisResults = [
-    {
-      species: 'Rastrelliger kanagurta',
-      commonName: 'Indian Mackerel',
-      confidence: 94.5,
-      characteristics: ['Silver body with dark stripes', 'Streamlined shape', 'Forked tail'],
-      habitat: 'Coastal waters, 0-200m depth',
-      distribution: 'Indo-Pacific region'
-    },
-    {
-      species: 'Katsuwonus pelamis',
-      commonName: 'Skipjack Tuna',
-      confidence: 87.2,
-      characteristics: ['Dark blue back', 'Silver belly', 'Horizontal stripes'],
-      habitat: 'Pelagic waters, 0-260m depth',
-      distribution: 'Tropical and subtropical waters worldwide'
-    }
-  ];
   const [analysisResults, setAnalysisResults] = useState<AnalysisResult[]>([]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -121,8 +103,6 @@ export const AnalyseSpecies: React.FC = () => {
           </Button>
         </div>
       </CardContent>
-
-
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Input Panel */}
@@ -309,8 +289,7 @@ export const AnalyseSpecies: React.FC = () => {
                           : result.confidence >= 0.8
                             ? 'bg-yellow-100 text-yellow-800'
                             : 'bg-red-100 text-red-800'
-                          }`}
-                      >
+                          }`}>
                         {(result.confidence * 100).toFixed(2)}% match
                       </span>
                     </div>
@@ -341,19 +320,19 @@ export const AnalyseSpecies: React.FC = () => {
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center p-4 bg-blue-50 rounded-lg">
-              <p className="text-2xl font-bold text-blue-600">2,847</p>
+              <p className="text-2xl font-bold text-blue-600">1,487</p>
               <p className="text-sm text-blue-800">Total Species</p>
             </div>
             <div className="text-center p-4 bg-green-50 rounded-lg">
-              <p className="text-2xl font-bold text-green-600">1,456</p>
+              <p className="text-2xl font-bold text-green-600">878</p>
               <p className="text-sm text-green-800">Fish Species</p>
             </div>
             <div className="text-center p-4 bg-purple-50 rounded-lg">
-              <p className="text-2xl font-bold text-purple-600">892</p>
+              <p className="text-2xl font-bold text-purple-600">492</p>
               <p className="text-sm text-purple-800">Invertebrates</p>
             </div>
             <div className="text-center p-4 bg-amber-50 rounded-lg">
-              <p className="text-2xl font-bold text-amber-600">499</p>
+              <p className="text-2xl font-bold text-amber-600">329</p>
               <p className="text-sm text-amber-800">Other Taxa</p>
             </div>
           </div>

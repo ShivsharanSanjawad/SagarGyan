@@ -70,7 +70,7 @@ export const LoginForm: React.FC = () => {
               <Waves className="h-8 w-8 text-primary-foreground" />
             </div>
           </div>
-          <h1 className="text-2xl font-bold text-blue-950">SagarDnyan</h1>
+          <h1 className="text-2xl font-bold text-blue-950">SagarGyaan</h1>
           <p className="text-gray-600 mt-2">Oceanographic Data Platform</p>
         </div>
 

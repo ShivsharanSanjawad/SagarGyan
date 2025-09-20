@@ -11,14 +11,10 @@ export default function PLYViewer() {
 
     const width = mountRef.current.clientWidth;
     const height = mountRef.current.clientHeight || 600;
-
-    // Scene
     const scene = new THREE.Scene();
-
-    // Camera
     const camera = new THREE.PerspectiveCamera(60, width / height, 0.01, 1000);
 
-    // Renderer (background applied only inside box)
+    // Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setClearColor(0xffffff, 1); // white canvas background
     renderer.setSize(width, height);
@@ -27,11 +23,7 @@ export default function PLYViewer() {
     // Controls
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
-
-    // Light
     scene.add(new THREE.AmbientLight(0xffffff, 1));
-
-    // Load PLY
     const loader = new PLYLoader();
     loader.load("/Segmentation.ply", (geometry) => {
       if (!geometry.hasAttribute("normal")) geometry.computeVertexNormals();
@@ -44,13 +36,13 @@ export default function PLYViewer() {
       const points = new THREE.Points(geometry, material);
       scene.add(points);
 
-      // --- Center model ---
+      //Center model
       geometry.computeBoundingBox();
       const box = geometry.boundingBox!;
       const center = box.getCenter(new THREE.Vector3());
       points.position.sub(center);
 
-      // --- Fit camera to model ---
+      //Fit camera to model
       const sphere = geometry.boundingSphere || new THREE.Sphere();
       geometry.computeBoundingSphere();
       const radius = geometry.boundingSphere!.radius;
@@ -58,11 +50,10 @@ export default function PLYViewer() {
       const fov = (camera.fov * Math.PI) / 180;
       const dist = radius / Math.sin(fov / 2);
 
-      camera.position.set(0, 0, dist * 1.2); // pull back a bit
+      camera.position.set(0, 0, dist * 1.2); 
       camera.lookAt(0, 0, 0);
       controls.update();
     });
-
     // Animate
     const animate = () => {
       controls.update();
@@ -70,7 +61,6 @@ export default function PLYViewer() {
       requestAnimationFrame(animate);
     };
     animate();
-
     // Resize
     const handleResize = () => {
       const w = mountRef.current?.clientWidth || width;

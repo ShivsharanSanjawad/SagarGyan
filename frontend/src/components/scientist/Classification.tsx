@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/Button';
 import { CustomInput } from '../ui/CustomInput';
-import { Microscope, Upload, Search, FileText } from 'lucide-react';
+import { Microscope, Upload, Search, FileText, FolderOutput } from 'lucide-react';
 import { mockSpecies } from '../../data/mockData';
 
 export const Classification: React.FC = () => {
@@ -29,7 +29,7 @@ export const Classification: React.FC = () => {
       </div>
 
       {/* Module Selector */}
-      <CardContent className="p-0 p-2">
+      <CardContent className="p-2">
         <div className="flex w-full">
           <Button
             variant="ghost"
@@ -66,7 +66,6 @@ export const Classification: React.FC = () => {
           </Button>
         </div>
       </CardContent>
-
 
       {/* eDNA Module */}
       {activeModule === 'edna' && (
@@ -137,7 +136,8 @@ export const Classification: React.FC = () => {
                       </p>
                       <div className="flex space-x-2">
                         <Button size="sm" variant="outline">View Details</Button>
-                        <Button size="sm" variant="outline">Export</Button>
+                        <Button size="sm" className="transition-all duration-200 ease-in-out border hover:bg-slate-400 active:scale-95">
+                         <FolderOutput className="h-4 w-4 mr-2" />Export</Button>
                       </div>
                     </div>
                   ))}

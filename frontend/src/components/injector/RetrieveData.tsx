@@ -101,8 +101,14 @@ export const RetrieveData: React.FC = () => {
                       Preview
                     </Button>
                     <Button size="sm" className="transition-all duration-200 ease-in-out border hover:bg-slate-400 active:scale-95">
-                      <FolderOutput className="h-4 w-4 mr-2" />
-                      Export
+                      <a
+                        href={entry.link}
+                        download
+                        className="flex items-center"
+                      >
+                        <FolderOutput className="h-4 w-4 mr-2" />
+                        Export
+                      </a>
                     </Button>
                   </div>
                 </div>

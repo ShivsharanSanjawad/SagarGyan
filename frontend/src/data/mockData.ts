@@ -36,31 +36,14 @@ export const mockUsers: User[] = [
 export const mockDataEntries: DataEntry[] = [
   {
     id: 'D001',
-    title: 'Sea Surface Temperature - Arabian Sea',
-    type: 'oceanographic',
+    title: 'Species Occurence - Goa ',
+    type: 'biodiversity',
     uploadedBy: 'Dr. Marine Data Collector',
     uploadDate: '2024-01-14',
     size: '245 MB',
-    status: 'completed'
+    status: 'completed',
+    link: '/temp-storage/nio_goa_archived_data.zip'
   },
-  {
-    id: 'D002',
-    title: 'Fish Population Survey - Kerala Coast',
-    type: 'fisheries',
-    uploadedBy: 'Dr. Marine Data Collector',
-    uploadDate: '2024-01-13',
-    size: '128 MB',
-    status: 'completed'
-  },
-  {
-    id: 'D003',
-    title: 'Coral Reef Biodiversity Assessment',
-    type: 'biodiversity',
-    uploadedBy: 'Dr. Marine Data Collector',
-    uploadDate: '2024-01-15',
-    size: '89 MB',
-    status: 'processing'
-  }
 ];
 
 export const mockSystemMetrics: SystemMetrics = {

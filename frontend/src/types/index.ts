@@ -23,6 +23,7 @@ export interface DataEntry {
   uploadDate: string;
   size: string;
   status: 'processing' | 'completed' | 'failed';
+  link: string
 }
 
 export interface SystemMetrics {

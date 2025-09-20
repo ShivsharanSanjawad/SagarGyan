@@ -9,7 +9,12 @@ export const AnalyseSpecies: React.FC = () => {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const analysisResults = [
+  interface AnalysisResult {
+    class_index: number;
+    class_name: string;
+    confidence: number;
+  }
+  const baseAnalysisResults = [
     {
       species: 'Rastrelliger kanagurta',
       commonName: 'Indian Mackerel',
@@ -27,6 +32,7 @@ export const AnalyseSpecies: React.FC = () => {
       distribution: 'Tropical and subtropical waters worldwide'
     }
   ];
+  const [analysisResults, setAnalysisResults] = useState<AnalysisResult[]>([]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -34,9 +40,34 @@ export const AnalyseSpecies: React.FC = () => {
     }
   };
 
-  const handleAnalysis = () => {
-    // Simulate analysis process
-    alert('Analysis started! Results will be available in a few moments.');
+  const handleAnalysis = async () => {
+    if (!uploadedFile) {
+      alert('Please upload a file first!');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', uploadedFile);
+
+    try {
+      const response = await fetch('http://localhost:8000/taxonomyImage', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log('Analysis results:', data);
+
+      // Wrap single object in array so map() works
+      setAnalysisResults([data]);
+    } catch (error) {
+      console.error(error);
+      alert('Failed to analyze image');
+    }
   };
 
   return (
@@ -47,47 +78,43 @@ export const AnalyseSpecies: React.FC = () => {
       </div>
 
       {/* Analysis Type Selector */}
-        <CardContent className="p-0 pb-2">
+      <CardContent className="p-0 pb-2">
         <div className="flex w-full">
           <Button
             variant="ghost"
-            className={`flex-1 rounded-none border-b-2 ${
-              analysisType === 'image'
-                ? 'border-sky-500 text-sky-600 font-semibold'
-                : 'border-transparent text-gray-600 hover:text-sky-500'
-            }`}
+            className={`flex-1 rounded-none border-b-2 ${analysisType === 'image'
+              ? 'border-sky-500 text-sky-600 font-semibold'
+              : 'border-transparent text-gray-600 hover:text-sky-500'
+              }`}
             onClick={() => setAnalysisType('image')}>
             Image Analysis
           </Button>
           <Button
             variant="ghost"
-            className={`flex-1 rounded-none border-b-2 ${
-              analysisType === 'morphometric'
-                ? 'border-sky-500 text-sky-600 font-semibold'
-                : 'border-transparent text-gray-600 hover:text-sky-500'
-            }`}
+            className={`flex-1 rounded-none border-b-2 ${analysisType === 'morphometric'
+              ? 'border-sky-500 text-sky-600 font-semibold'
+              : 'border-transparent text-gray-600 hover:text-sky-500'
+              }`}
             onClick={() => setAnalysisType('morphometric')}
           >
             Morphometric Data
           </Button>
           <Button
             variant="ghost"
-            className={`flex-1 rounded-none border-b-2 ${
-              analysisType === 'dna'
-                ? 'border-sky-500 text-sky-600 font-semibold'
-                : 'border-transparent text-gray-600 hover:text-sky-500'
-            }`}
+            className={`flex-1 rounded-none border-b-2 ${analysisType === 'dna'
+              ? 'border-sky-500 text-sky-600 font-semibold'
+              : 'border-transparent text-gray-600 hover:text-sky-500'
+              }`}
             onClick={() => setAnalysisType('dna')}
           >
             DNA Sequence
           </Button>
           <Button
             variant="ghost"
-            className={`flex-1 rounded-none border-b-2 ${
-              analysisType === 'search'
-                ? 'border-sky-500 text-sky-600 font-semibold'
-                : 'border-transparent text-gray-600 hover:text-sky-500'
-            }`}
+            className={`flex-1 rounded-none border-b-2 ${analysisType === 'search'
+              ? 'border-sky-500 text-sky-600 font-semibold'
+              : 'border-transparent text-gray-600 hover:text-sky-500'
+              }`}
             onClick={() => setAnalysisType('search')}
           >
             Database Search
@@ -95,7 +122,7 @@ export const AnalyseSpecies: React.FC = () => {
         </div>
       </CardContent>
 
-     
+
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Input Panel */}
@@ -130,7 +157,7 @@ export const AnalyseSpecies: React.FC = () => {
                     </p>
                   </div>
                 </div>
-                
+
                 {uploadedFile && (
                   <div className="text-sm text-green-600 bg-green-50 p-3 rounded-lg">
                     ✓ {uploadedFile.name} uploaded successfully
@@ -161,7 +188,7 @@ export const AnalyseSpecies: React.FC = () => {
                   <Input label="Eye Diameter (cm)" type="number" />
                   <Input label="Weight (g)" type="number" />
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Body Shape</label>
                   <select className="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500">
@@ -194,7 +221,7 @@ export const AnalyseSpecies: React.FC = () => {
                     placeholder="Paste FASTA sequence or raw DNA sequence here..."
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Sequence Type</label>
                   <select className="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500">
@@ -224,7 +251,7 @@ export const AnalyseSpecies: React.FC = () => {
                     className="pl-10"
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Input
                     label="Habitat (optional)"
@@ -234,7 +261,7 @@ export const AnalyseSpecies: React.FC = () => {
                     label="Geographic Region (optional)"
                     placeholder="e.g., Arabian Sea, Bay of Bengal"
                   />
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Classification</label>
                     <select className="block h-10 w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500">
@@ -250,8 +277,8 @@ export const AnalyseSpecies: React.FC = () => {
               </div>
             )}
 
-            <Button 
-              onClick={handleAnalysis} 
+            <Button
+              onClick={handleAnalysis}
               className="w-full"
               disabled={analysisType === 'image' && !uploadedFile}
             >
@@ -271,41 +298,21 @@ export const AnalyseSpecies: React.FC = () => {
               <div className="space-y-4">
                 {analysisResults.map((result, index) => (
                   <div key={index} className="border rounded-lg p-4">
-                    <div className="flex justify-between items-start mb-2">
+                    <div className="flex justify-between items-center mb-2">
                       <div>
-                        <h3 className="font-semibold">{result.commonName}</h3>
-                        <p className="text-sm text-gray-600 italic">{result.species}</p>
+                        <h3 className="font-semibold">{result.class_name}</h3>
+                        <p className="text-sm text-gray-600 italic">Class Index: {result.class_index}</p>
                       </div>
-                      <span className={`px-2 py-1 text-xs rounded-full ${
-                        result.confidence >= 90 
-                          ? 'bg-green-100 text-green-800' 
-                          : result.confidence >= 80
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : 'bg-red-100 text-red-800'
-                      }`}>
-                        {result.confidence}% match
+                      <span
+                        className={`px-2 py-1 text-xs rounded-full ${result.confidence >= 0.9
+                          ? 'bg-green-100 text-green-800'
+                          : result.confidence >= 0.8
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-red-100 text-red-800'
+                          }`}
+                      >
+                        {(result.confidence * 100).toFixed(2)}% match
                       </span>
-                    </div>
-
-                    <div className="space-y-2 text-sm">
-                      <div>
-                        <p className="font-medium">Characteristics:</p>
-                        <ul className="list-disc list-inside text-gray-600">
-                          {result.characteristics.map((char, i) => (
-                            <li key={i}>{char}</li>
-                          ))}
-                        </ul>
-                      </div>
-                      
-                      <div>
-                        <p className="font-medium">Habitat:</p>
-                        <p className="text-gray-600">{result.habitat}</p>
-                      </div>
-                      
-                      <div>
-                        <p className="font-medium">Distribution:</p>
-                        <p className="text-gray-600">{result.distribution}</p>
-                      </div>
                     </div>
 
                     <div className="mt-4 flex space-x-2">

@@ -3,7 +3,8 @@ CREATE TABLE dataset (
     format          TEXT,                   -- e.g., "DwC-A","PNG"
     name            TEXT,                   -- optional: dataset title
     information     TEXT,                   
-    ingestionDate   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ingestionDate   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    unmarkedCol int
 );
 
 CREATE TABLE taxon (

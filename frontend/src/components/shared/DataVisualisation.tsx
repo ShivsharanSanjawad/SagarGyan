@@ -248,18 +248,6 @@ export const DataVisualization: React.FC = () => {
     </CardContent>
   </Card>
 )}
-
-{/* 3D Interactive View - Minimal */}
-{activeView === '3d' && (
-  <Card>
-    <CardHeader>
-      <CardTitle>Interactive 3D Segmentation Visualization</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <Interactive3DView activeView={activeView} />
-    </CardContent>
-  </Card>
-      )}
     </div>
   );
 };

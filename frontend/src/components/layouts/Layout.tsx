@@ -33,7 +33,7 @@ export const Layout: React.FC = () => {
         case 'users': return <UserManagement />;
         case 'system': return <SystemManagement />;
         case 'settings': return <Settings />;
-        case 'docs': return window.location.href = 'http://localhost:8000/docs';
+        case 'docs': return window.location.href = 'http://localhost:8000/docs';  //api docs part
         default: return <AdminDashboard />;
       }
     } else if (user?.role === 'injector') {

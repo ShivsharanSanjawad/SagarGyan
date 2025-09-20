@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/input';
-import { Upload, Search, FileSearch, Database } from 'lucide-react';
+import { Upload, Search, FileSearch, Database, FolderOutput} from 'lucide-react';
 
 export const AnalyseSpecies: React.FC = () => {
   const [analysisType, setAnalysisType] = useState('image');
@@ -264,7 +264,7 @@ export const AnalyseSpecies: React.FC = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Classification</label>
-                    <select className="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                    <select className="block h-10 w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500">
                       <option>All</option>
                       <option>Fish</option>
                       <option>Crustacean</option>
@@ -317,7 +317,8 @@ export const AnalyseSpecies: React.FC = () => {
 
                     <div className="mt-4 flex space-x-2">
                       <Button size="sm" variant="outline">View Details</Button>
-                      <Button size="sm" variant="outline">Export Report</Button>
+                      <Button size="sm" className="transition-all duration-200 ease-in-out border hover:bg-slate-400 active:scale-95">
+                        <FolderOutput className="h-4 w-4 mr-2" />Export</Button>
                     </div>
                   </div>
                 ))}

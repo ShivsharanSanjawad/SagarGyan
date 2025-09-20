@@ -117,23 +117,21 @@ export const LoginForm: React.FC = () => {
                   label="Username"
                   type="text"
                   name="username"
+                  className='h-10'
                   value={formData.username}
                   onChange={handleInputChange}
                   error={errors.username}
-                  placeholder="Enter your username"
-                />
-                
+                  placeholder="Enter your username"/>
                 <CustomInput
                   label="Password"
                   type="password"
                   name="password"
+                  className='h-10'
                   value={formData.password}
                   onChange={handleInputChange}
                   error={errors.password}
-                  placeholder="Enter your password"
-                />
-
-                <Button type="submit" className="w-full bg-blue-900 text-white">
+                  placeholder="Enter your password"/>
+                <Button type="submit" className="w-full bg-blue-900 text-white mt-2">
                   Continue
                 </Button>
               </form>
@@ -147,8 +145,8 @@ export const LoginForm: React.FC = () => {
                   onChange={handleInputChange}
                   error={errors.twoFactorCode}
                   placeholder="000000"
-                  maxLength={6}
-                />
+                  className="text-center"
+                  maxLength={6}/>
 
                 <div className="flex gap-2">
                   <Button

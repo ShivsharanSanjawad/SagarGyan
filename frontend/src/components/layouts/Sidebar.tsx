@@ -32,6 +32,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
         { id: 'users', label: 'User Management', icon: Users },
         { id: 'system', label: 'System Management', icon: Activity },
         { id: 'settings', label: 'Settings', icon: Settings },
+        { id: 'docs', label: 'API Docs', icon: Settings },
       ];
     } else if (user?.role === 'injector') {
       return [

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/input';
-import { Search, Filter, Download, Eye } from 'lucide-react';
+import { Search, Filter, Eye, FolderOutput} from 'lucide-react';
 import { mockDataEntries } from '../../data/mockData';
 
 export const RetrieveData: React.FC = () => {
@@ -100,8 +100,8 @@ export const RetrieveData: React.FC = () => {
                       <Eye className="h-4 w-4 mr-2" />
                       Preview
                     </Button>
-                    <Button size="sm">
-                      <Download className="h-4 w-4 mr-2" />
+                    <Button size="sm" className="transition-all duration-200 ease-in-out border hover:bg-slate-400 active:scale-95">
+                      <FolderOutput className="h-4 w-4 mr-2" />
                       Export
                     </Button>
                   </div>

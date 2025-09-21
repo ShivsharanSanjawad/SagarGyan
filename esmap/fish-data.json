@@ -1,0 +1,11 @@
+{
+  "mappings": {
+    "properties": {
+      "genus": { "type": "text" },
+      "species": { "type": "text" },
+      "common_name": { "type": "text" },
+      "family": { "type": "text" },
+      "description": { "type": "text" }
+    }
+  }
+}

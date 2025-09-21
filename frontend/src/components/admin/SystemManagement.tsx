@@ -32,12 +32,12 @@ import {
 
 export const SystemManagement: React.FC = () => {
   const [performanceData, setPerformanceData] = useState([
-    { time: '00:00', cpu: 25, memory: 45, network: 30 },
-    { time: '04:00', cpu: 20, memory: 42, network: 25 },
-    { time: '08:00', cpu: 55, memory: 68, network: 60 },
-    { time: '12:00', cpu: 70, memory: 75, network: 80 },
-    { time: '16:00', cpu: 85, memory: 82, network: 75 },
-    { time: '20:00', cpu: 60, memory: 65, network: 45 },
+    { time: '14:00', cpu: 25, memory: 45, network: 30 },
+    { time: '15:00', cpu: 20, memory: 42, network: 25 },
+    { time: '16:00', cpu: 55, memory: 68, network: 60 },
+    { time: '17:00', cpu: 70, memory: 75, network: 80 },
+    { time: '18:00', cpu: 85, memory: 82, network: 75 },
+    { time: '19:00', cpu: 60, memory: 65, network: 45 },
   ]);
 
   const [storageData, setStorageData] = useState([
@@ -60,7 +60,6 @@ export const SystemManagement: React.FC = () => {
 
   const COLORS = ['#0ea5e9', '#10b981', '#f59e0b', '#8b5cf6'];
 
-  // Fake "refresh" by jittering data
   const handleRefresh = () => {
     setPerformanceData(prev =>
       prev.map(d => ({
@@ -88,7 +87,6 @@ export const SystemManagement: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header with Refresh */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">System Management</h1>
@@ -106,7 +104,7 @@ export const SystemManagement: React.FC = () => {
       {/* Status Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="px-6 py-2">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">CPU Usage</p>
@@ -118,7 +116,7 @@ export const SystemManagement: React.FC = () => {
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="px-6 py-2">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Memory</p>
@@ -130,7 +128,7 @@ export const SystemManagement: React.FC = () => {
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="px-6 py-2">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Storage</p>
@@ -142,7 +140,7 @@ export const SystemManagement: React.FC = () => {
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="px-6 py-2">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Network</p>
@@ -159,7 +157,7 @@ export const SystemManagement: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>System Performance (24h)</CardTitle>
+            <CardTitle>System Performance (hourly)</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>

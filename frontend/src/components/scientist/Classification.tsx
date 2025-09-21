@@ -38,8 +38,7 @@ export const Classification: React.FC = () => {
                 ? 'border-sky-500 text-sky-600 font-semibold'
                 : 'border-transparent text-gray-600 hover:text-sky-500'
             }`}
-            onClick={() => setActiveModule('edna')}
-          >
+            onClick={() => setActiveModule('edna')}>
             eDNA Analysis
           </Button>
           <Button
@@ -49,8 +48,7 @@ export const Classification: React.FC = () => {
                 ? 'border-sky-500 text-sky-600 font-semibold'
                 : 'border-transparent text-gray-600 hover:text-sky-500'
             }`}
-            onClick={() => setActiveModule('taxonomy')}
-          >
+            onClick={() => setActiveModule('taxonomy')}>
             Taxonomy
           </Button>
           <Button
@@ -156,13 +154,18 @@ export const Classification: React.FC = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="relative">
-                  <Search className="h-4 w-4 absolute left-3 top-3 text-gray-400" />
-                  <CustomInput
-                    placeholder="Search species by name or characteristics..."
-                    className="pl-10"
-                  />
-                </div>
+                <div className="flex space-x-2">
+                  {/* Input with Search Icon */}
+                  <div className="relative w-96">
+                    <Search className="h-4 w-4 absolute left-3 top-3 text-gray-400" />
+                    <CustomInput
+                      placeholder="Search species by name or characteristics..."
+                      className="pl-10"/>
+                  </div>
+                  {/* Search Button */} 
+                  <Button className="bg-sky-500 hover:bg-sky-600 active:scale-95 text-white rounded-lg px-6 w-32 transition">
+                      Search</Button>
+                  </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {mockSpecies.map((species) => (

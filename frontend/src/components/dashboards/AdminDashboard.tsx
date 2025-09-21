@@ -9,7 +9,7 @@ export const AdminDashboard: React.FC = () => {
 
   const MetricCard = ({ icon: Icon, title, value, subtitle, color }: any) => (
     <Card>
-      <CardContent className="p-6">
+      <CardContent className="px-6 py-2">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-gray-600">{title}</p>
@@ -38,29 +38,25 @@ export const AdminDashboard: React.FC = () => {
           title="Total Users"
           value={metrics.totalUsers}
           subtitle={`${metrics.activeUsers} active`}
-          color="text-sky-600"
-        />
+          color="text-sky-600"/>
         <MetricCard
           icon={Database}
           title="Data Entries"
           value={metrics.dataEntries.toLocaleString()}
           subtitle="Total datasets"
-          color="text-emerald-600"
-        />
+          color="text-emerald-600"/>
         <MetricCard
           icon={Activity}
           title="System Health"
           value={`${metrics.systemHealth}%`}
           subtitle="All systems operational"
-          color="text-green-600"
-        />
+          color="text-green-600"/>
         <MetricCard
           icon={Server}
           title="Storage Used"
           value={`${metrics.storageUsed}%`}
           subtitle="Processing queue: 12"
-          color="text-amber-600"
-        />
+          color="text-amber-600"/>
       </div>
 
       {/* Charts */}

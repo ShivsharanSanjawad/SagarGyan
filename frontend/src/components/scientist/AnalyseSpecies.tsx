@@ -228,19 +228,16 @@ export const AnalyseSpecies: React.FC = () => {
                     placeholder="Search by scientific name, common name, or characteristics..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10"
-                  />
+                    className="pl-10"/>
                 </div>
 
                 <div className="space-y-2">
                   <Input
                     label="Habitat (optional)"
-                    placeholder="e.g., coastal waters, deep sea"
-                  />
+                    placeholder="e.g., coastal waters, deep sea"/>
                   <Input
                     label="Geographic Region (optional)"
-                    placeholder="e.g., Arabian Sea, Bay of Bengal"
-                  />
+                    placeholder="e.g., Arabian Sea, Bay of Bengal"/>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Classification</label>
@@ -260,8 +257,7 @@ export const AnalyseSpecies: React.FC = () => {
             <Button
               onClick={handleAnalysis}
               className="w-full"
-              disabled={analysisType === 'image' && !uploadedFile}
-            >
+              disabled={analysisType === 'image' && !uploadedFile}>
               <FileSearch className="h-4 w-4 mr-2" />
               {analysisType === 'search' ? 'Search Database' : 'Analyze Species'}
             </Button>

@@ -23,7 +23,7 @@ router.get("/elasticsearch/health", async (req, res) => {
   }
 });
 
-// Search endpoint (all indexes, all fields)
+// Search endpoint (all indexes, all fields, keyword-aware)
 router.get("/elasticsearch", async (req, res) => {
   const { q } = req.query;
   if (!q) return res.status(400).json({ error: "Query parameter 'q' is required" });
@@ -32,11 +32,25 @@ router.get("/elasticsearch", async (req, res) => {
     const result = await esClient.search({
       index: "*", // search all indexes
       query: {
-        multi_match: {
-          query: q,
-          fields: ["*"], // search all fields
-        },
-      },
+        bool: {
+          should: [
+            {
+              multi_match: {
+                query: q,
+                fields: ["*"],       // search all fields
+                type: "best_fields",
+                operator: "or",      // allow partial matches
+                minimum_should_match: "50%" // 50% of keywords must match
+              },
+            },
+            {
+              match_phrase: {
+                description: { query: q, boost: 2 } // exact phrase boost
+              }
+            }
+          ]
+        }
+      }
     });
 
     res.json(result.hits.hits.map(hit => hit._source));

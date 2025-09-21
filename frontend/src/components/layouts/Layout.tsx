@@ -21,6 +21,7 @@ import { Classification } from '../scientist/Classification';
 import { DecisionMaking } from '../scientist/DecisionMaking';
 import { AnalyseSpecies } from '../scientist/AnalyseSpecies';
 import { Projects } from '../scientist/Projects';
+import { QuerySearch } from '../scientist/Query';
 
 export const Layout: React.FC = () => {
   const { user } = useAuth();
@@ -53,6 +54,7 @@ export const Layout: React.FC = () => {
         case 'classify': return <Classification />;
         case 'decisions': return <DecisionMaking />;
         case 'species': return <AnalyseSpecies />;
+        case 'query': return <QuerySearch />;
         case 'projects': return <Projects />;
         default: return <ScientistDashboard />;
       }

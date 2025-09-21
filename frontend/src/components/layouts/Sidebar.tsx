@@ -37,6 +37,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
         { id: 'classify', label: 'Classification', icon: Microscope },
         { id: 'decisions', label: 'Decision Making', icon: Brain },
         { id: 'species', label: 'Analyse Species', icon: FileSearch },
+        { id: 'query', label: 'Query Engine', icon: Search },
         { id: 'projects', label: 'Projects', icon: Folder },
       ];
     }

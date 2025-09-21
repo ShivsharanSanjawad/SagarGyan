@@ -190,18 +190,40 @@ async def taxoImage(file: UploadFile = File(..., description="Image of the fish 
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
 
-@app.get("/taxonomyClassifier", response_model=GBIFResponse, summary="GBIF Species Lookup")
+@app.get("/taxonomyClassifier", summary="GBIF Species Lookup")
 async def taxoClassify(name: str = Query(..., description="Common or scientific fish name")):
     """
-    Fetch species information from GBIF API.
+    Fetch full species information from GBIF API.
+    First, match the name to get the usageKey, then fetch full details.
     """
     try:
-        url = f"https://api.gbif.org/v1/species/match?name={name}"
-        response = requests.get(url)
-        if response.status_code == 200:
-            return response.json()
+        # Step 1: Match the name
+        match_url = f"https://api.gbif.org/v1/species/match?name={name}"
+        match_response = requests.get(match_url)
+        if match_response.status_code != 200:
+            return JSONResponse(
+                status_code=match_response.status_code,
+                content={"error": f"Failed to fetch from GBIF match endpoint. Status: {match_response.status_code}"}
+            )
+
+        match_data = match_response.json()
+
+        # Step 2: Get full species details if usageKey exists
+        usage_key = match_data.get("usageKey")
+        if usage_key:
+            details_url = f"https://api.gbif.org/v1/species/{usage_key}"
+            details_response = requests.get(details_url)
+            if details_response.status_code == 200:
+                return details_response.json()
+            else:
+                return JSONResponse(
+                    status_code=details_response.status_code,
+                    content={"error": f"Failed to fetch full species details. Status: {details_response.status_code}"}
+                )
         else:
-            return JSONResponse(status_code=response.status_code, content={"error": f"Failed to fetch from GBIF. Status: {response.status_code}"})
+            # No usageKey found, return match data as fallback
+            return match_data
+
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
 

@@ -4,7 +4,7 @@ CREATE TABLE dataset (
     name            TEXT,                   -- optional: dataset title
     information     TEXT,                   
     ingestionDate   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    unmarkedCol int
+    
 );
 
 CREATE TABLE taxon (

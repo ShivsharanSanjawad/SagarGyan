@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { use, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/Button';
 import { CustomInput } from '../ui/CustomInput';
@@ -8,7 +8,50 @@ import { mockSpecies } from '../../data/mockData';
 export const Classification: React.FC = () => {
   const [activeModule, setActiveModule] = useState('edna');
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [uploadText,setUploadText] = useState('');
 
+  const [speciesInfo, setSpeciesInfo] = useState({
+    name: "",
+    family: "",
+    genus: "",
+    kingdom: "",
+    phylum: "",
+    parent: "",
+    vernacularName: ""
+  });
+  const handleTaxoSubmit = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/taxonomyClassifier?name=${encodeURIComponent(uploadText)}`
+      );
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+      const data = await response.json();
+
+      // Extract only the fields you want and store in state
+      setSpeciesInfo({
+        name: data.scientificName || "",
+        family: data.family || "",
+        genus: data.genus || "",
+        kingdom: data.kingdom || "",
+        phylum: data.phylum || "",
+        parent: data.parent || "",
+        vernacularName: data.vernacularName || ""
+      });
+
+      console.log("Selected species info:", {
+        name: data.scientificName,
+        family: data.family,
+        genus: data.genus,
+        kingdom: data.kingdom,
+        phylum: data.phylum,
+        parent: data.parent,
+        vernacularName: data.vernacularName
+      });
+    } catch (error) {
+      console.error("API Error:", error);
+    }
+  };
   const classificationResults = [
     { id: 1, sample: 'Sample_001', species: 'Rastrelliger kanagurta', confidence: 95.2, method: 'eDNA' },
     { id: 2, sample: 'Sample_002', species: 'Chelonia mydas', confidence: 87.8, method: 'Morphology' },
@@ -160,36 +203,39 @@ export const Classification: React.FC = () => {
                     <Search className="h-4 w-4 absolute left-3 top-3 text-gray-400" />
                     <CustomInput
                       placeholder="Search species by name or characteristics..."
-                      className="pl-10"/>
+                      className="pl-10"
+                      value={uploadText}           // controlled input
+                      onChange={(e) => setUploadText(e.target.value)} // update state
+                    />
                   </div>
-                  {/* Search Button */} 
-                  <Button className="bg-sky-500 hover:bg-sky-600 active:scale-95 text-white rounded-lg px-6 w-32 transition">
-                      Search</Button>
+
+                  {/* Search Button */}
+                  <Button
+                    className="bg-sky-500 hover:bg-sky-600 active:scale-95 text-white rounded-lg px-6 w-32 transition"
+                    onClick={handleTaxoSubmit}
+                  >
+                    Search
+                  </Button>
                   </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {mockSpecies.map((species) => (
-                    <div key={species.id} className="border rounded-lg p-4 hover:bg-gray-50">
-                      <h3 className="font-semibold">{species.name}</h3>
-                      <p className="text-sm text-gray-600 italic">{species.scientificName}</p>
-                      <div className="mt-2 space-y-1 text-xs">
-                        <p><strong>Classification:</strong> {species.classification}</p>
-                        <p><strong>Habitat:</strong> {species.habitat}</p>
-                        <p><strong>Status:</strong> 
-                          <span className={`ml-1 px-2 py-0.5 rounded ${
-                            species.status === 'Stable' ? 'bg-green-100 text-green-800' :
-                            species.status === 'Endangered' ? 'bg-red-100 text-red-800' :
-                            'bg-yellow-100 text-yellow-800'
-                          }`}>
-                            {species.status}
-                          </span>
-                        </p>
-                      </div>
-                      <Button size="sm" variant="outline" className="mt-3">
-                        View Details
-                      </Button>
+                  <div className="border rounded-lg p-4 hover:bg-gray-50">
+                    <h3 className="font-semibold">{speciesInfo.name}</h3>
+                    <p className="text-sm text-gray-600 italic">{speciesInfo.name}</p>
+
+                    <div className="mt-2 space-y-1 text-xs">
+                      <p><strong>Family:</strong> {speciesInfo.family}</p>
+                      <p><strong>Genus:</strong> {speciesInfo.genus}</p>
+                      <p><strong>Kingdom:</strong> {speciesInfo.kingdom}</p>
+                      <p><strong>Phylum:</strong> {speciesInfo.phylum}</p>
+                      <p><strong>Parent:</strong> {speciesInfo.parent}</p>
+                      <p><strong>Vernacular Name:</strong> {speciesInfo.vernacularName}</p>
                     </div>
-                  ))}
+
+                    <Button size="sm" variant="outline" className="mt-3">
+                      View Details
+                    </Button>
+                  </div>
                 </div>
               </div>
             </CardContent>

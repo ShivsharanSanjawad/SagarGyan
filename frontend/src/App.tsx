@@ -2,6 +2,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/authContext';
 import { LoginForm } from './components/auth/Login';
 import { Layout } from './components/layouts/Layout';
+import 'leaflet/dist/leaflet.css';
 
 function AppContent() {
   const { isAuthenticated, isLoading } = useAuth();

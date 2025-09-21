@@ -18,7 +18,9 @@ export const LoginForm: React.FC = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    // Trim username to remove extra spaces
+    const processedValue = name === 'username' ? value.trim() : value;
+    setFormData(prev => ({ ...prev, [name]: processedValue }));
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -177,9 +179,9 @@ export const LoginForm: React.FC = () => {
         </Card>
 
         <div className="mt-6 flex items-center justify-center text-gray-500 text-sm">
-  <Cloud className="h-4 w-4 mr-2" />
-  <span>Powered by scalable cloud infrastructure</span>
-</div>
+          <Cloud className="h-4 w-4 mr-2" />
+         <span>Powered by scalable cloud infrastructure</span>
+        </div>
       </div>
     </div>
   );

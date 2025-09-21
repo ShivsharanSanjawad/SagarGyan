@@ -104,8 +104,7 @@ export const RetrieveData: React.FC = () => {
                       <a
                         href={entry.link}
                         download
-                        className="flex items-center"
-                      >
+                        className="flex items-center">
                         <FolderOutput className="h-4 w-4 mr-2" />
                         Export
                       </a>

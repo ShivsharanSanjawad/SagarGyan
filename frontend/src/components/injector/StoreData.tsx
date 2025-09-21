@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/input";
-import { Upload, FileText, CheckCircle2 } from "lucide-react";
+import { Upload, FileText } from "lucide-react";
 
 export const StoreData: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -15,7 +15,6 @@ export const StoreData: React.FC = () => {
   const [files, setFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [isConverted, setIsConverted] = useState(false);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -34,7 +33,6 @@ export const StoreData: React.FC = () => {
     e.preventDefault();
     setIsUploading(true);
     setUploadProgress(0);
-    setIsConverted(false);
 
     // Simulate upload progress
     const interval = setInterval(() => {
@@ -42,7 +40,6 @@ export const StoreData: React.FC = () => {
         if (prev >= 100) {
           clearInterval(interval);
           setIsUploading(false);
-          setIsConverted(true);
           alert("Data uploaded successfully!");
           setFormData({
             projectName: "",
@@ -114,7 +111,6 @@ export const StoreData: React.FC = () => {
             <CardTitle className="text-sky-700">Upload Dataset</CardTitle>
           </CardHeader>
           <CardContent className="p-6 space-y-6">
-            {/* File Upload & Info Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* File Upload */}
               <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-sky-500 transition cursor-pointer">
@@ -126,8 +122,7 @@ export const StoreData: React.FC = () => {
                     multiple
                     onChange={handleFileChange}
                     className="sr-only"
-                    accept=".csv,.xlsx,.nc,.json,.txt,.zip,.gz,.png"
-                  />
+                    accept=".csv,.xlsx,.nc,.json,.txt,.zip,.gz,.png"/>
                 </label>
                 <p className="text-xs text-gray-500 mt-2 text-center">
                   CSV, Excel, NetCDF, JSON, TXT, Zip
@@ -147,39 +142,34 @@ export const StoreData: React.FC = () => {
                   <option value="netcdf"> NetCDF</option>
                   <option value="dwca"> DwC-A</option>
                   <option value="json"> JSON</option>
+                  <option value="json"> Zip</option>
                 </select>
                 <Input
                   name="projectName"
                   value={formData.projectName}
                   onChange={handleInputChange}
                   placeholder="Enter Project Name"
-                  required
-                />
+                  required/>
                 <Input
                   name="datasetName"
                   value={formData.datasetName}
                   onChange={handleInputChange}
                   placeholder="Enter Dataset Name"
-                  required
-                />
+                  required/>
                 <div className="grid grid-cols-2 gap-4">
                   <Input
                     name="latitude"
                     value={formData.latitude}
                     onChange={handleInputChange}
                     placeholder="Latitude"
-                    required
-                  />
+                    required/>
                   <Input
                     name="longitude"
                     value={formData.longitude}
                     onChange={handleInputChange}
                     placeholder="Longitude"
-                    required
-                  />
-                </div>
-
-                
+                    required/>
+                </div>               
               </div>
             </div>
 
@@ -216,14 +206,6 @@ export const StoreData: React.FC = () => {
                     style={{ width: `${uploadProgress}%` }}
                   ></div>
                 </div>
-              </div>
-            )}
-
-            {/* Converted Badge */}
-            {isConverted && (
-              <div className="flex items-center space-x-2 text-green-600 font-medium text-sm">
-                <CheckCircle2 className="h-4 w-4" />
-                <span>Converted to Standard</span>
               </div>
             )}
 

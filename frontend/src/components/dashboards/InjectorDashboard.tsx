@@ -34,7 +34,7 @@ export const InjectorDashboard: React.FC = () => {
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="px-6 py-1">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Total Uploads</p>
@@ -46,7 +46,7 @@ export const InjectorDashboard: React.FC = () => {
         </Card>
 
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="px-6 py-1">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Data Size</p>
@@ -58,7 +58,7 @@ export const InjectorDashboard: React.FC = () => {
         </Card>
 
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="px-6 py-1">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Processing</p>
@@ -70,7 +70,7 @@ export const InjectorDashboard: React.FC = () => {
         </Card>
 
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="px-6 py-1">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Views</p>

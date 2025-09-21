@@ -1,9 +1,8 @@
-import React, { use, useState } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/Button';
 import { CustomInput } from '../ui/CustomInput';
 import { Microscope, Upload, Search, FileText, FolderOutput } from 'lucide-react';
-import { mockSpecies } from '../../data/mockData';
 
 export const Classification: React.FC = () => {
   const [activeModule, setActiveModule] = useState('edna');
@@ -204,8 +203,8 @@ export const Classification: React.FC = () => {
                     <CustomInput
                       placeholder="Search species by name or characteristics..."
                       className="pl-10"
-                      value={uploadText}           // controlled input
-                      onChange={(e) => setUploadText(e.target.value)} // update state
+                      value={uploadText}           
+                      onChange={(e) => setUploadText(e.target.value)} 
                     />
                   </div>
 
@@ -218,7 +217,7 @@ export const Classification: React.FC = () => {
                   </Button>
                   </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full gap-4">
                   <div className="border rounded-lg p-4 hover:bg-gray-50">
                     <h3 className="font-semibold">{speciesInfo.name}</h3>
                     <p className="text-sm text-gray-600 italic">{speciesInfo.name}</p>

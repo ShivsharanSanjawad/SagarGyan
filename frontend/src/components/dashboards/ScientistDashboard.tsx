@@ -29,7 +29,7 @@ export const ScientistDashboard: React.FC = () => {
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="px-6 py-2">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Queries Run</p>
@@ -41,7 +41,7 @@ export const ScientistDashboard: React.FC = () => {
         </Card>
 
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="px-6 py-2">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Visualizations</p>
@@ -53,7 +53,7 @@ export const ScientistDashboard: React.FC = () => {
         </Card>
 
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="px-6 py-2">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Classifications</p>
@@ -65,7 +65,7 @@ export const ScientistDashboard: React.FC = () => {
         </Card>
 
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="px-6 py-2">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Active Projects</p>

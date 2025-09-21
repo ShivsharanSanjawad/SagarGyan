@@ -4,6 +4,7 @@ import { Button } from "../ui/Button";
 import { MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+import  TemperatureMap  from "@/components/scientist/temp";
 
 export const DecisionMaking: React.FC = () => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
@@ -72,25 +73,8 @@ export const DecisionMaking: React.FC = () => {
                 </TransformWrapper>
               )}
 
-              {selectedOption === "temperature" && (
-                <div className="h-[500px] w-full rounded overflow-hidden shadow">
-                  <MapContainer
-                    center={[15, 80]} // Center on India's seas
-                    zoom={4}
-                    scrollWheelZoom={true}
-                    style={{ height: "100%", width: "100%" }}>
-                    <TileLayer
-                      url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-                      attribution="&copy; OpenStreetMap contributors"/>
-
-                    {/* Animated Temperature Overlay (gradient) */}
-                    <TileLayer
-                      url="https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=YOUR_API_KEY"
-                      attribution="&copy; OpenWeatherMap"
-                      opacity={0.6}/>
-                  </MapContainer>
-                </div>
-              )}
+              {selectedOption === "temperature" && <TemperatureMap />
+              }
 
               {selectedOption === "migration" && (
                 <TransformWrapper>

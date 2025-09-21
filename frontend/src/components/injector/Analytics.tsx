@@ -84,7 +84,7 @@ export const Analytics: React.FC = () => {
         <>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card>
-              <CardContent className="p-6">
+              <CardContent className="px-6 py-1">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-gray-600">Avg Temperature</p>
@@ -96,7 +96,7 @@ export const Analytics: React.FC = () => {
             </Card>
 
             <Card>
-              <CardContent className="p-6">
+              <CardContent className="px-6 py-1">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-gray-600">Data Points</p>
@@ -108,7 +108,7 @@ export const Analytics: React.FC = () => {
             </Card>
 
             <Card>
-              <CardContent className="p-6">
+              <CardContent className="px-6 py-1">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-gray-600">Coverage Area</p>
@@ -138,31 +138,48 @@ export const Analytics: React.FC = () => {
           </Card>
 
           <Card>
-            <CardHeader>
-              <CardTitle>Temperature Distribution Map</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="bg-gradient-to-br from-blue-100 to-blue-300 rounded-lg p-8 text-center">
-                <Map className="h-16 w-16 mx-auto text-blue-600 mb-4" />
-                <p className="text-lg font-medium text-blue-900">Interactive SST Map</p>
-                <p className="text-blue-700 mt-2">Arabian Sea Region - Temperature Distribution</p>
-                <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                  <div className="bg-white bg-opacity-50 p-3 rounded">
-                    <p className="font-medium">Min: 24.2°C</p>
+          <CardHeader>
+            <CardTitle>Temperature Distribution Map</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col md:flex-row gap-6 items-center">
+              {/* Image */}
+              <div className="flex-shrink-0">
+                <img 
+                  src="/temperature.png" 
+                  alt="Temperature Distribution Map"
+                  className="w-auto h-80 object-cover rounded-lg shadow-md border border-gray-200"
+                />
+              </div>
+              
+              <div className="flex-1">
+                <div className="mb-4">
+                  <p className="text-lg font-medium text-blue-900 mb-1">Interactive SST Map</p>
+                  <p className="text-blue-700">Arabian Sea Region - Temperature Distribution</p>
+                </div>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
+                    <p className="text-sm text-blue-600 mb-1">Minimum</p>
+                    <p className="text-xl font-bold text-blue-800">24.2°C</p>
                   </div>
-                  <div className="bg-white bg-opacity-50 p-3 rounded">
-                    <p className="font-medium">Max: 29.2°C</p>
+                  <div className="bg-red-50 border border-red-200 p-4 rounded-lg">
+                    <p className="text-sm text-amber-600 mb-1">Maximum</p>
+                    <p className="text-xl font-bold text-amber-600">29.2°C</p>
                   </div>
-                  <div className="bg-white bg-opacity-50 p-3 rounded">
-                    <p className="font-medium">Range: 5.0°C</p>
+                  <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
+                    <p className="text-sm text-green-600 mb-1">Range</p>
+                    <p className="text-xl font-bold text-green-800">5.0°C</p>
                   </div>
-                  <div className="bg-white bg-opacity-50 p-3 rounded">
-                    <p className="font-medium">Std Dev: 1.8°C</p>
+                  <div className="bg-purple-50 border border-purple-200 p-4 rounded-lg">
+                    <p className="text-sm text-purple-600 mb-1">Std Deviation</p>
+                    <p className="text-xl font-bold text-purple-800">1.8°C</p>
                   </div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </CardContent>
+        </Card>
         </>
       )}
 
@@ -212,7 +229,7 @@ export const Analytics: React.FC = () => {
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-sky-600">35</p>
+                  <p className="text-2xl font-bold text-sky-600">2</p>
                   <p className="text-sm text-gray-600">Total Uploads</p>
                 </div>
                 <div className="text-center">
@@ -220,11 +237,11 @@ export const Analytics: React.FC = () => {
                   <p className="text-sm text-gray-600">Total Size</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-purple-600">8.0 MB</p>
+                  <p className="text-2xl font-bold text-purple-600">140 MB</p>
                   <p className="text-sm text-gray-600">Avg Size</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-amber-600">7/day</p>
+                  <p className="text-2xl font-bold text-amber-600">1/day</p>
                   <p className="text-sm text-gray-600">Avg Rate</p>
                 </div>
               </div>

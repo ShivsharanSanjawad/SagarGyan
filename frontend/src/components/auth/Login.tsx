@@ -18,7 +18,6 @@ export const LoginForm: React.FC = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    // Trim username to remove extra spaces
     const processedValue = name === 'username' ? value.trim() : value;
     setFormData(prev => ({ ...prev, [name]: processedValue }));
     if (errors[name]) {
@@ -139,7 +138,7 @@ export const LoginForm: React.FC = () => {
               <form onSubmit={handleTwoFactorSubmit} className="space-y-4">
                 <CustomInput
                   label="Authentication Code"
-                  type="text"
+                  type="password"
                   name="twoFactorCode"
                   value={formData.twoFactorCode}
                   onChange={handleInputChange}

@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import ingestDWCA from "./routes/ingestdwca.js";
+import analysespecies from "./routes/analysespecies.js";
 import elasticSearch from "./routes/elasticsearch.js";
 
 import dotenv from "dotenv";
@@ -18,6 +19,7 @@ app.use(express.json()); // parse JSON bodies
 // API routes
 app.use("/api", ingestDWCA);
 app.use("/api", elasticSearch);
+app.use("/api", analysespecies);
 
 // Start server
 app.listen(PORT, () => {

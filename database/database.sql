@@ -14,6 +14,7 @@ CREATE TABLE dataset (
     description     TEXT,                   
     keywords        TEXT,
     date_published   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    dataset_link TEXT,
     FOREIGN KEY (project_id) REFERENCES project(project_id)
 );
 

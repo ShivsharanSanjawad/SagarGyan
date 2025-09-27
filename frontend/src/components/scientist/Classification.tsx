@@ -89,10 +89,11 @@ export const Classification: React.FC = () => {
     try {
       setIsAnalyzing(true)
       const response = await fetch(
-        `http://localhost:8000/taxonomyClassifier?name=${encodeURIComponent(uploadText)}`
+        `https://api.gbif.org/v1/species/match?name=${encodeURIComponent(uploadText)}`
       )
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
       const data = await response.json()
+      console.log(data)
       setSpeciesInfo({
         name: data.scientificName || "",
         family: data.family || "",

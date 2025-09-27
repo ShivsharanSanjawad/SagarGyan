@@ -6,8 +6,8 @@ import { Save, RefreshCw, Shield, Bell, Database, Globe } from 'lucide-react';
 
 export const Settings: React.FC = () => {
   const [settings, setSettings] = useState({
-    systemName: 'SagarDnyan',
-    systemEmail: 'admin@cmfri.gov.in',
+    systemName: 'SagarGyaan',
+    systemEmail: 'admin@cmrle.gov.in',
     maxUploadSize: '500',
     sessionTimeout: '30',
     enableNotifications: true,

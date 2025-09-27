@@ -154,7 +154,7 @@ export const Analytics: React.FC = () => {
               
               <div className="flex-1">
                 <div className="mb-4">
-                  <p className="text-lg font-medium text-blue-900 mb-1">Interactive SST Map</p>
+                  <p className="text-lg font-medium text-blue-900 mb-1">SST Map Last Month</p>
                   <p className="text-blue-700">Arabian Sea Region - Temperature Distribution</p>
                 </div>
                 

@@ -1,0 +1,1090 @@
+[
+  {
+    "lat": -2.2311,
+    "lon": 116.9706,
+    "species": "Blue Whale",
+    "scientific": "Balaenoptera musculus",
+    "count": 3,
+    "timestamp": "2024-11-22T13:45:26.691571"
+  },
+  {
+    "lat": -13.8553,
+    "lon": -131.2942,
+    "species": "Blue Whale",
+    "scientific": "Balaenoptera musculus",
+    "count": 1,
+    "timestamp": "2025-02-24T13:45:26.691718"
+  },
+  {
+    "lat": -57.0092,
+    "lon": 151.173,
+    "species": "Blue Whale",
+    "scientific": "Balaenoptera musculus",
+    "count": 1,
+    "timestamp": "2023-11-14T13:45:26.691776"
+  },
+  {
+    "lat": -12.0032,
+    "lon": 63.008,
+    "species": "Blue Whale",
+    "scientific": "Balaenoptera musculus",
+    "count": 2,
+    "timestamp": "2025-02-18T13:45:26.691856"
+  },
+  {
+    "lat": -48.6687,
+    "lon": 39.2757,
+    "species": "Blue Whale",
+    "scientific": "Balaenoptera musculus",
+    "count": 3,
+    "timestamp": "2025-04-03T13:45:26.691917"
+  },
+  {
+    "lat": -45.6615,
+    "lon": 115.3589,
+    "species": "Blue Whale",
+    "scientific": "Balaenoptera musculus",
+    "count": 2,
+    "timestamp": "2025-04-04T13:45:26.691984"
+  },
+  {
+    "lat": 4.0038,
+    "lon": -163.5371,
+    "species": "Blue Whale",
+    "scientific": "Balaenoptera musculus",
+    "count": 1,
+    "timestamp": "2025-04-28T13:45:26.692043"
+  },
+  {
+    "lat": 5.9164,
+    "lon": 174.1253,
+    "species": "Blue Whale",
+    "scientific": "Balaenoptera musculus",
+    "count": 1,
+    "timestamp": "2025-01-09T13:45:26.692093"
+  },
+  {
+    "lat": -11.5635,
+    "lon": 178.9997,
+    "species": "Blue Whale",
+    "scientific": "Balaenoptera musculus",
+    "count": 1,
+    "timestamp": "2025-03-11T13:45:26.692141"
+  },
+  {
+    "lat": -4.794,
+    "lon": 56.8333,
+    "species": "Blue Whale",
+    "scientific": "Balaenoptera musculus",
+    "count": 3,
+    "timestamp": "2024-10-01T13:45:26.692199"
+  },
+  {
+    "lat": -56.073,
+    "lon": 17.3168,
+    "species": "Blue Whale",
+    "scientific": "Balaenoptera musculus",
+    "count": 1,
+    "timestamp": "2024-06-14T13:45:26.692256"
+  },
+  {
+    "lat": -41.6978,
+    "lon": 14.6473,
+    "species": "Blue Whale",
+    "scientific": "Balaenoptera musculus",
+    "count": 1,
+    "timestamp": "2025-01-11T13:45:26.692350"
+  },
+  {
+    "lat": -55.6967,
+    "lon": -127.959,
+    "species": "Blue Whale",
+    "scientific": "Balaenoptera musculus",
+    "count": 2,
+    "timestamp": "2025-05-20T13:45:26.692409"
+  },
+  {
+    "lat": 36.0511,
+    "lon": -168.2124,
+    "species": "Blue Whale",
+    "scientific": "Balaenoptera musculus",
+    "count": 4,
+    "timestamp": "2024-07-10T13:45:26.692487"
+  },
+  {
+    "lat": 34.7501,
+    "lon": -176.8263,
+    "species": "Blue Whale",
+    "scientific": "Balaenoptera musculus",
+    "count": 1,
+    "timestamp": "2024-09-03T13:45:26.692565"
+  },
+  {
+    "lat": 44.6007,
+    "lon": -49.7728,
+    "species": "Blue Whale",
+    "scientific": "Balaenoptera musculus",
+    "count": 1,
+    "timestamp": "2024-11-04T13:45:26.692634"
+  },
+  {
+    "lat": 54.6621,
+    "lon": -45.0086,
+    "species": "Blue Whale",
+    "scientific": "Balaenoptera musculus",
+    "count": 1,
+    "timestamp": "2024-05-21T13:45:26.692682"
+  },
+  {
+    "lat": -9.9522,
+    "lon": 81.5688,
+    "species": "Blue Whale",
+    "scientific": "Balaenoptera musculus",
+    "count": 2,
+    "timestamp": "2024-02-15T13:45:26.692741"
+  },
+  {
+    "lat": -21.3983,
+    "lon": 99.7899,
+    "species": "Blue Whale",
+    "scientific": "Balaenoptera musculus",
+    "count": 1,
+    "timestamp": "2024-06-09T13:45:26.692860"
+  },
+  {
+    "lat": 1.0032,
+    "lon": 71.9627,
+    "species": "Blue Whale",
+    "scientific": "Balaenoptera musculus",
+    "count": 1,
+    "timestamp": "2025-08-24T13:45:26.692914"
+  },
+  {
+    "lat": -49.555,
+    "lon": 79.2775,
+    "species": "Blue Whale",
+    "scientific": "Balaenoptera musculus",
+    "count": 1,
+    "timestamp": "2024-09-21T13:45:26.692966"
+  },
+  {
+    "lat": 6.5261,
+    "lon": -155.2813,
+    "species": "Blue Whale",
+    "scientific": "Balaenoptera musculus",
+    "count": 3,
+    "timestamp": "2023-10-26T13:45:26.693032"
+  },
+  {
+    "lat": -19.1488,
+    "lon": -121.8368,
+    "species": "Blue Whale",
+    "scientific": "Balaenoptera musculus",
+    "count": 1,
+    "timestamp": "2025-05-26T13:45:26.693165"
+  },
+  {
+    "lat": -55.4555,
+    "lon": 78.1208,
+    "species": "Blue Whale",
+    "scientific": "Balaenoptera musculus",
+    "count": 1,
+    "timestamp": "2024-05-28T13:45:26.693249"
+  },
+  {
+    "lat": -55.4588,
+    "lon": -117.9169,
+    "species": "Blue Whale",
+    "scientific": "Balaenoptera musculus",
+    "count": 1,
+    "timestamp": "2024-02-10T13:45:26.693349"
+  },
+  {
+    "lat": -46.0095,
+    "lon": -109.5933,
+    "species": "Blue Whale",
+    "scientific": "Balaenoptera musculus",
+    "count": 1,
+    "timestamp": "2024-03-02T13:45:26.693422"
+  },
+  {
+    "lat": -18.3596,
+    "lon": -135.4389,
+    "species": "Blue Whale",
+    "scientific": "Balaenoptera musculus",
+    "count": 1,
+    "timestamp": "2024-02-17T13:45:26.693479"
+  },
+  {
+    "lat": -31.1496,
+    "lon": 86.1032,
+    "species": "Blue Whale",
+    "scientific": "Balaenoptera musculus",
+    "count": 1,
+    "timestamp": "2024-11-11T13:45:26.693535"
+  },
+  {
+    "lat": -36.8084,
+    "lon": -95.0142,
+    "species": "Blue Whale",
+    "scientific": "Balaenoptera musculus",
+    "count": 2,
+    "timestamp": "2024-10-23T13:45:26.693590"
+  },
+  {
+    "lat": -55.6091,
+    "lon": 125.7106,
+    "species": "Blue Whale",
+    "scientific": "Balaenoptera musculus",
+    "count": 1,
+    "timestamp": "2025-08-08T13:45:26.693644"
+  },
+  {
+    "lat": -1.2288,
+    "lon": -177.5543,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 12,
+    "timestamp": "2023-11-15T13:45:26.693750"
+  },
+  {
+    "lat": 25.9712,
+    "lon": -25.7454,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 8,
+    "timestamp": "2025-02-14T13:45:26.693839"
+  },
+  {
+    "lat": 7.8342,
+    "lon": -158.29,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 8,
+    "timestamp": "2025-04-25T13:45:26.693935"
+  },
+  {
+    "lat": -15.7746,
+    "lon": 60.0845,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 2,
+    "timestamp": "2024-06-21T13:45:26.694003"
+  },
+  {
+    "lat": 0.9022,
+    "lon": -122.106,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 2,
+    "timestamp": "2023-12-24T13:45:26.694067"
+  },
+  {
+    "lat": 20.1843,
+    "lon": -22.1202,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 5,
+    "timestamp": "2025-08-16T13:45:26.694122"
+  },
+  {
+    "lat": -27.3744,
+    "lon": -101.4585,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 8,
+    "timestamp": "2025-05-13T13:45:26.694355"
+  },
+  {
+    "lat": 6.4885,
+    "lon": -145.7923,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 8,
+    "timestamp": "2024-10-24T13:45:26.694428"
+  },
+  {
+    "lat": -9.6894,
+    "lon": -145.4508,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 5,
+    "timestamp": "2023-11-12T13:45:26.694502"
+  },
+  {
+    "lat": -7.9614,
+    "lon": 161.6271,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 12,
+    "timestamp": "2024-06-27T13:45:26.694556"
+  },
+  {
+    "lat": 2.3801,
+    "lon": 78.9238,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 5,
+    "timestamp": "2025-01-28T13:45:26.694619"
+  },
+  {
+    "lat": 38.5616,
+    "lon": -29.5361,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 5,
+    "timestamp": "2024-05-04T13:45:26.694740"
+  },
+  {
+    "lat": 7.38,
+    "lon": -25.908,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 5,
+    "timestamp": "2023-11-13T13:45:26.694786"
+  },
+  {
+    "lat": 33.6428,
+    "lon": 175.5817,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 5,
+    "timestamp": "2024-10-08T13:45:26.694849"
+  },
+  {
+    "lat": 36.8015,
+    "lon": -42.2827,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 2,
+    "timestamp": "2025-09-01T13:45:26.694919"
+  },
+  {
+    "lat": -35.045,
+    "lon": 56.6376,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 2,
+    "timestamp": "2023-12-19T13:45:26.694964"
+  },
+  {
+    "lat": 30.4405,
+    "lon": 156.6604,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 5,
+    "timestamp": "2024-09-18T13:45:26.695017"
+  },
+  {
+    "lat": -20.2356,
+    "lon": 59.2914,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 8,
+    "timestamp": "2024-01-02T13:45:26.695063"
+  },
+  {
+    "lat": -24.8718,
+    "lon": -150.7945,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 8,
+    "timestamp": "2023-12-11T13:45:26.695124"
+  },
+  {
+    "lat": 3.8754,
+    "lon": -90.0777,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 5,
+    "timestamp": "2024-09-21T13:45:26.695177"
+  },
+  {
+    "lat": 0.835,
+    "lon": 113.0531,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 5,
+    "timestamp": "2025-03-09T13:45:26.695240"
+  },
+  {
+    "lat": 14.2753,
+    "lon": -128.9379,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 5,
+    "timestamp": "2023-10-21T13:45:26.695330"
+  },
+  {
+    "lat": 7.5666,
+    "lon": 158.7731,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 5,
+    "timestamp": "2024-06-20T13:45:26.695406"
+  },
+  {
+    "lat": 6.7774,
+    "lon": -120.5086,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 5,
+    "timestamp": "2025-02-05T13:45:26.695454"
+  },
+  {
+    "lat": -37.46,
+    "lon": 96.4714,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 2,
+    "timestamp": "2024-10-16T13:45:26.695535"
+  },
+  {
+    "lat": 6.9363,
+    "lon": -174.2923,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 20,
+    "timestamp": "2023-10-13T13:45:26.695580"
+  },
+  {
+    "lat": 44.763,
+    "lon": -14.2706,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 2,
+    "timestamp": "2024-10-18T13:45:26.695626"
+  },
+  {
+    "lat": -23.5061,
+    "lon": -115.6213,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 2,
+    "timestamp": "2024-06-30T13:45:26.695680"
+  },
+  {
+    "lat": 1.6504,
+    "lon": 106.3585,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 5,
+    "timestamp": "2025-02-23T13:45:26.695735"
+  },
+  {
+    "lat": -0.2412,
+    "lon": 111.6129,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 8,
+    "timestamp": "2024-01-12T13:45:26.695781"
+  },
+  {
+    "lat": -25.677,
+    "lon": -171.0876,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 2,
+    "timestamp": "2024-06-23T13:45:26.695837"
+  },
+  {
+    "lat": -37.4882,
+    "lon": 54.4558,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 2,
+    "timestamp": "2024-11-03T13:45:26.695959"
+  },
+  {
+    "lat": -2.6463,
+    "lon": -125.6243,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 5,
+    "timestamp": "2025-03-01T13:45:26.696006"
+  },
+  {
+    "lat": -31.3277,
+    "lon": -25.8337,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 5,
+    "timestamp": "2024-08-16T13:45:26.696052"
+  },
+  {
+    "lat": -19.2441,
+    "lon": 107.9631,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 12,
+    "timestamp": "2024-08-01T13:45:26.696097"
+  },
+  {
+    "lat": 17.3848,
+    "lon": 162.0704,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 2,
+    "timestamp": "2024-08-10T13:45:26.696157"
+  },
+  {
+    "lat": 29.4447,
+    "lon": 57.9932,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 12,
+    "timestamp": "2024-03-16T13:45:26.696203"
+  },
+  {
+    "lat": 8.4789,
+    "lon": -26.1361,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 8,
+    "timestamp": "2024-01-30T13:45:26.696248"
+  },
+  {
+    "lat": 18.0595,
+    "lon": -70.2355,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 8,
+    "timestamp": "2024-06-30T13:45:26.696353"
+  },
+  {
+    "lat": 5.3436,
+    "lon": -24.3673,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 12,
+    "timestamp": "2025-06-11T13:45:26.696402"
+  },
+  {
+    "lat": -27.6841,
+    "lon": 81.1705,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 5,
+    "timestamp": "2025-01-05T13:45:26.696449"
+  },
+  {
+    "lat": -19.2961,
+    "lon": -110.7696,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 2,
+    "timestamp": "2024-12-18T13:45:26.696512"
+  },
+  {
+    "lat": -12.5776,
+    "lon": -127.9453,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 8,
+    "timestamp": "2024-09-22T13:45:26.696557"
+  },
+  {
+    "lat": -13.4287,
+    "lon": -140.5933,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 8,
+    "timestamp": "2024-02-01T13:45:26.696622"
+  },
+  {
+    "lat": -7.8842,
+    "lon": 151.6197,
+    "species": "Bottlenose Dolphin",
+    "scientific": "Tursiops truncatus",
+    "count": 8,
+    "timestamp": "2025-06-06T13:45:26.696669"
+  },
+  {
+    "lat": -45.771,
+    "lon": -90.143,
+    "species": "Great White Shark",
+    "scientific": "Carcharodon carcharias",
+    "count": 1,
+    "timestamp": "2025-03-25T13:45:26.696720"
+  },
+  {
+    "lat": -11.4485,
+    "lon": -150.905,
+    "species": "Great White Shark",
+    "scientific": "Carcharodon carcharias",
+    "count": 1,
+    "timestamp": "2025-04-15T13:45:26.696774"
+  },
+  {
+    "lat": -54.6779,
+    "lon": -125.9074,
+    "species": "Great White Shark",
+    "scientific": "Carcharodon carcharias",
+    "count": 2,
+    "timestamp": "2024-03-13T13:45:26.696827"
+  },
+  {
+    "lat": -11.5502,
+    "lon": -145.5309,
+    "species": "Great White Shark",
+    "scientific": "Carcharodon carcharias",
+    "count": 1,
+    "timestamp": "2023-11-20T13:45:26.696874"
+  },
+  {
+    "lat": -53.7339,
+    "lon": 62.3649,
+    "species": "Great White Shark",
+    "scientific": "Carcharodon carcharias",
+    "count": 2,
+    "timestamp": "2024-12-29T13:45:26.696919"
+  },
+  {
+    "lat": -38.4658,
+    "lon": -18.8343,
+    "species": "Great White Shark",
+    "scientific": "Carcharodon carcharias",
+    "count": 1,
+    "timestamp": "2024-11-08T13:45:26.696970"
+  },
+  {
+    "lat": -19.6288,
+    "lon": 59.0525,
+    "species": "Great White Shark",
+    "scientific": "Carcharodon carcharias",
+    "count": 1,
+    "timestamp": "2023-12-11T13:45:26.697034"
+  },
+  {
+    "lat": 5.0071,
+    "lon": -106.0963,
+    "species": "Great White Shark",
+    "scientific": "Carcharodon carcharias",
+    "count": 1,
+    "timestamp": "2024-11-12T13:45:26.697122"
+  },
+  {
+    "lat": 29.7711,
+    "lon": -43.2385,
+    "species": "Great White Shark",
+    "scientific": "Carcharodon carcharias",
+    "count": 1,
+    "timestamp": "2024-07-31T13:45:26.697174"
+  },
+  {
+    "lat": 12.3599,
+    "lon": -95.0954,
+    "species": "Great White Shark",
+    "scientific": "Carcharodon carcharias",
+    "count": 1,
+    "timestamp": "2025-07-15T13:45:26.697226"
+  },
+  {
+    "lat": -10.8209,
+    "lon": -94.3693,
+    "species": "Great White Shark",
+    "scientific": "Carcharodon carcharias",
+    "count": 1,
+    "timestamp": "2023-11-15T13:45:26.697277"
+  },
+  {
+    "lat": -30.9564,
+    "lon": -27.4458,
+    "species": "Great White Shark",
+    "scientific": "Carcharodon carcharias",
+    "count": 1,
+    "timestamp": "2024-04-19T13:45:26.697376"
+  },
+  {
+    "lat": -20.2325,
+    "lon": -170.332,
+    "species": "Great White Shark",
+    "scientific": "Carcharodon carcharias",
+    "count": 2,
+    "timestamp": "2024-02-09T13:45:26.697473"
+  },
+  {
+    "lat": -30.5092,
+    "lon": -177.6506,
+    "species": "Great White Shark",
+    "scientific": "Carcharodon carcharias",
+    "count": 1,
+    "timestamp": "2024-12-25T13:45:26.697567"
+  },
+  {
+    "lat": -45.2756,
+    "lon": -165.2169,
+    "species": "Great White Shark",
+    "scientific": "Carcharodon carcharias",
+    "count": 1,
+    "timestamp": "2025-03-18T13:45:26.697615"
+  },
+  {
+    "lat": -24.4591,
+    "lon": 65.7434,
+    "species": "Great White Shark",
+    "scientific": "Carcharodon carcharias",
+    "count": 1,
+    "timestamp": "2023-09-29T13:45:26.697663"
+  },
+  {
+    "lat": 17.0903,
+    "lon": -95.7766,
+    "species": "Great White Shark",
+    "scientific": "Carcharodon carcharias",
+    "count": 1,
+    "timestamp": "2024-11-10T13:45:26.697721"
+  },
+  {
+    "lat": -24.9697,
+    "lon": -21.5818,
+    "species": "Great White Shark",
+    "scientific": "Carcharodon carcharias",
+    "count": 1,
+    "timestamp": "2024-12-24T13:45:26.697769"
+  },
+  {
+    "lat": -7.2204,
+    "lon": -130.7643,
+    "species": "Great White Shark",
+    "scientific": "Carcharodon carcharias",
+    "count": 1,
+    "timestamp": "2025-05-03T13:45:26.697835"
+  },
+  {
+    "lat": -21.0795,
+    "lon": -111.791,
+    "species": "Great White Shark",
+    "scientific": "Carcharodon carcharias",
+    "count": 1,
+    "timestamp": "2023-10-14T13:45:26.697884"
+  },
+  {
+    "lat": 47.3946,
+    "lon": -16.3642,
+    "species": "Great White Shark",
+    "scientific": "Carcharodon carcharias",
+    "count": 1,
+    "timestamp": "2024-12-22T13:45:26.697932"
+  },
+  {
+    "lat": 18.2785,
+    "lon": -64.8732,
+    "species": "Great White Shark",
+    "scientific": "Carcharodon carcharias",
+    "count": 1,
+    "timestamp": "2025-09-11T13:45:26.697989"
+  },
+  {
+    "lat": 19.1985,
+    "lon": -85.4576,
+    "species": "Great White Shark",
+    "scientific": "Carcharodon carcharias",
+    "count": 1,
+    "timestamp": "2025-09-15T13:45:26.698057"
+  },
+  {
+    "lat": 3.7618,
+    "lon": -134.2715,
+    "species": "Great White Shark",
+    "scientific": "Carcharodon carcharias",
+    "count": 1,
+    "timestamp": "2024-02-05T13:45:26.698109"
+  },
+  {
+    "lat": 22.1281,
+    "lon": -132.9813,
+    "species": "Great White Shark",
+    "scientific": "Carcharodon carcharias",
+    "count": 1,
+    "timestamp": "2024-12-15T13:45:26.698176"
+  },
+  {
+    "lat": -31.0514,
+    "lon": -140.9851,
+    "species": "Great White Shark",
+    "scientific": "Carcharodon carcharias",
+    "count": 1,
+    "timestamp": "2025-02-11T13:45:26.698353"
+  },
+  {
+    "lat": -9.3067,
+    "lon": -123.7894,
+    "species": "Loggerhead Turtle",
+    "scientific": "Caretta caretta",
+    "count": 1,
+    "timestamp": "2025-01-19T13:45:26.698424"
+  },
+  {
+    "lat": 0.0154,
+    "lon": 82.0346,
+    "species": "Loggerhead Turtle",
+    "scientific": "Caretta caretta",
+    "count": 1,
+    "timestamp": "2024-06-22T13:45:26.698495"
+  },
+  {
+    "lat": -4.393,
+    "lon": -107.9496,
+    "species": "Loggerhead Turtle",
+    "scientific": "Caretta caretta",
+    "count": 1,
+    "timestamp": "2025-05-20T13:45:26.698559"
+  },
+  {
+    "lat": -25.672,
+    "lon": -169.4471,
+    "species": "Loggerhead Turtle",
+    "scientific": "Caretta caretta",
+    "count": 1,
+    "timestamp": "2024-01-16T13:45:26.698646"
+  },
+  {
+    "lat": -33.0208,
+    "lon": -29.9424,
+    "species": "Loggerhead Turtle",
+    "scientific": "Caretta caretta",
+    "count": 1,
+    "timestamp": "2024-10-13T13:45:26.698692"
+  },
+  {
+    "lat": -26.7121,
+    "lon": -118.7316,
+    "species": "Loggerhead Turtle",
+    "scientific": "Caretta caretta",
+    "count": 1,
+    "timestamp": "2025-05-08T13:45:26.698737"
+  },
+  {
+    "lat": 17.4672,
+    "lon": -101.044,
+    "species": "Loggerhead Turtle",
+    "scientific": "Caretta caretta",
+    "count": 1,
+    "timestamp": "2025-02-05T13:45:26.698824"
+  },
+  {
+    "lat": 2.3622,
+    "lon": 66.3008,
+    "species": "Loggerhead Turtle",
+    "scientific": "Caretta caretta",
+    "count": 1,
+    "timestamp": "2023-10-16T13:45:26.698922"
+  },
+  {
+    "lat": 13.3051,
+    "lon": -175.9071,
+    "species": "Loggerhead Turtle",
+    "scientific": "Caretta caretta",
+    "count": 1,
+    "timestamp": "2025-05-14T13:45:26.698968"
+  },
+  {
+    "lat": -28.6394,
+    "lon": -100.0925,
+    "species": "Loggerhead Turtle",
+    "scientific": "Caretta caretta",
+    "count": 1,
+    "timestamp": "2024-10-13T13:45:26.699013"
+  },
+  {
+    "lat": 34.8752,
+    "lon": 57.436,
+    "species": "Loggerhead Turtle",
+    "scientific": "Caretta caretta",
+    "count": 1,
+    "timestamp": "2023-12-08T13:45:26.699058"
+  },
+  {
+    "lat": -3.9973,
+    "lon": 91.7712,
+    "species": "Loggerhead Turtle",
+    "scientific": "Caretta caretta",
+    "count": 1,
+    "timestamp": "2025-04-22T13:45:26.699110"
+  },
+  {
+    "lat": 49.3223,
+    "lon": -171.718,
+    "species": "Loggerhead Turtle",
+    "scientific": "Caretta caretta",
+    "count": 1,
+    "timestamp": "2024-07-09T13:45:26.699156"
+  },
+  {
+    "lat": 3.6103,
+    "lon": -114.2974,
+    "species": "Loggerhead Turtle",
+    "scientific": "Caretta caretta",
+    "count": 1,
+    "timestamp": "2024-01-19T13:45:26.699200"
+  },
+  {
+    "lat": 21.4577,
+    "lon": 169.4343,
+    "species": "Loggerhead Turtle",
+    "scientific": "Caretta caretta",
+    "count": 1,
+    "timestamp": "2024-07-28T13:45:26.699245"
+  },
+  {
+    "lat": 25.8837,
+    "lon": 58.1554,
+    "species": "Loggerhead Turtle",
+    "scientific": "Caretta caretta",
+    "count": 1,
+    "timestamp": "2024-12-19T13:45:26.699358"
+  },
+  {
+    "lat": -36.0614,
+    "lon": -86.8737,
+    "species": "Loggerhead Turtle",
+    "scientific": "Caretta caretta",
+    "count": 2,
+    "timestamp": "2023-10-19T13:45:26.699412"
+  },
+  {
+    "lat": -4.2837,
+    "lon": -108.302,
+    "species": "Loggerhead Turtle",
+    "scientific": "Caretta caretta",
+    "count": 1,
+    "timestamp": "2025-09-03T13:45:26.699498"
+  },
+  {
+    "lat": 3.7901,
+    "lon": 71.4555,
+    "species": "Loggerhead Turtle",
+    "scientific": "Caretta caretta",
+    "count": 1,
+    "timestamp": "2024-11-21T13:45:26.699553"
+  },
+  {
+    "lat": 14.8705,
+    "lon": -31.2924,
+    "species": "Loggerhead Turtle",
+    "scientific": "Caretta caretta",
+    "count": 1,
+    "timestamp": "2025-06-18T13:45:26.699789"
+  },
+  {
+    "lat": 13.2491,
+    "lon": -100.7007,
+    "species": "Loggerhead Turtle",
+    "scientific": "Caretta caretta",
+    "count": 1,
+    "timestamp": "2023-11-28T13:45:26.699847"
+  },
+  {
+    "lat": 14.946,
+    "lon": 153.8362,
+    "species": "Loggerhead Turtle",
+    "scientific": "Caretta caretta",
+    "count": 3,
+    "timestamp": "2024-03-13T13:45:26.699897"
+  },
+  {
+    "lat": 20.8984,
+    "lon": -95.9253,
+    "species": "Loggerhead Turtle",
+    "scientific": "Caretta caretta",
+    "count": 1,
+    "timestamp": "2024-07-21T13:45:26.699946"
+  },
+  {
+    "lat": 22.8368,
+    "lon": 158.3854,
+    "species": "Loggerhead Turtle",
+    "scientific": "Caretta caretta",
+    "count": 1,
+    "timestamp": "2024-09-25T13:45:26.700003"
+  },
+  {
+    "lat": -33.4132,
+    "lon": -85.5598,
+    "species": "Loggerhead Turtle",
+    "scientific": "Caretta caretta",
+    "count": 1,
+    "timestamp": "2024-08-16T13:45:26.700069"
+  },
+  {
+    "lat": 3.9028,
+    "lon": 83.8676,
+    "species": "Loggerhead Turtle",
+    "scientific": "Caretta caretta",
+    "count": 1,
+    "timestamp": "2023-12-23T13:45:26.700135"
+  },
+  {
+    "lat": 2.1545,
+    "lon": -112.2757,
+    "species": "Loggerhead Turtle",
+    "scientific": "Caretta caretta",
+    "count": 2,
+    "timestamp": "2024-06-04T13:45:26.700228"
+  },
+  {
+    "lat": 59.2252,
+    "lon": -160.2099,
+    "species": "Loggerhead Turtle",
+    "scientific": "Caretta caretta",
+    "count": 1,
+    "timestamp": "2024-06-18T13:45:26.700312"
+  },
+  {
+    "lat": 8.1826,
+    "lon": -167.1796,
+    "species": "Loggerhead Turtle",
+    "scientific": "Caretta caretta",
+    "count": 1,
+    "timestamp": "2025-07-07T13:45:26.700373"
+  },
+  {
+    "lat": 35.6239,
+    "lon": -178.1825,
+    "species": "Harbor Seal",
+    "scientific": "Phoca vitulina",
+    "count": 3,
+    "timestamp": "2024-09-28T13:45:26.700464"
+  },
+  {
+    "lat": 41.7595,
+    "lon": -176.1629,
+    "species": "Harbor Seal",
+    "scientific": "Phoca vitulina",
+    "count": 3,
+    "timestamp": "2024-08-24T13:45:26.700553"
+  },
+  {
+    "lat": 59.722,
+    "lon": -13.1315,
+    "species": "Harbor Seal",
+    "scientific": "Phoca vitulina",
+    "count": 6,
+    "timestamp": "2025-08-12T13:45:26.700668"
+  },
+  {
+    "lat": 59.4319,
+    "lon": -25.8257,
+    "species": "Harbor Seal",
+    "scientific": "Phoca vitulina",
+    "count": 3,
+    "timestamp": "2025-04-30T13:45:26.700789"
+  },
+  {
+    "lat": 32.2533,
+    "lon": 59.6174,
+    "species": "Harbor Seal",
+    "scientific": "Phoca vitulina",
+    "count": 1,
+    "timestamp": "2023-12-09T13:45:26.700856"
+  },
+  {
+    "lat": 51.3427,
+    "lon": -22.9465,
+    "species": "Harbor Seal",
+    "scientific": "Phoca vitulina",
+    "count": 6,
+    "timestamp": "2024-04-18T13:45:26.701012"
+  }
+]

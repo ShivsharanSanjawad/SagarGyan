@@ -10,6 +10,8 @@ import {BarChart3,Globe,Layers,Droplet,Fish,Thermometer,MapPin,TrendingUp,Calend
 import Interactive3DView from "./interactive";
 import { MapContainer, TileLayer, CircleMarker, Popup, Tooltip as LTooltip, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import CrossDomain from "@/components/shared/CrossDomain";
+
 
 const oceanData = {
   temperature: [
@@ -763,6 +765,13 @@ export const DataVisualization: React.FC = () => {
           </Card>       
         </div>
       )}
+      {activeView === 'cross-domain' &&       
+      <CrossDomain/>
+    }
+
+
+
+      
 
       {/* 3D Interactive View */}
         {activeView === '3d' && (

@@ -10,12 +10,8 @@ import {
   Eye,
   Users,
   ArrowRight,
-  Fish,
   Microscope,
   Map,
-  Droplets,
-  Compass,
-  ChevronDown,
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 import { Button } from "../components/ui/Button"
@@ -25,6 +21,36 @@ interface LandingPageProps {
   onLoginClick?: () => void
 }
 
+/** AnimatedNumber: smooth 0 → value animation using requestAnimationFrame */
+const AnimatedNumber: React.FC<{ value: number; duration?: number; className?: string }> = ({ value, duration = 1600, className }) => {
+  const [display, setDisplay] = useState(0)
+  const rafRef = useRef<number | null>(null)
+  const startRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    if (value === 0) {
+      setDisplay(0)
+      return
+    }
+    startRef.current = null
+    const step = (t: number) => {
+      if (!startRef.current) startRef.current = t
+      const elapsed = t - startRef.current
+      const prog = Math.min(1, elapsed / duration)
+      const eased = Math.pow(prog, 0.65)
+      const cur = Math.round(eased * value)
+      setDisplay(cur)
+      if (prog < 1) rafRef.current = requestAnimationFrame(step)
+    }
+    rafRef.current = requestAnimationFrame(step)
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+    }
+  }, [value, duration])
+
+  return <span className={className}>{display}</span>
+}
+
 export const Landing: React.FC<LandingPageProps> = ({ onLoginClick }) => {
   const [taxonomyInput, setTaxonomyInput] = useState("")
   const [queryInput, setQueryInput] = useState("")
@@ -32,25 +58,56 @@ export const Landing: React.FC<LandingPageProps> = ({ onLoginClick }) => {
   const [queryResult, setQueryResult] = useState<string | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
 
-  // Video lazy load + reduced motion
+  // UI state for header opacity on scroll
+  const [headerElevated, setHeaderElevated] = useState(false)
+
+  // stats visibility
+  const [statsVisible, setStatsVisible] = useState(false)
+  const statsRef = useRef<HTMLElement | null>(null)
+
+  // hero video lazy load + reduced motion
   const heroRef = useRef<HTMLElement | null>(null)
   const [loadVideo, setLoadVideo] = useState(false)
   const prefersReducedMotion =
     typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
 
   useEffect(() => {
+    const onScroll = () => {
+      setHeaderElevated(window.scrollY > 16)
+    }
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [])
+
+  useEffect(() => {
+    if (prefersReducedMotion) return
+    const el = statsRef.current
+    if (!el) return
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setStatsVisible(true)
+            obs.disconnect()
+          }
+        })
+      },
+      { rootMargin: "0px 0px -10% 0px" }
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [prefersReducedMotion])
+
+  useEffect(() => {
     if (prefersReducedMotion) {
       setLoadVideo(false)
       return
     }
-
     const el = heroRef.current || document.getElementById("hero-section")
     if (!el) {
-      // fallback: small timeout
       const t = setTimeout(() => setLoadVideo(true), 800)
       return () => clearTimeout(t)
     }
-
     const obs = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -62,12 +119,10 @@ export const Landing: React.FC<LandingPageProps> = ({ onLoginClick }) => {
       },
       { rootMargin: "300px" }
     )
-
     obs.observe(el)
     return () => obs.disconnect()
   }, [prefersReducedMotion])
 
-  // Mock taxonomy data moved into memo for stability
   const mockResults = useMemo(
     () =>
       ({
@@ -85,20 +140,17 @@ export const Landing: React.FC<LandingPageProps> = ({ onLoginClick }) => {
   const handleTaxonomyDemo = useCallback(async () => {
     if (!taxonomyInput.trim()) return
     setIsProcessing(true)
-
-    // simulate API latency
     setTimeout(() => {
       const key = normalize(taxonomyInput)
       const result = mockResults[key] || `${taxonomyInput} - Species classification requires full platform access`
       setTaxonomyResult(result)
       setIsProcessing(false)
-    }, 1200)
+    }, 1100)
   }, [taxonomyInput, mockResults])
 
   const handleQueryDemo = useCallback(async () => {
     if (!queryInput.trim()) return
     setIsProcessing(true)
-
     setTimeout(() => {
       const randomResults = [
         "Red mullet: A small, colorful fish prized for its delicate flavor in Mediterranean cuisine.",
@@ -108,7 +160,7 @@ export const Landing: React.FC<LandingPageProps> = ({ onLoginClick }) => {
       const result = randomResults[Math.floor(Math.random() * randomResults.length)]
       setQueryResult(result)
       setIsProcessing(false)
-    }, 1000)
+    }, 900)
   }, [queryInput])
 
   const features = useMemo(
@@ -117,302 +169,218 @@ export const Landing: React.FC<LandingPageProps> = ({ onLoginClick }) => {
         icon: Database,
         title: "Unified Data Platform",
         description: "Access oceanographic, fisheries, and biodiversity data in one place",
-        color: "text-blue-600 bg-blue-100",
       },
       {
         icon: Brain,
         title: "AI Classification",
         description: "Automated species identification and marine life classification",
-        color: "text-purple-600 bg-purple-100",
       },
       {
         icon: BarChart3,
         title: "Advanced Analytics",
         description: "SST mapping, decision-making tools and predictive insights",
-        color: "text-green-600 bg-green-100",
       },
       {
         icon: Eye,
         title: "Data Visualization",
         description: "Interactive 2D/3D visualizations and cross-domain analysis",
-        color: "text-teal-600 bg-teal-100",
       },
       {
         icon: Search,
         title: "Smart Query Engine",
         description: "Natural language queries for complex data retrieval",
-        color: "text-orange-600 bg-orange-100",
       },
       {
         icon: Users,
         title: "Collaborative Platform",
         description: "Multi-role access for scientists, researchers and data injectors",
-        color: "text-indigo-600 bg-indigo-100",
       },
     ],
     []
   )
 
-  // Animations
-  const floatingVariants = useMemo(
-    () => ({
-      animate: prefersReducedMotion ? { y: 0 } : { y: [0, -20, 0], transition: { duration: 3, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" } },
-    }),
-    [prefersReducedMotion]
-  )
-
-  const waveVariants = useMemo(
-    () => ({
-      animate: prefersReducedMotion ? { x: 0 } : { x: [0, -100], transition: { duration: 8, repeat: Number.POSITIVE_INFINITY, ease: "linear" } },
-    }),
-    [prefersReducedMotion]
-  )
-
-  // accessibility: announce results to screen readers
   const resultAnnouncement = taxonomyResult ? `Taxonomy result ready for ${taxonomyInput}` : queryResult ? `Query result ready` : isProcessing ? "Processing" : ""
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* shimmer CSS (clipped to text; no rectangular overlay) */}
+    <div className="min-h-screen relative overflow-x-hidden">
       <style>{`
-        @keyframes shimmer-slide {
-          0% { background-position: -200% 0; }
-          100% { background-position: 200% 0; }
+        :root{
+          --cream: #fdf2df;
+          --primary: #15609d;
+          --teal: #008ca6;
+          --cta: #0270e0;
+          --white-hero: rgba(255,255,255,0.98);
+          --text-dark: #111827;
+          --muted: #6b7280;
         }
 
-        /* shimmer only affects text fill via background-clip:text */
-        .shimmer-text {
-          background-image: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.85) 50%, rgba(255,255,255,0) 100%);
-          background-size: 200% 100%;
-          background-clip: text;
-          -webkit-background-clip: text;
-          color: transparent;
-          mix-blend-mode: screen;
-          display: inline-block;
-          animation: shimmer-slide 2s linear infinite;
+        /* top navbar container styling */
+        .site-top {
+          position: fixed;
+          inset: 12px 0 auto 0;
+          z-index: 70;
+          display: flex;
+          justify-content: center;
           pointer-events: none;
         }
-
-        .shimmer-sub {
-          background-image: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%);
-          background-size: 200% 100%;
-          background-clip: text;
-          -webkit-background-clip: text;
-          color: transparent;
-          mix-blend-mode: screen;
-          display: inline-block;
-          animation: shimmer-slide 2.6s linear infinite;
-          pointer-events: none;
+        .site-top .inner {
+          pointer-events: auto;
+          width: calc(100% - 48px);
+          max-width: 1400px;
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+          background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.4));
+          padding: 10px 18px;
+          border-radius: 12px;
+          box-shadow: 0 12px 30px rgba(2,6,23,0.08);
+          transition: transform .18s ease, backdrop-filter .18s ease, opacity .18s ease;
+        }
+        .site-top.elevated .inner {
+          transform: translateY(-4px);
+          box-shadow: 0 22px 46px rgba(2,6,23,0.12);
         }
 
-        @media (prefers-reduced-motion: reduce) {
-          .shimmer-text, .shimmer-sub { animation: none; background-image: none; color: white; -webkit-background-clip: unset; background-clip: unset; mix-blend-mode: normal; }
+        .nav-links a { margin-right: 18px; color: var(--text-dark); font-weight:600; text-decoration:none; }
+        .nav-links a:hover { text-decoration: underline; }
+
+        .headline-hero {
+          background: linear-gradient(90deg, rgba(255,255,255,1), rgba(235,248,255,0.95), rgba(255,255,255,1));
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+          text-shadow: 0 12px 40px rgba(2,6,23,0.06);
+        }
+
+        /* stats card style */
+        .stat-card {
+          background: white;
+          border-radius: 16px;
+          padding: 28px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
+          box-shadow: 0 10px 30px rgba(2,6,23,0.06);
+          transition: transform .18s ease, box-shadow .18s ease;
+        }
+        .stat-card:hover { transform: translateY(-6px); box-shadow: 0 26px 60px rgba(2,6,23,0.08); }
+
+        @media (max-width: 1024px) {
+          .site-top { inset: 8px 0 auto 0; }
+          .site-top .inner { width: calc(100% - 32px); }
         }
       `}</style>
 
-      {/* Background Ocean Pattern */}
-      <div
-        className="fixed inset-0 opacity-5 bg-repeat"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23006994' fillOpacity='0.3'%3E%3Cpath d='M20 20c0-11.046-8.954-20-20-20s-20 8.954-20 20 8.954 20 20 20 20-8.954 20-20zm-15.097 5.097l2.828-2.828a4 4 0 015.657 0l2.828 2.828a4 4 0 010 5.657l-2.828 2.828a4 4 0 01-5.657 0l-2.828-2.828a4 4 0 010-5.657z'/%3E%3C/g%3E%3C/svg%3E")`,
-          backgroundSize: "40px 40px",
-        }}
-      />
+      {/* HERO */}
+      <header className={`site-top ${headerElevated ? "elevated" : ""}`} role="banner" aria-label="Main header">
+        <div className="inner">
+          <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+            <div style={{ width: 44, height: 44, borderRadius: 10, overflow: "hidden", background: "white", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <img src="/sidebarlogo.png" alt="logo" style={{ width: 34, height: 34, objectFit: "contain" }} />
+            </div>
+            <div>
+              <div style={{ fontWeight: 800, color: "var(--primary)" }}>SagarGyaan</div>
+              <div style={{ fontSize: 12, color: "var(--muted)" }}>AI-Driven Ocean Data Platform</div>
+            </div>
+          </div>
 
-      {/* Gradient Overlay */}
-      <div className="fixed inset-0 bg-gradient-to-br from-blue-50/90 via-teal-50/90 to-cyan-50/90" />
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <nav className="nav-links" aria-label="Primary navigation">
+              <a href="#features">Features</a>
+              <a href="#demo">Demo</a>
+              <a href="#contact">Contact</a>
+            </nav>
 
-      {/* Floating Ocean Elements */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <motion.div variants={floatingVariants} animate="animate" className="absolute top-20 left-10 text-blue-200/30" style={{ animationDelay: "0s" }}>
-          <Droplets className="h-12 w-12" />
-        </motion.div>
-        <motion.div variants={floatingVariants} animate="animate" className="absolute top-40 right-20 text-teal-200/30" style={{ animationDelay: "1s" }}>
-          <Fish className="h-16 w-16" />
-        </motion.div>
-        <motion.div variants={floatingVariants} animate="animate" className="absolute bottom-40 left-20 text-cyan-200/30" style={{ animationDelay: "2s" }}>
-          <Compass className="h-14 w-14" />
-        </motion.div>
-
-        {/* Animated Wave Pattern */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 overflow-hidden">
-          <motion.div variants={waveVariants} animate="animate" className="absolute bottom-0 left-0 right-0 h-16 opacity-10" style={{ background: "linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.3), transparent)", width: "200%" }} />
+            <Button className="btn-primary" onClick={() => (onLoginClick ? onLoginClick() : (window.location.href = "/login"))} style={{ background: "linear-gradient(90deg,var(--teal),var(--cta))", color: "white", borderRadius: 8, padding: "8px 12px" }}>
+              <span>Sign In</span>
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
-      </div>
+      </header>
 
-      {/* Content */}
-      <div className="relative z-10">
-        {/* HERO: changed to object-cover so 16:9 fills the hero without bars */}
-        <section id="hero-section" ref={heroRef} className="relative h-[100svh] w-full overflow-hidden">
-          {prefersReducedMotion || !loadVideo ? (
-            <img className="absolute inset-0 h-full w-full object-cover" src="/waves-poster.jpg" alt="Gentle ocean waves" />
-          ) : (
-            <video className="absolute inset-0 h-full w-full object-cover" autoPlay loop muted playsInline preload="metadata" poster="/waves-poster.jpg" aria-hidden="true">
-              <source src="/videos/waves.mp4" type="video/mp4" />
-              Your browser does not support the video element.
-            </video>
-          )}
+      <section id="hero-section" ref={heroRef} className="relative h-[100vh] w-full overflow-hidden">
+        {loadVideo && !prefersReducedMotion ? (
+          <video className="absolute inset-0 h-full w-full object-cover" autoPlay loop muted playsInline preload="metadata" poster="/waves-poster.jpg" aria-hidden="true">
+            <source src="/videos/waves.mp4" type="video/mp4" />
+          </video>
+        ) : (
+          <img className="absolute inset-0 h-full w-full object-cover" src="/waves-poster.jpg" alt="Ocean waves" />
+        )}
 
-          <div className="absolute inset-0 bg-gradient-to-b from-slate-900/40 via-slate-900/20 to-white/10" />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.26), rgba(255,255,255,0.02) 40%, rgba(255,255,255,0.02) 100%)" }} />
 
-          <div className="relative z-10 h-full w-full flex flex-col items-center justify-center text-center px-6">
-            {/* --- Centered dynamic title using background-clip:text shimmer (no rectangular box) --- */}
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="mb-4">
-              <div className="text-center">
-                <div>
-                  <span
-                    className="block font-extrabold leading-tight"
-                    style={{
-                      fontSize: "3.5rem",
-                      lineHeight: 1,
-                      background: "linear-gradient(90deg,#9be3ff,#ffffff,#9be3ff)",
-                      WebkitBackgroundClip: "text",
-                      backgroundClip: "text",
-                      color: "transparent",
-                    }}
-                  >
-                    सागरज्ञान
-                    <span className="shimmer-text" aria-hidden />
-                  </span>
+        <div className="relative z-20 h-full w-full flex flex-col items-center justify-center text-center px-6">
+          <motion.h1 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-6xl md:text-7xl font-extrabold headline-hero" style={{ lineHeight: 0.98, textAlign: "center" }}>
+            Unified Ocean
+            <br />
+            Intelligence
+          </motion.h1>
+
+          <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.12 }} className="mt-6 text-white/90 text-lg md:text-xl max-w-3xl" style={{ lineHeight: 1.6 }}>
+            Harness the power of AI to unlock insights from oceanographic, fisheries, and biodiversity data. Make informed decisions for marine conservation and sustainable resource management across Indian Ocean waters.
+          </motion.p>
+
+          <div className="mt-8 flex gap-4">
+            <Button onClick={() => (onLoginClick ? onLoginClick() : (window.location.href = "/login"))} style={{ background: "linear-gradient(90deg,var(--teal),var(--cta))", color: "white", borderRadius: 8, padding: "10px 16px" }}>
+              Get Full Access <ArrowRight className="h-4 w-4" />
+            </Button>
+            <Button onClick={() => { const el = document.getElementById("features"); if (el) el.scrollIntoView({ behavior: "smooth" }) }} style={{ background: "white", color: "var(--text-dark)", border: "1px solid rgba(0,0,0,0.06)", borderRadius: 8, padding: "10px 16px" }}>
+              Learn More
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      <main className="relative z-10">
+
+        {/* Stats band on cream background */}
+        <section ref={statsRef as any} className="py-14" style={{ backgroundColor: "var(--cream)" }}>
+          <div style={{ width: "100%", maxWidth: "1400px", margin: "0 auto", padding: "0 20px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 20 }}>
+              {[
+                { value: 20, suffix: "+", label: "Datasets Processed", color: "#008ca6", dur: 1800 },
+                { value: 48, suffix: "+", label: "Species Classified", color: "#15609d", dur: 2100 },
+                { value: 3, suffix: "", label: "Active Projects", color: "#0270e0", dur: 1700 },
+                { value: 83, suffix: ".3%", label: "AI Accuracy", color: "#008ca6", dur: 2400 },
+              ].map((stat, i) => (
+                <div key={i} className="stat-card" style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: 40, fontWeight: 800, color: stat.color }}>
+                    {statsVisible ? <AnimatedNumber value={stat.value} duration={stat.dur} /> : 0}
+                    {stat.suffix}
+                  </div>
+                  <div style={{ marginTop: 6, color: "var(--muted)", fontWeight: 600 }}>{stat.label}</div>
                 </div>
-
-                <div className="mt-3">
-                  <span
-                    className="inline-block font-medium"
-                    style={{
-                      fontSize: "1.125rem",
-                      background: "linear-gradient(90deg,#dff7ff,#ffffff,#dff7ff)",
-                      WebkitBackgroundClip: "text",
-                      backgroundClip: "text",
-                      color: "transparent",
-                    }}
-                  >
-                    भारतीयमहासागरात् अमृतं ज्ञानम्
-                    <span className="shimmer-sub" aria-hidden />
-                  </span>
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.15 }} className="text-white/90 max-w-2xl mt-6">
-              AI-Driven Ocean Data Platform
-            </motion.p>
-
-            <motion.button
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              onClick={() => {
-                const el = document.getElementById("main-content")
-                if (el) el.scrollIntoView({ behavior: "smooth" })
-              }}
-              className="mt-8 inline-flex items-center gap-2 rounded-full border border-white/40 bg-white/20 px-4 py-2 text-white backdrop-blur-md hover:bg-white/25 transition-colors"
-              aria-label="Scroll to content"
-            >
-              Scroll
-              <ChevronDown className="h-4 w-4" />
-            </motion.button>
+              ))}
+            </div>
           </div>
         </section>
 
-        <div id="main-content" />
-
-        {/* Header */}
-        <header className="bg-white/80 backdrop-blur-md border-b border-slate-200/50 sticky top-0 z-50 shadow-lg">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center py-4">
-              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }} className="flex items-center space-x-3">
-                {/* logo image replaces Waves icon */}
-                <div className="w-11 h-11 rounded-full bg-white/10 flex items-center justify-center overflow-hidden shadow-sm">
-                  <img src="/sidebarlogo.png" alt="SagarGyaan logo" className="w-9 h-9 object-contain" width={44} height={44} />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-700 to-teal-600 bg-clip-text text-transparent">SagarGyaan</h1>
-                  <p className="text-sm text-slate-600">AI-Driven Ocean Data Platform</p>
-                </div>
-              </motion.div>
-
-              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }}>
-                <Button onClick={() => (onLoginClick ? onLoginClick() : (window.location.href = "/login"))} className="bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105">
-                  Sign In
-                  <ArrowRight className="h-4 w-4 ml-2" />
-                </Button>
-              </motion.div>
-            </div>
-          </div>
-        </header>
-
-        {/* Hero Section (text area) */}
-        <section className="py-24 relative">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: "easeOut" }}>
-              <motion.h1 initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: 0.2 }} className="text-6xl md:text-7xl font-bold mb-6 leading-tight">
-                <span className="bg-gradient-to-r from-blue-700 via-teal-600 to-cyan-600 bg-clip-text text-transparent">Unified Ocean</span>
-                <br />
-                <span className="bg-gradient-to-r from-teal-600 to-blue-700 bg-clip-text text-transparent">Intelligence</span>
-              </motion.h1>
-
-              <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }} className="text-xl md:text-2xl text-slate-700 mb-12 max-w-4xl mx-auto leading-relaxed">
-                Harness the power of AI to unlock insights from oceanographic, fisheries, and molecular biodiversity data. Make informed decisions for marine conservation and sustainable resource management across Indian Ocean waters.
-              </motion.p>
-
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.6 }} className="flex flex-col sm:flex-row justify-center gap-6 mb-16">
-                <Button size="lg" className="bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105" onClick={() => (onLoginClick ? onLoginClick() : (window.location.href = "/login"))}>
-                  Get Full Access
-                  <ArrowRight className="h-5 w-5 ml-2" />
-                </Button>
-
-                <Button size="lg" variant="outline" className="border-2 border-teal-600 text-teal-700 hover:bg-teal-50 px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-transparent">
-                  Learn More
-                </Button>
-              </motion.div>
-
-              {/* Stats Cards */}
-              <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.8 }} className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-                <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-white/50 shadow-xl">
-                  <div className="text-3xl font-bold text-blue-600 mb-2">20+</div>
-                  <div className="text-slate-600">Datasets Integrated</div>
-                </div>
-
-                <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-white/50 shadow-xl">
-                  <div className="text-3xl font-bold text-teal-600 mb-2">91.3%</div>
-                  <div className="text-slate-600">AI Accuracy</div>
-                </div>
-
-                <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-white/50 shadow-xl">
-                  <div className="text-3xl font-bold text-cyan-600 mb-2">50+</div>
-                  <div className="text-slate-600">Species Classified</div>
-                </div>
-              </motion.div>
-            </motion.div>
-          </div>
-
-          {/* Scroll Cue */}
-          <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2">
-            <ChevronDown className="h-8 w-8 text-white animate-bounce" />
-          </div>
-        </section>
-
-        {/* Features Grid */}
-        <section className="py-16 bg-white/50 backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-slate-800 mb-4">Platform Features</h2>
-              <p className="text-slate-600">Comprehensive tools for marine research and analysis</p>
+        {/* Features */}
+        <section id="features" className="py-16" style={{ background: "var(--cream)" }}>
+          <div style={{ width: "100%", maxWidth: "1400px", margin: "0 auto", padding: "0 20px" }}>
+            <div style={{ textAlign: "center", marginBottom: 28 }}>
+              <h2 style={{ fontSize: 28, fontWeight: 800, color: "var(--text-dark)", marginBottom: 8 }}>Platform Features</h2>
+              <p style={{ color: "var(--muted)" }}>Comprehensive tools for marine research and analysis</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 20 }}>
               {features.map((feature, index) => {
                 const Icon = feature.icon
                 return (
-                  <motion.div key={feature.title} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: index * 0.1 }}>
-                    <Card className="h-60 hover:shadow-lg transition-shadow">
+                  <motion.div key={feature.title} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.32, delay: index * 0.06 }}>
+                    <Card className="h-60" style={{ cursor: "pointer" }}>
                       <CardContent className="p-6">
-                        <div className={`p-3 rounded-full ${feature.color} w-fit mb-4`}>
-                          <Icon className="h-6 w-6" />
+                        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                          <div style={{ padding: 12, borderRadius: 9999, background: "rgba(21,96,157,0.06)" }}>
+                            <Icon className="h-6 w-6" />
+                          </div>
+                          <div>
+                            <h3 style={{ fontSize: 18, fontWeight: 700, color: "var(--text-dark)", marginBottom: 6 }}>{feature.title}</h3>
+                            <p style={{ color: "var(--muted)" }}>{feature.description}</p>
+                          </div>
                         </div>
-                        <h3 className="text-xl font-semibold text-slate-800 mb-2">{feature.title}</h3>
-                        <p className="text-slate-600">{feature.description}</p>
                       </CardContent>
                     </Card>
                   </motion.div>
@@ -422,45 +390,42 @@ export const Landing: React.FC<LandingPageProps> = ({ onLoginClick }) => {
           </div>
         </section>
 
-        {/* Interactive Demo Section */}
-        <section className="py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-slate-800 mb-4">Try Our AI Features</h2>
-              <p className="text-slate-600">Experience the power of our AI-driven analysis tools</p>
+        {/* Demo */}
+        <section id="demo" className="py-16" style={{ background: "white" }}>
+          <div style={{ width: "100%", maxWidth: "1200px", margin: "0 auto", padding: "0 20px" }}>
+            <div style={{ textAlign: "center", marginBottom: 28 }}>
+              <h2 style={{ fontSize: 28, fontWeight: 800, color: "var(--text-dark)", marginBottom: 8 }}>Try Our AI Features</h2>
+              <p style={{ color: "var(--muted)" }}>Experience the power of our AI-driven analysis tools</p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center">
-                    <Microscope className="h-5 w-5 mr-2 text-purple-600" />
+                    <Microscope className="h-5 w-5 mr-2" />
                     Species Taxonomical Classification
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    <p className="text-sm text-slate-600">Enter a marine species name to see AI-powered taxonomic classification</p>
-                    <div className="flex space-x-2">
-                      <Input placeholder="e.g., sardinella longiceps, alectis indica..." value={taxonomyInput} onChange={(e) => setTaxonomyInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleTaxonomyDemo()} />
-                      <Button onClick={handleTaxonomyDemo} disabled={!taxonomyInput.trim() || isProcessing}>
-                        {isProcessing ? "Processing..." : "Classify"}
-                      </Button>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                    <p style={{ color: "var(--muted)" }} className="text-sm">Enter a marine species name to see AI-powered taxonomic classification</p>
+                    <div style={{ display: "flex", gap: 8 }}>
+                      <Input placeholder="e.g., sardinella longiceps" value={taxonomyInput} onChange={(e) => setTaxonomyInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleTaxonomyDemo()} />
+                      <Button onClick={handleTaxonomyDemo} disabled={!taxonomyInput.trim() || isProcessing}>{isProcessing ? "Processing..." : "Classify"}</Button>
                     </div>
 
                     {taxonomyResult && (
-                      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-purple-50 p-4 rounded-lg border border-purple-200">
-                        <div className="flex items-start space-x-2">
-                          <Fish className="h-5 w-5 text-purple-600 mt-0.5" />
+                      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} style={{ background: "rgba(60,125,170,0.06)", padding: 12, borderRadius: 8, border: "1px solid rgba(60,125,170,0.12)" }}>
+                        <div style={{ display: "flex", gap: 8 }}>
+                          <Microscope className="h-5 w-5" />
                           <div>
-                            <p className="font-medium text-purple-800">Classification Result:</p>
-                            <p className="text-sm text-purple-700 whitespace-pre-line">{taxonomyResult}</p>
+                            <div style={{ fontWeight: 700, color: "var(--primary)" }}>Classification Result:</div>
+                            <div style={{ color: "var(--primary)" }} className="text-sm whitespace-pre-line">{taxonomyResult}</div>
                           </div>
                         </div>
                       </motion.div>
                     )}
-
-                    <div className="text-xs text-slate-500">* Limited species query only</div>
+                    <div style={{ fontSize: 12, color: "var(--muted)" }}>* Limited species query only</div>
                   </div>
                 </CardContent>
               </Card>
@@ -468,27 +433,25 @@ export const Landing: React.FC<LandingPageProps> = ({ onLoginClick }) => {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center">
-                    <Search className="h-5 w-5 mr-2 text-teal-600" />
+                    <Search className="h-5 w-5 mr-2" />
                     Smart Query Engine
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    <p className="text-sm text-slate-600">Ask questions about oceanographic data in natural language</p>
-                    <div className="flex space-x-2">
+                  <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                    <p style={{ color: "var(--muted)" }} className="text-sm">Ask questions about oceanographic data in natural language</p>
+                    <div style={{ display: "flex", gap: 8 }}>
                       <Input placeholder="e.g., give me an indian ocean fish..." value={queryInput} onChange={(e) => setQueryInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleQueryDemo()} />
-                      <Button onClick={handleQueryDemo} disabled={!queryInput.trim() || isProcessing}>
-                        {isProcessing ? "Searching..." : "Query"}
-                      </Button>
+                      <Button onClick={handleQueryDemo} disabled={!queryInput.trim() || isProcessing}>{isProcessing ? "Searching..." : "Query"}</Button>
                     </div>
 
                     {queryResult && (
-                      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-teal-50 p-4 rounded-lg border border-teal-200">
-                        <div className="flex items-start space-x-2">
-                          <Map className="h-5 w-5 text-teal-600 mt-0.5" />
+                      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} style={{ background: "rgba(0,140,166,0.06)", padding: 12, borderRadius: 8, border: "1px solid rgba(0,140,166,0.12)" }}>
+                        <div style={{ display: "flex", gap: 8 }}>
+                          <Map className="h-5 w-5" />
                           <div>
-                            <p className="font-medium text-teal-800">Query Result:</p>
-                            <p className="text-sm text-teal-700">{queryResult}</p>
+                            <div style={{ fontWeight: 700, color: "var(--teal)" }}>Query Result:</div>
+                            <div style={{ color: "var(--teal)" }} className="text-sm">{queryResult}</div>
                           </div>
                         </div>
                       </motion.div>
@@ -500,90 +463,60 @@ export const Landing: React.FC<LandingPageProps> = ({ onLoginClick }) => {
           </div>
         </section>
 
-        {/* Announcement for screen readers */}
-        <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
-          {resultAnnouncement}
-        </div>
-
-        {/* Stats Section */}
-        <section className="py-16 bg-slate-900 text-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
-              <div>
-                <div className="text-4xl font-bold text-teal-400 mb-2">20+</div>
-                <div className="text-slate-300">Datasets Processed</div>
-              </div>
-
-              <div>
-                <div className="text-4xl font-bold text-blue-400 mb-2">50+</div>
-                <div className="text-slate-300">Species Classified</div>
-              </div>
-
-              <div>
-                <div className="text-4xl font-bold text-green-400 mb-2">3</div>
-                <div className="text-slate-300">Active Projects</div>
-              </div>
-
-              <div>
-                <div className="text-4xl font-bold text-purple-400 mb-2">91.3%</div>
-                <div className="text-slate-300">AI Accuracy</div>
-              </div>
-            </div>
+        {/* CTA */}
+        <section className="py-16" style={{ background: "linear-gradient(90deg,var(--teal),var(--cta))", color: "white" }}>
+          <div style={{ width: "100%", maxWidth: "1000px", margin: "0 auto", padding: "0 20px", textAlign: "center" }}>
+            <h2 style={{ fontSize: 28, fontWeight: 800, marginBottom: 8 }}>Ready to Dive Deeper?</h2>
+            <p style={{ opacity: 0.95, marginBottom: 16 }}>Access the full platform for analysing species, visualisation tools, and comprehensive ocean data analysis.</p>
+            <Button onClick={() => (onLoginClick ? onLoginClick() : (window.location.href = "/login"))} style={{ background: "white", color: "var(--teal)", padding: "10px 18px", fontWeight: 700 }}>
+              Get Full Platform Access <ArrowRight className="h-4 w-4" />
+            </Button>
           </div>
         </section>
 
-        <section className="py-20 bg-gradient-to-r from-teal-600 to-blue-600 text-white">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-              <h2 className="text-4xl font-bold mb-6">Ready to Dive Deeper?</h2>
-              <p className="text-xl mb-8 opacity-90">Access the full platform for analysing species, visualisation tools, and comprehensive ocean data analysis.</p>
-              <Button size="lg" onClick={() => (onLoginClick ? onLoginClick() : (window.location.href = "/login"))} className="bg-white text-teal-600 hover:bg-slate-100">
-                Get Full Platform Access
-                <ArrowRight className="h-5 w-5 ml-2" />
-              </Button>
-            </motion.div>
-          </div>
-        </section>
-
-        <footer className="bg-slate-800 text-white py-12">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div>
-                <div className="flex items-center space-x-3 mb-4">
-                  {/* footer logo image */}
-                  <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center overflow-hidden">
-                    <img src="/sidebarlogo.png" alt="SagarGyaan logo" className="w-7 h-7 object-contain" width={32} height={32} loading="lazy" />
-                  </div>
-                  <span className="text-xl font-bold">SagarGyaan</span>
+        {/* Footer (white, black text) */}
+        <footer style={{ background: "#ffffff", color: "var(--text-dark)", padding: "44px 20px" }}>
+          <div style={{ width: "100%", maxWidth: "1200px", margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 20 }}>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                <div style={{ width: 44, height: 44, borderRadius: 8, background: "rgba(0,0,0,0.04)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <img src="/sidebarlogo.png" alt="logo" style={{ width: 28, height: 28 }} />
                 </div>
-                <p className="text-slate-300">AI-driven platform for comprehensive ocean data analysis and marine research.</p>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-semibold mb-4">Platform</h3>
-                <ul className="space-y-2 text-slate-300">
-                  <li>Data Analytics</li>
-                  <li>Species Classification</li>
-                  <li>Visualization Tools</li>
-                  <li>Natural Language Querying</li>
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-semibold mb-4">Support</h3>
-                <ul className="space-y-2 text-slate-300">
-                  <li>Documentation</li>
-                  <li>API Reference</li>
-                  <li>Demo Link</li>
-                </ul>
+                <div>
+                  <div style={{ fontWeight: 800 }}>SagarGyaan</div>
+                  <div style={{ color: "var(--muted)", fontSize: 13 }}>AI-driven platform for comprehensive ocean data analysis and marine research.</div>
+                </div>
               </div>
             </div>
 
-            <div className="border-t border-slate-700 mt-8 pt-8 text-center text-slate-400">
-              <p>&copy; 2025 SagarGyaan. Built for Smart India Hackathon 2025.</p>
+            <div>
+              <h4 style={{ fontWeight: 700, marginBottom: 8 }}>Platform</h4>
+              <ul style={{ listStyle: "none", padding: 0, margin: 0, color: "var(--text-dark)" }}>
+                <li>Data Analytics</li>
+                <li>Species Classification</li>
+                <li>Visualization Tools</li>
+                <li>Natural Language Querying</li>
+              </ul>
             </div>
+
+            <div>
+              <h4 style={{ fontWeight: 700, marginBottom: 8 }}>Support</h4>
+              <ul style={{ listStyle: "none", padding: 0, margin: 0, color: "var(--text-dark)" }}>
+                <li>Documentation</li>
+                <li>API Reference</li>
+                <li>Demo Link</li>
+              </ul>
+            </div>
+          </div>
+
+          <div style={{ textAlign: "center", marginTop: 28, color: "rgba(0,0,0,0.6)" }}>
+            © 2025 SagarGyaan. Built for Smart India Hackathon 2025.
           </div>
         </footer>
+      </main>
+
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+        {resultAnnouncement}
       </div>
     </div>
   )

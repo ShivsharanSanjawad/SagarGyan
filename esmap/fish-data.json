@@ -5,7 +5,22 @@
       "species": { "type": "text" },
       "common_name": { "type": "text" },
       "family": { "type": "text" },
-      "description": { "type": "text" }
+      "description": { "type": "text" },
+      "order": { "type": "text" },
+      "class": { "type": "text" },
+      "phylum": { "type": "text" },
+      "conservation_status": { "type": "keyword" }, 
+      "habitat": { "type": "text" },
+      "geographic_distribution": { "type": "text" },
+      "max_length_cm": { "type": "float" },
+      "average_weight_kg": { "type": "float" },
+      "diet": { "type": "text" },
+      "behavior": { "type": "text" },
+      "reproduction": { "type": "text" },
+      "temperature_range_c": { "type": "text" }, 
+      "salinity_range": { "type": "text" },
+      "fishing_method": { "type": "text" },
+      "commercial_value": { "type": "text" }
     }
   }
 }

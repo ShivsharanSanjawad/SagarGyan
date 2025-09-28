@@ -3,5 +3,20 @@
   "species": "barbatus",
   "common_name": "Red Mullet",
   "family": "Mullidae",
-  "description": "A small, colorful fish found in the Indian Ocean."
+  "order": "Perciformes",
+  "class": "Actinopterygii",
+  "phylum": "Chordata",
+  "description": "A small, colorful benthic fish commonly found along the sandy and muddy coasts of the Indian Ocean.",
+  "conservation_status": "Least Concern",
+  "habitat": "Sandy or muddy seabeds in shallow coastal waters",
+  "geographic_distribution": "Indian Ocean, including coasts of India, Sri Lanka, and East Africa",
+  "max_length_cm": 30.0,
+  "average_weight_kg": 0.3,
+  "diet": "Small invertebrates, crustaceans, worms",
+  "behavior": "Benthic, often found in small schools, migrates seasonally",
+  "reproduction": "Spawns in spring to summer; eggs and larvae are planktonic",
+  "temperature_range_c": "22-28",
+  "salinity_range": "33-36 ppt",
+  "fishing_method": "Trawling, gillnets, artisanal fishing",
+  "commercial_value": "High; popular in regional cuisine for its flavor"
 }

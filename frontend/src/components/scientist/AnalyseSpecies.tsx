@@ -519,19 +519,19 @@ export const AnalyseSpecies: React.FC = () => {
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center p-4 bg-blue-50 rounded-lg">
-                  <p className="text-2xl font-bold text-blue-600">1,487</p>
+                  <p className="text-2xl font-bold text-blue-600">100+</p>
                   <p className="text-sm text-blue-800">Total Species</p>
                 </div>
                 <div className="text-center p-4 bg-green-50 rounded-lg">
-                  <p className="text-2xl font-bold text-green-600">878</p>
+                  <p className="text-2xl font-bold text-green-600">70+</p>
                   <p className="text-sm text-green-800">Fish Species</p>
                 </div>
                 <div className="text-center p-4 bg-purple-50 rounded-lg">
-                  <p className="text-2xl font-bold text-purple-600">492</p>
+                  <p className="text-2xl font-bold text-purple-600">13+</p>
                   <p className="text-sm text-purple-800">Invertebrates</p>
                 </div>
                 <div className="text-center p-4 bg-amber-50 rounded-lg">
-                  <p className="text-2xl font-bold text-amber-600">329</p>
+                  <p className="text-2xl font-bold text-amber-600">18+</p>
                   <p className="text-sm text-amber-800">Other Taxa</p>
                 </div>
               </div>

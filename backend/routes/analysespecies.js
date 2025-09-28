@@ -2,7 +2,7 @@ import express from "express";
 const router = express.Router();
 
 const speciesData = {
-  "Scomberomorus guttatus": {
+  "scomberomorus guttatus": {
     "files": {
       "otholith": ["C:\\GitHub\\CodeNerds-SIH2025\\data\\Comgut_99_216mm_04-08-18_STATION38_MEDITS_R.png"],
       "image": ["C:\\GitHub\\CodeNerds-SIH2025\\data\\Indian_Kingfish.jpg"],

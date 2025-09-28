@@ -22,6 +22,7 @@ import { DecisionMaking } from '../scientist/DecisionMaking';
 import { AnalyseSpecies } from '../scientist/AnalyseSpecies';
 import { Projects } from '../scientist/Projects';
 import { QuerySearch } from '../scientist/Query';
+import EnvModel from '../scientist/envmodel';
 
 export const Layout: React.FC = () => {
   const { user } = useAuth();
@@ -55,6 +56,7 @@ export const Layout: React.FC = () => {
         case 'decisions': return <DecisionMaking />;
         case 'species': return <AnalyseSpecies />;
         case 'query': return <QuerySearch />;
+        case 'env': return <EnvModel />;
         case 'projects': return <Projects />;
         default: return <ScientistDashboard />;
       }

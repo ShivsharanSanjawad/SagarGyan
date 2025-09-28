@@ -99,7 +99,6 @@ export const Classification: React.FC = () => {
       )
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
       const data = await response.json()
-      console.log(data)
       setSpeciesInfo({
         name: data.scientificName || "",
         family: data.family || "",
@@ -265,7 +264,7 @@ export const Classification: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-50 to-sky-100">
-      {/* Top banner */}
+      {/* Top banner (background image removed per request) */}
       <div className="relative w-full h-44 flex items-center justify-center bg-sky-800">
         <div className="relative text-center">
           <h1 className="text-3xl md:text-4xl font-extrabold text-white">Classification Module</h1>
@@ -415,8 +414,6 @@ export const Classification: React.FC = () => {
                                 <div className="text-sm text-slate-400">e-value: {typeof ednaResult.topHit?.evalue !== "undefined" ? String(ednaResult.topHit.evalue) : "—"}</div>
                               </div>
                             </div>
-
-                            {/* TAXONOMY block removed by request */}
 
                             <div>
                               <div className="text-sm font-medium">FASTA snippet (preview)</div>
@@ -616,335 +613,346 @@ export const Classification: React.FC = () => {
 
         {/* OTOLITH */}
         {activeModule === "otolith" && (
-          <div className="space-y-6">
-            <Card className="shadow-lg rounded-2xl hover:shadow-xl transition">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-sky-700">
-                  <Microscope className="h-5 w-5 text-sky-600" />
-                  Otolith Analysis
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="border-2 border-dashed border-sky-200 rounded-md p-6 text-center">
-                  <Upload className="h-10 w-10 mx-auto text-sky-400" />
-                  <label className="cursor-pointer block mt-4 text-sky-700 font-medium">
-                    <span>Upload Otolith Image</span>
-                    <input type="file" onChange={handleFileUpload} className="sr-only" accept=".jpg,.jpeg,.png,.tiff" />
-                  </label>
-                  <p className="text-sm text-slate-500 mt-2">High-res JPG/PNG/TIFF preferred (scale bar preserved).</p>
-                </div>
-
-                {uploadedFile && (
-                  <div className="flex items-center justify-between bg-sky-50 border border-sky-100 rounded-md p-3 text-sm">
-                    <div className="flex items-center gap-3">
-                      <FileText className="h-4 w-4 text-sky-600" />
-                      <div>
-                        <div className="font-medium text-slate-800 truncate">{uploadedFile.name}</div>
-                        <div className="text-xs text-slate-500">{(uploadedFile.size / 1024).toFixed(1)} KB</div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button variant="outline" onClick={() => { setUploadedFile(null); if (previewUrl) { URL.revokeObjectURL(previewUrl); setPreviewUrl(null) } setDemoResult(null) }}>Remove</Button>
-                    </div>
+          <div className="space-y-6 mt-8 relative overflow-hidden rounded-2xl"
+            style={{
+              backgroundImage: "url('/backgroundotlo.png')",
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "right bottom",
+              backgroundSize: "cover",
+            }}
+          >
+            {/* overlay so background doesn't reduce readability */}
+            <div className="absolute inset-0 bg-white/88 pointer-events-none" />
+            <div className="relative z-10 p-6 space-y-6">
+              <Card className="shadow-lg rounded-2xl hover:shadow-xl transition">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-sky-700">
+                    <Microscope className="h-5 w-5 text-sky-600" />
+                    Otolith Analysis
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="border-2 border-dashed border-sky-200 rounded-md p-6 text-center">
+                    <Upload className="h-10 w-10 mx-auto text-sky-400" />
+                    <label className="cursor-pointer block mt-4 text-sky-700 font-medium">
+                      <span>Upload Otolith Image</span>
+                      <input type="file" onChange={handleFileUpload} className="sr-only" accept=".jpg,.jpeg,.png,.tiff" />
+                    </label>
+                    <p className="text-sm text-slate-500 mt-2">High-res JPG/PNG/TIFF preferred (scale bar preserved).</p>
                   </div>
-                )}
 
-                <div className="mt-2">
-                  <Button onClick={handleAnalyze} disabled={!uploadedFile || isAnalyzing} className="w-full bg-sky-600 hover:bg-sky-700 text-white">
-                    {isAnalyzing ? "Analyzing..." : "Analyze Otolith"}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="shadow-lg rounded-2xl hover:shadow-xl transition">
-              <CardHeader>
-                <CardTitle className="text-sky-700">Preview</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {previewUrl ? (
-                  <div className="w-full flex justify-center">
-                    <div className="w-full max-w-3xl border rounded-md overflow-hidden bg-white">
-                      <img src={previewUrl} alt={demoResult ? `${demoResult.otolithId} preview` : "otolith preview"} className="w-full object-contain" style={{ maxHeight: 560 }} />
-                      <div className="px-3 py-2 border-t border-sky-50 bg-sky-50 text-xs text-slate-700">Scale bar (from image): 2 mm</div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="text-center py-12 text-slate-500">No image uploaded. Preview will appear here.</div>
-                )}
-              </CardContent>
-            </Card>
-
-            {demoResult && (
-              <div className="grid grid-cols-1 gap-4">
-                {/* Sample Information */}
-                <Card className="shadow-lg rounded-2xl">
-                  <CardHeader>
-                    <CardTitle className="text-sky-700">Sample Information</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-slate-800">
-                      <div className="space-y-2">
+                  {uploadedFile && (
+                    <div className="flex items-center justify-between bg-sky-50 border border-sky-100 rounded-md p-3 text-sm">
+                      <div className="flex items-center gap-3">
+                        <FileText className="h-4 w-4 text-sky-600" />
                         <div>
-                          <div className="text-xs text-slate-500">Otolith ID</div>
-                          <div className="font-mono text-sm text-slate-900 bg-slate-50 px-2 py-1 rounded">{demoResult.otolithId}</div>
-                        </div>
-
-                        <div>
-                          <div className="text-xs text-slate-500">Scientific name</div>
-                          <div className="text-sm font-medium text-slate-800 italic">{demoResult.metadata.scientificName || "—"}</div>
-                        </div>
-
-                        <div>
-                          <div className="text-xs text-slate-500">Submitted by</div>
-                          <div className="text-sm text-slate-800">{demoResult.metadata.submittedBy || "—"}</div>
-                        </div>
-
-                        <div>
-                          <div className="text-xs text-slate-500">Platform / Station</div>
-                          <div className="text-sm text-slate-800">{demoResult.metadata.platform || "—"} {demoResult.metadata.stationId ? ` / ${demoResult.metadata.stationId}` : ""}</div>
-                        </div>
-
-                        <div>
-                          <div className="text-xs text-slate-500">Collection date</div>
-                          <div className="text-sm text-slate-800">{demoResult.metadata.collectionDate || "—"}</div>
+                          <div className="font-medium text-slate-800 truncate">{uploadedFile.name}</div>
+                          <div className="text-xs text-slate-500">{(uploadedFile.size / 1024).toFixed(1)} KB</div>
                         </div>
                       </div>
+                      <div className="flex items-center gap-2">
+                        <Button variant="outline" onClick={() => { setUploadedFile(null); if (previewUrl) { URL.revokeObjectURL(previewUrl); setPreviewUrl(null) } setDemoResult(null) }}>Remove</Button>
+                      </div>
+                    </div>
+                  )}
 
-                      <div className="space-y-2">
-                        <div>
-                          <div className="text-xs text-slate-500">Locality</div>
-                          <div className="text-sm text-slate-800">{demoResult.metadata.locality || "—"}</div>
-                        </div>
+                  <div className="mt-2">
+                    <Button onClick={handleAnalyze} disabled={!uploadedFile || isAnalyzing} className="w-full bg-sky-600 hover:bg-sky-700 text-white">
+                      {isAnalyzing ? "Analyzing..." : "Analyze Otolith"}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
 
-                        <div>
-                          <div className="flex items-center justify-between">
-                            <div className="text-xs text-slate-500">Coordinates</div>
-                            <div className="flex items-center gap-2">
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  const lat = demoResult.metadata.decimalLatitude ?? ""
-                                  const lon = demoResult.metadata.decimalLongitude ?? ""
-                                  const txt = lat && lon ? `${lat}, ${lon}` : ""
-                                  if (txt) navigator.clipboard.writeText(txt)
-                                }}
-                                className="text-xs text-sky-600 hover:underline"
-                              >
-                                Copy
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => openInMaps(demoResult.metadata.decimalLatitude, demoResult.metadata.decimalLongitude)}
-                                className="text-xs text-sky-600 hover:underline"
-                              >
-                                Map
-                              </button>
-                            </div>
+              <Card className="shadow-lg rounded-2xl hover:shadow-xl transition">
+                <CardHeader>
+                  <CardTitle className="text-sky-700">Preview</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {previewUrl ? (
+                    <div className="w-full flex justify-center">
+                      <div className="w-full max-w-3xl border rounded-md overflow-hidden bg-white">
+                        <img src={previewUrl} alt={demoResult ? `${demoResult.otolithId} preview` : "otolith preview"} className="w-full object-contain" style={{ maxHeight: 560 }} />
+                        <div className="px-3 py-2 border-t border-sky-50 bg-sky-50 text-xs text-slate-700">Scale bar (from image): 2 mm</div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-12 text-slate-500">No image uploaded. Preview will appear here.</div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {demoResult && (
+                <div className="grid grid-cols-1 gap-4">
+                  {/* Sample Information */}
+                  <Card className="shadow-lg rounded-2xl">
+                    <CardHeader>
+                      <CardTitle className="text-sky-700">Sample Information</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-slate-800">
+                        <div className="space-y-2">
+                          <div>
+                            <div className="text-xs text-slate-500">Otolith ID</div>
+                            <div className="font-mono text-sm text-slate-900 bg-slate-50 px-2 py-1 rounded">{demoResult.otolithId}</div>
                           </div>
-                          <div className="font-mono text-sm text-slate-900 bg-slate-50 px-2 py-1 rounded">{demoResult.metadata.decimalLatitude ?? "—"}, {demoResult.metadata.decimalLongitude ?? "—"}</div>
-                        </div>
 
-                        <div>
-                          <div className="text-xs text-slate-500">Depth</div>
-                          <div className="text-sm text-slate-800">{demoResult.metadata.collectionDepth_m ? `${demoResult.metadata.collectionDepth_m} m` : "—"}</div>
-                        </div>
+                          <div>
+                            <div className="text-xs text-slate-500">Scientific name</div>
+                            <div className="text-sm font-medium text-slate-800 italic">{demoResult.metadata.scientificName || "—"}</div>
+                          </div>
 
-                        <div>
-                          <div className="text-xs text-slate-500">Collection method</div>
-                          <div className="text-sm text-slate-800">{demoResult.metadata.collectionMethod || "—"}</div>
-                        </div>
+                          <div>
+                            <div className="text-xs text-slate-500">Submitted by</div>
+                            <div className="text-sm text-slate-800">{demoResult.metadata.submittedBy || "—"}</div>
+                          </div>
 
-                        <div>
-                          <div className="text-xs text-slate-500">Habitat / Life stage / Sex</div>
-                          <div className="text-sm text-slate-800">
-                            {(demoResult.metadata.habitat || "—")}
-                            {demoResult.metadata.lifeStage ? ` • ${demoResult.metadata.lifeStage}` : ""}
-                            {demoResult.metadata.sex ? ` • ${demoResult.metadata.sex}` : ""}
+                          <div>
+                            <div className="text-xs text-slate-500">Platform / Station</div>
+                            <div className="text-sm text-slate-800">{demoResult.metadata.platform || "—"} {demoResult.metadata.stationId ? ` / ${demoResult.metadata.stationId}` : ""}</div>
+                          </div>
+
+                          <div>
+                            <div className="text-xs text-slate-500">Collection date</div>
+                            <div className="text-sm text-slate-800">{demoResult.metadata.collectionDate || "—"}</div>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
 
-                <Card className="shadow-lg rounded-2xl">
-                  <CardHeader>
-                    <CardTitle className="text-sky-700">Morphometrics</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-2 gap-4 text-slate-800">
-                      <div>
-                        <div className="text-xs text-slate-500">Length</div>
-                        <div className="text-lg font-semibold">{demoResult.morphometrics.length_mm} mm</div>
-                      </div>
-                      <div>
-                        <div className="text-xs text-slate-500">Width</div>
-                        <div className="text-lg font-semibold">{demoResult.morphometrics.width_mm} mm</div>
-                      </div>
-                      <div>
-                        <div className="text-xs text-slate-500">Area</div>
-                        <div className="text-lg font-semibold">{demoResult.morphometrics.area_mm2} mm²</div>
-                      </div>
-                      <div>
-                        <div className="text-xs text-slate-500">Circularity</div>
-                        <div className="text-lg font-semibold">{demoResult.morphometrics.circularity}</div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                        <div className="space-y-2">
+                          <div>
+                            <div className="text-xs text-slate-500">Locality</div>
+                            <div className="text-sm text-slate-800">{demoResult.metadata.locality || "—"}</div>
+                          </div>
 
-                <Card className="shadow-lg rounded-2xl">
-                  <CardHeader>
-                    <CardTitle className="text-sky-700">Taxonomic Confidence (hierarchical)</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      {demoResult.hierarchy.map((h: any, idx: number) => {
-                        const shown = animatedPct[idx] ?? 0
-                        const color = h.score > 900 ? "bg-sky-700" : h.score > 700 ? "bg-sky-600" : "bg-sky-500"
-                        return (
-                          <div key={h.rank} className="p-3 rounded-md border border-sky-50 bg-white flex items-center gap-4">
-                            <div className="w-48">
-                              <div className="text-xs text-slate-500">{h.rank}</div>
-                              <div className="text-sm font-medium text-slate-800 truncate">{h.name}</div>
-                            </div>
-
-                            <div className="flex-1">
-                              <div className="w-full bg-sky-50 rounded-full h-3 overflow-hidden" aria-hidden>
-                                <div
-                                  className={color}
-                                  style={{
-                                    width: `${Math.min(100, shown)}%`,
-                                    height: "100%",
-                                    transition: "width 220ms linear"
+                          <div>
+                            <div className="flex items-center justify-between">
+                              <div className="text-xs text-slate-500">Coordinates</div>
+                              <div className="flex items-center gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const lat = demoResult.metadata.decimalLatitude ?? ""
+                                    const lon = demoResult.metadata.decimalLongitude ?? ""
+                                    const txt = lat && lon ? `${lat}, ${lon}` : ""
+                                    if (txt) navigator.clipboard.writeText(txt)
                                   }}
-                                />
+                                  className="text-xs text-sky-600 hover:underline"
+                                >
+                                  Copy
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => openInMaps(demoResult.metadata.decimalLatitude, demoResult.metadata.decimalLongitude)}
+                                  className="text-xs text-sky-600 hover:underline"
+                                >
+                                  Map
+                                </button>
                               </div>
                             </div>
+                            <div className="font-mono text-sm text-slate-900 bg-slate-50 px-2 py-1 rounded">{demoResult.metadata.decimalLatitude ?? "—"}, {demoResult.metadata.decimalLongitude ?? "—"}</div>
+                          </div>
 
-                            <div style={{ minWidth: 72, textAlign: "right" }}>
-                              <div className="text-sm font-semibold text-sky-700">{shown.toFixed(1)}%</div>
-                              <div className="text-xs text-slate-400">{h.score} / 1000</div>
+                          <div>
+                            <div className="text-xs text-slate-500">Depth</div>
+                            <div className="text-sm text-slate-800">{demoResult.metadata.collectionDepth_m ? `${demoResult.metadata.collectionDepth_m} m` : "—"}</div>
+                          </div>
+
+                          <div>
+                            <div className="text-xs text-slate-500">Collection method</div>
+                            <div className="text-sm text-slate-800">{demoResult.metadata.collectionMethod || "—"}</div>
+                          </div>
+
+                          <div>
+                            <div className="text-xs text-slate-500">Habitat / Life stage / Sex</div>
+                            <div className="text-sm text-slate-800">
+                              {(demoResult.metadata.habitat || "—")}
+                              {demoResult.metadata.lifeStage ? ` • ${demoResult.metadata.lifeStage}` : ""}
+                              {demoResult.metadata.sex ? ` • ${demoResult.metadata.sex}` : ""}
                             </div>
                           </div>
-                        )
-                      })}
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Compare flow + actions (present and functional) */}
-                {!compareResult && (
-                  <Card className="shadow-lg rounded-2xl">
-                    <CardContent className="flex gap-3 items-center">
-                      <Button variant="outline" className="flex items-center gap-2" onClick={() => document.getElementById("compareUpload")?.click()}>
-                        <GitCompare className="h-4 w-4" /> Compare with another otolith
-                      </Button>
-                      <input id="compareUpload" type="file" accept=".jpg,.jpeg,.png" className="hidden" onChange={handleCompareUpload} />
-                      {compareFile && (
-                        <div className="flex items-center gap-3 ml-auto">
-                          <div className="text-sm text-slate-600">{compareFile.name}</div>
-                          <Button className="bg-sky-600 text-white" onClick={handleCompareAnalyze}>Analyze Comparison</Button>
                         </div>
-                      )}
+                      </div>
                     </CardContent>
                   </Card>
-                )}
 
-                {compareResult && (
-                  <>
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                      <Card>
-                        <CardHeader><CardTitle className="text-sky-700">Primary Otolith</CardTitle></CardHeader>
-                        <CardContent>
-                          <div className="w-full h-64 border rounded overflow-hidden flex items-center justify-center bg-white">
-                            <img src={previewUrl || demoResult.image?.previewUrl} alt="primary otolith" className="object-contain max-h-full" />
-                          </div>
-                          <div className="mt-3 text-sm text-slate-700">
-                            <div><strong>ID:</strong> {demoResult.otolithId}</div>
-                            <div className="truncate"><strong>Species:</strong> {demoResult.metadata.scientificName}</div>
-                          </div>
-                        </CardContent>
-                      </Card>
-
-                      <Card>
-                        <CardHeader><CardTitle className="text-sky-700">Comparison Otolith</CardTitle></CardHeader>
-                        <CardContent>
-                          <div className="w-full h-64 border rounded overflow-hidden flex items-center justify-center bg-white">
-                            <img src={comparePreview || compareResult.image?.previewUrl} alt="comparison otolith" className="object-contain max-h-full" />
-                          </div>
-                          <div className="mt-3 text-sm text-slate-700">
-                            <div><strong>ID:</strong> {compareResult.otolithId}</div>
-                            <div className="truncate"><strong>Species:</strong> {compareResult.metadata.scientificName}</div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </div>
-
-                    <Card>
-                      <CardHeader><CardTitle className="text-sky-700">Comparison Summary</CardTitle></CardHeader>
-                      <CardContent>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-slate-800">
-                          <div>
-                            <div><strong>Length diff:</strong> {morphoDiff(demoResult.morphometrics.length_mm, compareResult.morphometrics.length_mm)}</div>
-                            <div><strong>Width diff:</strong> {morphoDiff(demoResult.morphometrics.width_mm, compareResult.morphometrics.width_mm)}</div>
-                            <div><strong>Area diff:</strong> {morphoDiff(demoResult.morphometrics.area_mm2, compareResult.morphometrics.area_mm2)}</div>
-                            <div><strong>Circularity diff:</strong> {morphoDiff(demoResult.morphometrics.circularity, compareResult.morphometrics.circularity)}</div>
-                          </div>
-                          <div>
-                            <div><strong>Species match:</strong> {demoResult.metadata.scientificName === compareResult.metadata.scientificName ? "Same species" : "Different species"}</div>
-                            <div className="mt-2"><strong>Primary voucher:</strong> <a className="text-sky-600 hover:underline" href={demoResult.provenance?.voucherUrl} target="_blank" rel="noreferrer">View record</a></div>
-                            <div className="mt-1"><strong>Compare voucher:</strong> <a className="text-sky-600 hover:underline" href={compareResult.provenance?.voucherUrl} target="_blank" rel="noreferrer">View record</a></div>
-                          </div>
+                  <Card className="shadow-lg rounded-2xl">
+                    <CardHeader>
+                      <CardTitle className="text-sky-700">Morphometrics</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-2 gap-4 text-slate-800">
+                        <div>
+                          <div className="text-xs text-slate-500">Length</div>
+                          <div className="text-lg font-semibold">{demoResult.morphometrics.length_mm} mm</div>
                         </div>
+                        <div>
+                          <div className="text-xs text-slate-500">Width</div>
+                          <div className="text-lg font-semibold">{demoResult.morphometrics.width_mm} mm</div>
+                        </div>
+                        <div>
+                          <div className="text-xs text-slate-500">Area</div>
+                          <div className="text-lg font-semibold">{demoResult.morphometrics.area_mm2} mm²</div>
+                        </div>
+                        <div>
+                          <div className="text-xs text-slate-500">Circularity</div>
+                          <div className="text-lg font-semibold">{demoResult.morphometrics.circularity}</div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="shadow-lg rounded-2xl">
+                    <CardHeader>
+                      <CardTitle className="text-sky-700">Taxonomic Confidence (hierarchical)</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        {demoResult.hierarchy.map((h: any, idx: number) => {
+                          const shown = animatedPct[idx] ?? 0
+                          const color = h.score > 900 ? "bg-sky-700" : h.score > 700 ? "bg-sky-600" : "bg-sky-500"
+                          return (
+                            <div key={h.rank} className="p-3 rounded-md border border-sky-50 bg-white flex items-center gap-4">
+                              <div className="w-48">
+                                <div className="text-xs text-slate-500">{h.rank}</div>
+                                <div className="text-sm font-medium text-slate-800 truncate">{h.name}</div>
+                              </div>
+
+                              <div className="flex-1">
+                                <div className="w-full bg-sky-50 rounded-full h-3 overflow-hidden" aria-hidden>
+                                  <div
+                                    className={color}
+                                    style={{
+                                      width: `${Math.min(100, shown)}%`,
+                                      height: "100%",
+                                      transition: "width 220ms linear"
+                                    }}
+                                  />
+                                </div>
+                              </div>
+
+                              <div style={{ minWidth: 72, textAlign: "right" }}>
+                                <div className="text-sm font-semibold text-sky-700">{shown.toFixed(1)}%</div>
+                                <div className="text-xs text-slate-400">{h.score} / 1000</div>
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Compare flow + actions (present and functional) */}
+                  {!compareResult && (
+                    <Card className="shadow-lg rounded-2xl">
+                      <CardContent className="flex gap-3 items-center">
+                        <Button variant="outline" className="flex items-center gap-2" onClick={() => document.getElementById("compareUpload")?.click()}>
+                          <GitCompare className="h-4 w-4" /> Compare with another otolith
+                        </Button>
+                        <input id="compareUpload" type="file" accept=".jpg,.jpeg,.png" className="hidden" onChange={handleCompareUpload} />
+                        {compareFile && (
+                          <div className="flex items-center gap-3 ml-auto">
+                            <div className="text-sm text-slate-600">{compareFile.name}</div>
+                            <Button className="bg-sky-600 text-white" onClick={handleCompareAnalyze}>Analyze Comparison</Button>
+                          </div>
+                        )}
                       </CardContent>
                     </Card>
-                  </>
-                )}
+                  )}
 
-                <Card className="shadow-lg rounded-2xl">
-                  <CardContent>
-                    <div className="flex flex-wrap gap-3">
-                      <Button
-                        variant="outline"
-                        className="bg-white border-sky-100 text-sky-700"
-                        onClick={() => {
-                          const csv =
-                            "field,value\n" +
-                            "length_mm," + demoResult.morphometrics.length_mm + "\n" +
-                            "width_mm," + demoResult.morphometrics.width_mm + "\n" +
-                            "area_mm2," + demoResult.morphometrics.area_mm2 + "\n" +
-                            "circularity," + demoResult.morphometrics.circularity
-                          const blob = new Blob([csv], { type: "text/csv" })
-                          const url = URL.createObjectURL(blob)
-                          const a = document.createElement("a")
-                          a.href = url
-                          a.download = "morphometrics.csv"
-                          a.click()
-                        }}
-                      >
-                        <FolderOutput className="h-4 w-4 mr-2" />
-                        Export Morphometrics
-                      </Button>
+                  {compareResult && (
+                    <>
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <Card>
+                          <CardHeader><CardTitle className="text-sky-700">Primary Otolith</CardTitle></CardHeader>
+                          <CardContent>
+                            <div className="w-full h-64 border rounded overflow-hidden flex items-center justify-center bg-white">
+                              <img src={previewUrl || demoResult.image?.previewUrl} alt="primary otolith" className="object-contain max-h-full" />
+                            </div>
+                            <div className="mt-3 text-sm text-slate-700">
+                              <div><strong>ID:</strong> {demoResult.otolithId}</div>
+                              <div className="truncate"><strong>Species:</strong> {demoResult.metadata.scientificName}</div>
+                            </div>
+                          </CardContent>
+                        </Card>
 
-                      <Button
-                        variant="outline"
-                        className="bg-white border-sky-100 text-sky-700"
-                        onClick={() => { window.open(demoResult.provenance?.voucherUrl || "#", "_blank") }}
-                      >
-                        <FileText className="h-4 w-4 mr-2" />
-                        View Voucher Record
-                      </Button>
+                        <Card>
+                          <CardHeader><CardTitle className="text-sky-700">Comparison Otolith</CardTitle></CardHeader>
+                          <CardContent>
+                            <div className="w-full h-64 border rounded overflow-hidden flex items-center justify-center bg-white">
+                              <img src={comparePreview || compareResult.image?.previewUrl} alt="comparison otolith" className="object-contain max-h-full" />
+                            </div>
+                            <div className="mt-3 text-sm text-slate-700">
+                              <div><strong>ID:</strong> {compareResult.otolithId}</div>
+                              <div className="truncate"><strong>Species:</strong> {compareResult.metadata.scientificName}</div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </div>
 
-                      <Button className="bg-sky-600 text-white ml-auto" onClick={() => alert("Flagged for curator review (demo)")}>
-                        Flag for Review
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            )}
+                      <Card>
+                        <CardHeader><CardTitle className="text-sky-700">Comparison Summary</CardTitle></CardHeader>
+                        <CardContent>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-slate-800">
+                            <div>
+                              <div><strong>Length diff:</strong> {morphoDiff(demoResult.morphometrics.length_mm, compareResult.morphometrics.length_mm)}</div>
+                              <div><strong>Width diff:</strong> {morphoDiff(demoResult.morphometrics.width_mm, compareResult.morphometrics.width_mm)}</div>
+                              <div><strong>Area diff:</strong> {morphoDiff(demoResult.morphometrics.area_mm2, compareResult.morphometrics.area_mm2)}</div>
+                              <div><strong>Circularity diff:</strong> {morphoDiff(demoResult.morphometrics.circularity, compareResult.morphometrics.circularity)}</div>
+                            </div>
+                            <div>
+                              <div><strong>Species match:</strong> {demoResult.metadata.scientificName === compareResult.metadata.scientificName ? "Same species" : "Different species"}</div>
+                              <div className="mt-2"><strong>Primary voucher:</strong> <a className="text-sky-600 hover:underline" href={demoResult.provenance?.voucherUrl} target="_blank" rel="noreferrer">View record</a></div>
+                              <div className="mt-1"><strong>Compare voucher:</strong> <a className="text-sky-600 hover:underline" href={compareResult.provenance?.voucherUrl} target="_blank" rel="noreferrer">View record</a></div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </>
+                  )}
+
+                  <Card className="shadow-lg rounded-2xl">
+                    <CardContent>
+                      <div className="flex flex-wrap gap-3">
+                        <Button
+                          variant="outline"
+                          className="bg-white border-sky-100 text-sky-700"
+                          onClick={() => {
+                            const csv =
+                              "field,value\n" +
+                              "length_mm," + demoResult.morphometrics.length_mm + "\n" +
+                              "width_mm," + demoResult.morphometrics.width_mm + "\n" +
+                              "area_mm2," + demoResult.morphometrics.area_mm2 + "\n" +
+                              "circularity," + demoResult.morphometrics.circularity
+                            const blob = new Blob([csv], { type: "text/csv" })
+                            const url = URL.createObjectURL(blob)
+                            const a = document.createElement("a")
+                            a.href = url
+                            a.download = "morphometrics.csv"
+                            a.click()
+                          }}
+                        >
+                          <FolderOutput className="h-4 w-4 mr-2" />
+                          Export Morphometrics
+                        </Button>
+
+                        <Button
+                          variant="outline"
+                          className="bg-white border-sky-100 text-sky-700"
+                          onClick={() => { window.open(demoResult.provenance?.voucherUrl || "#", "_blank") }}
+                        >
+                          <FileText className="h-4 w-4 mr-2" />
+                          View Voucher Record
+                        </Button>
+
+                        <Button className="bg-sky-600 text-white ml-auto" onClick={() => alert("Flagged for curator review (demo)")}>
+                          Flag for Review
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

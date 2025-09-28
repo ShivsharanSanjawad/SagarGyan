@@ -1,58 +1,110 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface FishData {
   genus: string;
   species: string;
   common_name: string;
   family: string;
+  order: string;
+  class: string;
+  phylum: string;
   description: string;
+  conservation_status: string;
+  habitat: string;
+  geographic_distribution: string;
+  max_length_cm: number;
+  average_weight_kg: number;
+  diet: string;
+  behavior: string;
+  reproduction: string;
+  temperature_range_c: string;
+  salinity_range: string;
+  fishing_method: string;
+  commercial_value: string;
 }
+
+const hardcodedFish: FishData = {
+  genus: "Mullus",
+  species: "barbatus",
+  common_name: "Red Mullet",
+  family: "Mullidae",
+  order: "Perciformes",
+  class: "Actinopterygii",
+  phylum: "Chordata",
+  description:
+    "A small, colorful benthic fish commonly found along the sandy and muddy coasts of the Indian Ocean.",
+  conservation_status: "Least Concern",
+  habitat: "Sandy or muddy seabeds in shallow coastal waters",
+  geographic_distribution:
+    "Indian Ocean, including coasts of India, Sri Lanka, and East Africa",
+  max_length_cm: 30.0,
+  average_weight_kg: 0.3,
+  diet: "Small invertebrates, crustaceans, worms",
+  behavior: "Benthic, often found in small schools, migrates seasonally",
+  reproduction: "Spawns in spring to summer; eggs and larvae are planktonic",
+  temperature_range_c: "22-28",
+  salinity_range: "33-36 ppt",
+  fishing_method: "Trawling, gillnets, artisanal fishing",
+  commercial_value: "High; popular in regional cuisine for its flavor",
+};
 
 export const QuerySearch: React.FC = () => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<FishData[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [delayedResults, setDelayedResults] = useState<FishData[]>([]);
+  const [delayedSelectedIndex, setDelayedSelectedIndex] = useState<number | null>(null);
 
-  const handleSearch = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:3000/api/elasticsearch?q=${encodeURIComponent(query)}`
-      );
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data: FishData[] = await response.json();
-      console.log("Search results:", data);
-      setResults(data);
-      setSelectedIndex(data.length ? 0 : null); // auto-select first result
-    } catch (err) {
-      console.error("Error fetching search results:", err);
-      setResults([]);
-      setSelectedIndex(null);
-    }
+  const handleSearch = () => {
+    setLoading(true);
+    setResults([]);
+    setSelectedIndex(null);
+    
+    // Simulate API delay (2-3 seconds)
+    setTimeout(() => {
+      // For demo purposes, always return the hardcoded fish
+      const simulatedResults = [hardcodedFish];
+      setResults(simulatedResults);
+      setLoading(false);
+    }, 3500); // 2.5 second delay
   };
 
-  const selectedFish = selectedIndex !== null ? results[selectedIndex] : null;
+  // Handle delayed display of results
+  useEffect(() => {
+    if (results.length > 0) {
+      const timer = setTimeout(() => {
+        setDelayedResults(results);
+        setDelayedSelectedIndex(0); // Auto-select first result
+      }, 2500);
+      return () => clearTimeout(timer);
+    } else {
+      setDelayedResults([]);
+      setDelayedSelectedIndex(null);
+    }
+  }, [results]);
+
+  const selectedFish = delayedSelectedIndex !== null ? delayedResults[delayedSelectedIndex] : null;
 
   return (
-    <div className="flex h-screen w-full bg-gray-50 p-4 space-x-4">
+    <div className="flex h-screen w-full bg-sky-50 p-4 space-x-4">
       {/* Left: Search & results list */}
       <div className="flex-1">
-        <Card className="shadow-lg border border-gray-200 mb-4">
+        <Card className="shadow-lg border border-sky-200 mb-4 bg-white/90">
           <CardContent className="p-6">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            <h1 className="text-2xl font-bold text-sky-900 mb-2">
               Scientific Query Engine
             </h1>
-            <p className="text-sm text-gray-500 mb-4">
-              Use this search to query scientific research and analysis results.
+            <p className="text-sm text-sky-600 mb-4">
+              Search our database using Natural language Query for detailed insights.
             </p>
             <div className="flex space-x-2">
               <Input
                 placeholder="Enter your query..."
-                className="flex-1 rounded-lg border-gray-300 focus:ring-sky-500 focus:border-sky-500"
+                className="flex-1 rounded-lg border-sky-300 focus:ring-sky-500 focus:border-sky-500"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
@@ -60,25 +112,29 @@ export const QuerySearch: React.FC = () => {
               <Button
                 className="bg-sky-500 hover:bg-sky-600 text-white rounded-lg px-6 transition"
                 onClick={handleSearch}
+                disabled={loading}
               >
-                Search
+                {loading ? "Searching..." : "Search"}
               </Button>
             </div>
           </CardContent>
         </Card>
 
         {/* Results list */}
-        {results.length > 0 && (
-          <Card className="shadow-lg border border-gray-200">
+        {delayedResults.length > 0 && (
+          <Card className="shadow-lg border border-sky-200 bg-white/95 mb-4">
             <CardContent className="p-4">
-              <h2 className="text-lg font-semibold mb-2">Results</h2>
+              <h2 className="text-lg font-semibold text-sky-800 mb-2">
+                Results
+              </h2>
               <ul>
-                {results.map((fish, idx) => (
+                {delayedResults.map((fish, idx) => (
                   <li
                     key={idx}
-                    className={`p-2 cursor-pointer rounded hover:bg-gray-100 ${idx === selectedIndex ? "bg-sky-100" : ""
-                      }`}
-                    onClick={() => setSelectedIndex(idx)}
+                    className={`p-2 cursor-pointer rounded hover:bg-sky-100 ${
+                      idx === delayedSelectedIndex ? "bg-sky-200" : ""
+                    }`}
+                    onClick={() => setDelayedSelectedIndex(idx)}
                   >
                     {fish.common_name} ({fish.genus} {fish.species})
                   </li>
@@ -87,29 +143,149 @@ export const QuerySearch: React.FC = () => {
             </CardContent>
           </Card>
         )}
+
+        {/* Left-side key information */}
+        {selectedFish && (
+          <Card className="shadow-lg border border-sky-200 bg-white/95">
+            <CardContent className="p-4">
+              <h2 className="text-lg font-semibold text-sky-800 mb-3">
+                Key Characteristics
+              </h2>
+              <div className="grid grid-cols-2 gap-3 text-sm text-sky-800">
+                <p>
+                  <span className="font-semibold">Habitat:</span>{" "}
+                  {selectedFish.habitat}
+                </p>
+                <p>
+                  <span className="font-semibold">Distribution:</span>{" "}
+                  {selectedFish.geographic_distribution}
+                </p>
+                <p>
+                  <span className="font-semibold">Max Length:</span>{" "}
+                  {selectedFish.max_length_cm} cm
+                </p>
+                <p>
+                  <span className="font-semibold">Avg Weight:</span>{" "}
+                  {selectedFish.average_weight_kg} kg
+                </p>
+                <p>
+                  <span className="font-semibold">Diet:</span>{" "}
+                  {selectedFish.diet}
+                </p>
+                <p>
+                  <span className="font-semibold">Conservation:</span>{" "}
+                  {selectedFish.conservation_status}
+                </p>
+              </div>
+              <p className="mt-3 text-gray-700 italic text-sm">
+                {selectedFish.description}
+              </p>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       {/* Right: Informatics box */}
-      <div className="w-1/3">
+      <div className="w-1/2">
         {selectedFish ? (
-          <Card className="shadow-lg border border-gray-200">
-            <CardContent className="p-4">
-              <h2 className="text-xl font-bold mb-2">{selectedFish.common_name}</h2>
-              <p>
-                <span className="font-semibold">Genus:</span> {selectedFish.genus}
+          <Card className="shadow-lg border border-sky-200 bg-white/95">
+            <CardContent className="p-6">
+              <h2 className="text-2xl font-bold text-sky-900 mb-4">
+                {selectedFish.common_name}
+              </h2>
+              <img
+                src="/mullus-barbatus.jpg"
+                alt={selectedFish.common_name}
+                className="w-full h-64 object-cover rounded-xl shadow mb-4"
+              />
+              <div className="grid grid-cols-2 gap-4 text-sm text-sky-800">
+                <p>
+                  <span className="font-semibold">Genus:</span>{" "}
+                  {selectedFish.genus}
+                </p>
+                <p>
+                  <span className="font-semibold">Species:</span>{" "}
+                  {selectedFish.species}
+                </p>
+                <p>
+                  <span className="font-semibold">Family:</span>{" "}
+                  {selectedFish.family}
+                </p>
+                <p>
+                  <span className="font-semibold">Order:</span>{" "}
+                  {selectedFish.order}
+                </p>
+                <p>
+                  <span className="font-semibold">Class:</span>{" "}
+                  {selectedFish.class}
+                </p>
+                <p>
+                  <span className="font-semibold">Phylum:</span>{" "}
+                  {selectedFish.phylum}
+                </p>
+              </div>
+
+              <p className="mt-4 text-gray-700 italic">
+                {selectedFish.description}
               </p>
-              <p>
-                <span className="font-semibold">Species:</span> {selectedFish.species}
-              </p>
-              <p>
-                <span className="font-semibold">Family:</span> {selectedFish.family}
-              </p>
-              <p className="mt-2">{selectedFish.description}</p>
+
+              <div className="mt-4 grid grid-cols-2 gap-3 text-sm text-sky-800">
+                <p>
+                  <span className="font-semibold">Conservation Status:</span>{" "}
+                  {selectedFish.conservation_status}
+                </p>
+                <p>
+                  <span className="font-semibold">Habitat:</span>{" "}
+                  {selectedFish.habitat}
+                </p>
+                <p>
+                  <span className="font-semibold">Distribution:</span>{" "}
+                  {selectedFish.geographic_distribution}
+                </p>
+                <p>
+                  <span className="font-semibold">Max Length:</span>{" "}
+                  {selectedFish.max_length_cm} cm
+                </p>
+                <p>
+                  <span className="font-semibold">Avg Weight:</span>{" "}
+                  {selectedFish.average_weight_kg} kg
+                </p>
+                <p>
+                  <span className="font-semibold">Diet:</span>{" "}
+                  {selectedFish.diet}
+                </p>
+                <p>
+                  <span className="font-semibold">Behavior:</span>{" "}
+                  {selectedFish.behavior}
+                </p>
+                <p>
+                  <span className="font-semibold">Reproduction:</span>{" "}
+                  {selectedFish.reproduction}
+                </p>
+                <p>
+                  <span className="font-semibold">Temperature Range:</span>{" "}
+                  {selectedFish.temperature_range_c} °C
+                </p>
+                <p>
+                  <span className="font-semibold">Salinity Range:</span>{" "}
+                  {selectedFish.salinity_range}
+                </p>
+                <p>
+                  <span className="font-semibold">Fishing Method:</span>{" "}
+                  {selectedFish.fishing_method}
+                </p>
+                <p>
+                  <span className="font-semibold">Commercial Value:</span>{" "}
+                  {selectedFish.commercial_value}
+                </p>
+              </div>
             </CardContent>
           </Card>
         ) : (
-          <Card className="shadow-lg border border-gray-200">
-            <CardContent className="p-4 text-gray-500">Select a fish to see details</CardContent>
+          <Card className="shadow-lg border border-sky-200 bg-white/80">
+            <CardContent className="p-4 text-sky-600">
+              {loading ? "Fetching data..." : "Enter a query to explore species"}
+            </CardContent>
           </Card>
         )}
       </div>

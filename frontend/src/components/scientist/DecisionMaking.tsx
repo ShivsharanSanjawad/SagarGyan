@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/Button";
-import {MapContainer,TileLayer,CircleMarker,Popup,Tooltip,} from "react-leaflet";
+import { MapContainer, TileLayer, CircleMarker, Popup, Tooltip } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import TemperatureMap from "@/components/scientist/temp";
@@ -23,7 +23,7 @@ export const DecisionMaking: React.FC = () => {
       impact: "Marine ecosystem disruption, fishing restrictions in 20 km radius",
       icon: AlertTriangle,
       color: "red",
-      coords: [18.95, 72.65], // realistic offshore location near Mumbai
+      coords: [18.95, 72.65],
     },
     {
       id: 2,
@@ -37,7 +37,7 @@ export const DecisionMaking: React.FC = () => {
       impact: "Potential impact on fishing seasons, need for updated fishing advisories",
       icon: Fish,
       color: "amber",
-      coords: [16.8, 68.5], 
+      coords: [16.8, 68.5],
     },
     {
       id: 3,
@@ -50,8 +50,8 @@ export const DecisionMaking: React.FC = () => {
       severity: "low",
       impact: "Significant scientific discovery, need for habitat protection measures",
       icon: TrendingUp,
-      color: "green",
-      coords: [9.1, 72.8], // south-west India oceanic area
+      color: "purple",
+      coords: [9.1, 72.8],
     },
     {
       id: 4,
@@ -65,18 +65,19 @@ export const DecisionMaking: React.FC = () => {
       impact: "Potential coral bleaching, fish behavior changes expected",
       icon: Waves,
       color: "blue",
-      coords: [15.0, 88.0], // Bay of Bengal anomaly
+      coords: [15.0, 88.0],
     },
   ];
 
   const getSeverityColor = (severity: string) => {
+    // theme-aligned classes (cream page, white cards — use softer tints)
     switch (severity) {
       case "high":
         return "border-red-200 bg-red-50";
       case "medium":
         return "border-amber-200 bg-amber-50";
       case "low":
-        return "border-green-200 bg-green-50";
+        return "border-sky-50 bg-sky-50";
       default:
         return "border-gray-200 bg-gray-50";
     }
@@ -88,12 +89,12 @@ export const DecisionMaking: React.FC = () => {
         return "text-red-600";
       case "amber":
         return "text-amber-600";
-      case "green":
-        return "text-green-600";
+      case "purple":
+        return "text-purple-600";
       case "blue":
-        return "text-blue-600";
+        return "text-sky-600";
       default:
-        return "text-gray-600";
+        return "text-slate-600";
     }
   };
 
@@ -101,45 +102,46 @@ export const DecisionMaking: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<any | null>(null);
 
   const fishAbundancePoints = [
-    { lat: 19.0, lng: 72.7, abundance: 78 }, // Mumbai coast
-    { lat: 16.8, lng: 71.1, abundance: 64 }, // Ratnagiri
-    { lat: 10.5, lng: 72.6, abundance: 45 }, // near Lakshadweep
-    { lat: 8.9, lng: 77.9, abundance: 30 }, // south-west Bay 
-    { lat: 21.6, lng: 86.7, abundance: 55 }, // near Odisha coast
-    { lat: 14.7, lng: 80.3, abundance: 70 }, // near Chennai coast
-    { lat: 11.0, lng: 92.7, abundance: 25 }, // Andaman nearby
-    { lat: 18.2, lng: 72.9, abundance: 82 }, // near Mumbai - more productive
-    { lat: 15.0, lng: 88.0, abundance: 34 }, // Bay of Bengal anomaly area
-    { lat: 7.5, lng: 78.7, abundance: 20 }, // deep sea south-east
-    { lat: 19.9, lng: 65.5, abundance: 60 }, // northern Arabian Sea
-    { lat: 20.0, lng: 72.0, abundance: 50 }, // central west coast
+    { lat: 19.0, lng: 72.7, abundance: 78 },
+    { lat: 16.8, lng: 71.1, abundance: 64 },
+    { lat: 10.5, lng: 72.6, abundance: 45 },
+    { lat: 8.9, lng: 77.9, abundance: 30 },
+    { lat: 21.6, lng: 86.7, abundance: 55 },
+    { lat: 14.7, lng: 80.3, abundance: 70 },
+    { lat: 11.0, lng: 92.7, abundance: 25 },
+    { lat: 18.2, lng: 72.9, abundance: 82 },
+    { lat: 15.0, lng: 88.0, abundance: 34 },
+    { lat: 7.5, lng: 78.7, abundance: 20 },
+    { lat: 19.9, lng: 65.5, abundance: 60 },
+    { lat: 20.0, lng: 72.0, abundance: 50 },
   ];
 
   const abundanceRadius = (val: number) => Math.max(4, Math.round((val / 100) * 18));
 
-  const generateImpactPoints = (center: [number, number], count = 8) => { //event map helper
+  const generateImpactPoints = (center: [number, number], count = 8) => {
     const [lat, lng] = center;
     const points: [number, number][] = [];
     for (let i = 0; i < count; i++) {
-      const latOffset = (Math.random() - 0.5) * 0.6; // ~ +/- 0.3 deg
+      const latOffset = (Math.random() - 0.5) * 0.6;
       const lngOffset = (Math.random() - 0.5) * 0.6;
       points.push([lat + latOffset, lng + lngOffset]);
     }
     return points;
   };
-  // Map components 
+
+  // --- Map components (functionality unchanged) ---
   const FishAbundanceMap: React.FC = () => {
     return (
-      <div className="mx-auto w-full rounded shadow">
-        <MapContainer center={INDIA_CENTER} zoom={5} style={{ height: 500, width: "100%" }} scrollWheelZoom={true}>
+      <div className="mx-auto w-full rounded shadow-sm">
+        <MapContainer center={INDIA_CENTER} zoom={5} style={{ height: 500, width: "100%" }} scrollWheelZoom>
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-
           {fishAbundancePoints.map((p, idx) => (
             <CircleMarker
               key={`fish-${idx}`}
               center={[p.lat, p.lng]}
               radius={abundanceRadius(p.abundance)}
-              pathOptions={{ color: "#0ea5e9", fillColor: "#0ea5e9", fillOpacity: 0.7 }}>
+              pathOptions={{ color: "#0ea5e9", fillColor: "#0ea5e9", fillOpacity: 0.78 }}
+            >
               <Tooltip direction="top" offset={[0, -10]} opacity={1}>
                 <div className="text-xs">
                   <div><strong>Abundance:</strong> {p.abundance}%</div>
@@ -155,10 +157,9 @@ export const DecisionMaking: React.FC = () => {
               </Popup>
             </CircleMarker>
           ))}
-
         </MapContainer>
-        {/* simple legend */}
-        <div className="mt-2 text-xs text-gray-600">
+
+        <div className="mt-2 text-xs text-slate-600">
           <div><strong>Legend:</strong> circle size ∝ abundance</div>
         </div>
       </div>
@@ -179,7 +180,7 @@ export const DecisionMaking: React.FC = () => {
     }, [map, selectedEvent]);
 
     return (
-      <div className="mx-auto w-full rounded shadow">
+      <div className="mx-auto w-full rounded shadow-sm">
         <MapContainer whenCreated={setMap} center={INDIA_CENTER} zoom={5} style={{ height: 500, width: "100%" }}>
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
@@ -194,27 +195,27 @@ export const DecisionMaking: React.FC = () => {
                     ? "#ef4444"
                     : ev.color === "amber"
                     ? "#f59e0b"
-                    : ev.color === "green"
-                    ? "#10b981"
-                    : "#3b82f6",
+                    : ev.color === "purple"
+                    ? "#8b5cf6"
+                    : "#0ea5e9",
                 fillOpacity: 0.85,
               }}
             >
               <Tooltip direction="top" offset={[0, -10]}>
                 <div className="text-sm font-medium">{ev.title}</div>
               </Tooltip>
+
               <Popup>
                 <div>
                   <h4 className="font-semibold">{ev.title}</h4>
-                  <p className="text-sm text-gray-700">{ev.description}</p>
-                  <div className="mt-2 text-xs text-gray-600">{ev.location} • {ev.date}</div>
+                  <p className="text-sm text-slate-700">{ev.description}</p>
+                  <div className="mt-2 text-xs text-slate-600">{ev.location} • {ev.date}</div>
                   <div className="mt-1 text-xs"><strong>Impact:</strong> {ev.impact}</div>
                 </div>
               </Popup>
             </CircleMarker>
           ))}
 
-          {/* If an event is selected, show several nearby dummy impact/sample points */}
           {selectedEvent && selectedEvent.coords && (
             generateImpactPoints(selectedEvent.coords, 10).map((pt, idx) => (
               <CircleMarker
@@ -227,7 +228,7 @@ export const DecisionMaking: React.FC = () => {
           )}
         </MapContainer>
 
-        <div className="mt-2 text-xs text-gray-600">
+        <div className="mt-2 text-xs text-slate-600">
           <div><strong>Tip:</strong> Click an event marker for more details.</div>
         </div>
       </div>
@@ -235,154 +236,154 @@ export const DecisionMaking: React.FC = () => {
   };
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Decision-Making Module</h1>
-        <p className="text-gray-600">Major events and decision support for marine management</p>
-      </div>
+    <div className="min-h-screen p-6 bg-[#fdf2df]">
+      <div className="max-w-6xl mx-auto space-y-4">
+        <div>
+          <h1 className="text-2xl font-extrabold text-slate-900">Decision-Making Module</h1>
+          <p className="text-slate-600">Major events and decision support for marine management</p>
+        </div>
 
-      {/* Data Options */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Explore Environmental Data</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex w-full">
-            <Button
-              variant="ghost"
-              className={`flex-1 rounded-none border-b-2 ${
-                selectedOption === "abundance"
-                  ? "border-sky-500 text-sky-600 font-semibold"
-                  : "border-transparent text-gray-600 hover:text-sky-500"
-              }`}
-              onClick={() => setSelectedOption("abundance")}
-            >
-              Fish Abundance
-            </Button>
+        <Card className="bg-white border border-slate-200 shadow-sm">
+          <CardHeader>
+            <CardTitle>Explore Environmental Data</CardTitle>
+          </CardHeader>
 
-            <Button
-              variant="ghost"
-              className={`flex-1 rounded-none border-b-2 ${
-                selectedOption === "temperature"
-                  ? "border-sky-500 text-sky-600 font-semibold"
-                  : "border-transparent text-gray-600 hover:text-sky-500"
-              }`}
-              onClick={() => setSelectedOption("temperature")}
-            >
-              Temperature
-            </Button>
+          <CardContent>
+            <div className="flex w-full">
+              <button
+                onClick={() => setSelectedOption("abundance")}
+                className={`flex-1 py-3 text-center rounded-none border-b-2 transition ${
+                  selectedOption === "abundance"
+                    ? "border-sky-500 text-sky-600 font-semibold"
+                    : "border-transparent text-slate-600 hover:text-sky-500"
+                }`}
+                aria-pressed={selectedOption === "abundance"}
+              >
+                Fish Abundance
+              </button>
 
-            <Button
-              variant="ghost"
-              className={`flex-1 rounded-none border-b-2 ${
-                selectedOption === "migration"
-                  ? "border-sky-500 text-sky-600 font-semibold"
-                  : "border-transparent text-gray-600 hover:text-sky-500"
-              }`}
-              onClick={() => setSelectedOption("migration")}
-            >
-              Migration Map
-            </Button>
+              <button
+                onClick={() => setSelectedOption("temperature")}
+                className={`flex-1 py-3 text-center rounded-none border-b-2 transition ${
+                  selectedOption === "temperature"
+                    ? "border-sky-500 text-sky-600 font-semibold"
+                    : "border-transparent text-slate-600 hover:text-sky-500"
+                }`}
+                aria-pressed={selectedOption === "temperature"}
+              >
+                Temperature
+              </button>
 
-            {/* New Events Tab */}
-            <Button
-              variant="ghost"
-              className={`flex-1 rounded-none border-b-2 ${
-                selectedOption === "events"
-                  ? "border-sky-500 text-sky-600 font-semibold"
-                  : "border-transparent text-gray-600 hover:text-sky-500"
-              }`}
-              onClick={() => {
-                setSelectedOption("events");
-              }}>Events
-            </Button>
-          </div>
+              <button
+                onClick={() => setSelectedOption("migration")}
+                className={`flex-1 py-3 text-center rounded-none border-b-2 transition ${
+                  selectedOption === "migration"
+                    ? "border-sky-500 text-sky-600 font-semibold"
+                    : "border-transparent text-slate-600 hover:text-sky-500"
+                }`}
+                aria-pressed={selectedOption === "migration"}
+              >
+                Migration Map
+              </button>
 
-          {/* Show Visual Only If Option Selected */}
-          {selectedOption && (
-            <div className="mt-6 border rounded-lg bg-gray-50 p-6 text-center">
-              {selectedOption === "abundance" && (
-                // interactive map for fish abundance
-                <FishAbundanceMap />
-              )}
-
-              {selectedOption === "temperature" && <TemperatureMap />}
-
-              {selectedOption === "migration" && (
-                <TransformWrapper>
-                  <TransformComponent>
-                    <img src="/migration.png" alt="Migration Map" className="mx-auto max-h-96 rounded shadow" />
-                  </TransformComponent>
-                </TransformWrapper>
-              )}
-
-              {selectedOption === "events" && (
-                <EventsMap events={majorEvents} selectedEvent={selectedEvent} />
-              )}
+              <button
+                onClick={() => {
+                  setSelectedOption("events");
+                }}
+                className={`flex-1 py-3 text-center rounded-none border-b-2 transition ${
+                  selectedOption === "events"
+                    ? "border-sky-500 text-sky-600 font-semibold"
+                    : "border-transparent text-slate-600 hover:text-sky-500"
+                }`}
+                aria-pressed={selectedOption === "events"}
+              >
+                Events
+              </button>
             </div>
-          )}
-        </CardContent>
-      </Card>
 
-      {/* Major Events */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Major Events using AI-powered Insights</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {majorEvents.map((event) => {
-              const Icon = event.icon;
-              return (
-                <div key={event.id} className={`border rounded-lg p-4 ${getSeverityColor(event.severity)}`}>
-                  <div className="flex items-start space-x-3">
-                    <Icon className={`h-6 w-6 ${getIconColor(event.color)} mt-1`} />
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h3 className="font-semibold text-gray-900">{event.title}</h3>
-                          <p className="text-sm text-gray-600 mt-1">{event.description}</p>
-                        </div>
-                        <span className={`px-2 py-1 text-xs rounded-full ${
-                          event.severity === 'high' ? 'bg-red-100 text-red-800' :
-                          event.severity === 'medium' ? 'bg-amber-100 text-amber-800' :
-                          'bg-green-100 text-green-800'
-                        }`}>
-                          {event.severity} priority
-                        </span>
-                      </div>
+            {selectedOption && (
+              <div className="mt-6 border rounded-lg bg-slate-50 p-6">
+                {selectedOption === "abundance" && <FishAbundanceMap />}
 
-                      <div className="mt-3 space-y-2 text-sm">
-                        <div className="flex items-center text-gray-600">
-                          <MapPin className="h-4 w-4 mr-1" />
-                          {event.location} • {event.date}
-                        </div>
-                        <div>
-                          <p className="text-gray-700"><strong>Impact:</strong> {event.impact}</p>
-                        </div>
-                      </div>
+                {selectedOption === "temperature" && <TemperatureMap />}
 
-                      <div className="mt-3 flex space-x-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => {
-                            // When View Details clicked: open Events tab and center map
-                            setSelectedEvent(event);
-                            setSelectedOption("events");
-                          }}>
-                          View Details
-                        </Button>
-                        <Button size="sm" variant="outline">Generate Report</Button>
+                {selectedOption === "migration" && (
+                  <TransformWrapper>
+                    <TransformComponent>
+                      <img src="/migration.png" alt="Migration Map" className="mx-auto max-h-96 rounded shadow-sm" />
+                    </TransformComponent>
+                  </TransformWrapper>
+                )}
+
+                {selectedOption === "events" && (
+                  <EventsMap events={majorEvents} selectedEvent={selectedEvent} />
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="bg-white border border-slate-200 shadow-sm">
+          <CardHeader>
+            <CardTitle>Recent Major Events using AI-powered Insights</CardTitle>
+          </CardHeader>
+
+          <CardContent>
+            <div className="space-y-4">
+              {majorEvents.map((event) => {
+                const Icon = event.icon;
+                return (
+                  <div key={event.id} className={`rounded-lg border p-4 ${getSeverityColor(event.severity)}`}>
+                    <div className="flex items-start space-x-3">
+                      <Icon className={`h-6 w-6 ${getIconColor(event.color)} mt-1`} />
+                      <div className="flex-1">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <h3 className="font-semibold text-slate-900">{event.title}</h3>
+                            <p className="text-sm text-slate-600 mt-1">{event.description}</p>
+                          </div>
+
+                          <span className={`px-2 py-1 text-xs rounded-full ${
+                            event.severity === "high" ? "bg-red-100 text-red-800" :
+                            event.severity === "medium" ? "bg-amber-100 text-amber-800" :
+                            "bg-sky-50 text-sky-700"
+                          }`}>
+                            {event.severity} priority
+                          </span>
+                        </div>
+
+                        <div className="mt-3 space-y-2 text-sm">
+                          <div className="flex items-center text-slate-600">
+                            <MapPin className="h-4 w-4 mr-1" />
+                            {event.location} • {event.date}
+                          </div>
+                          <div>
+                            <p className="text-slate-700"><strong>Impact:</strong> {event.impact}</p>
+                          </div>
+                        </div>
+
+                        <div className="mt-3 flex space-x-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              setSelectedEvent(event);
+                              setSelectedOption("events");
+                            }}
+                          >
+                            View Details
+                          </Button>
+                          <Button size="sm" variant="outline">Generate Report</Button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

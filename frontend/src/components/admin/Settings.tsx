@@ -22,11 +22,33 @@ export const Settings: React.FC = () => {
 
   const handleSave = async () => {
     setIsSaving(true);
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
     setIsSaving(false);
     alert('Settings saved successfully!');
   };
+
+  const Toggle = ({
+    checked,
+    onChange,
+  }: {
+    checked: boolean;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  }) => (
+    <label className="relative inline-flex items-center cursor-pointer">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={onChange}
+        className="sr-only peer"
+      />
+      <div className="w-11 h-6 bg-gray-200 rounded-full peer transition-colors duration-300 peer-checked:bg-sky-600 
+        peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-sky-300 
+        after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white 
+        after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 
+        after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white">
+      </div>
+    </label>
+  );
 
   return (
     <div className="space-y-6">
@@ -37,10 +59,10 @@ export const Settings: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* General Settings */}
-        <Card>
+        <Card className="shadow-md bg-white">
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Globe className="h-5 w-5 mr-2" />
+              <Globe className="h-5 w-5 mr-2 text-sky-600" />
               General Settings
             </CardTitle>
           </CardHeader>
@@ -72,10 +94,10 @@ export const Settings: React.FC = () => {
         </Card>
 
         {/* Security Settings */}
-        <Card>
+        <Card className="shadow-md bg-white">
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Shield className="h-5 w-5 mr-2" />
+              <Shield className="h-5 w-5 mr-2 text-sky-600" />
               Security Settings
             </CardTitle>
           </CardHeader>
@@ -85,15 +107,10 @@ export const Settings: React.FC = () => {
                 <p className="font-medium">Maintenance Mode</p>
                 <p className="text-sm text-gray-600">Temporarily disable system access</p>
               </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={settings.maintenanceMode}
-                  onChange={(e) => setSettings(prev => ({ ...prev, maintenanceMode: e.target.checked }))}
-                  className="sr-only peer"
-                />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-sky-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-sky-600"></div>
-              </label>
+              <Toggle
+                checked={settings.maintenanceMode}
+                onChange={(e) => setSettings(prev => ({ ...prev, maintenanceMode: e.target.checked }))}
+              />
             </div>
 
             <div className="flex items-center justify-between">
@@ -101,15 +118,10 @@ export const Settings: React.FC = () => {
                 <p className="font-medium">Enable Logging</p>
                 <p className="text-sm text-gray-600">Record system activities</p>
               </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={settings.enableLogging}
-                  onChange={(e) => setSettings(prev => ({ ...prev, enableLogging: e.target.checked }))}
-                  className="sr-only peer"
-                />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-sky-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-sky-600"></div>
-              </label>
+              <Toggle
+                checked={settings.enableLogging}
+                onChange={(e) => setSettings(prev => ({ ...prev, enableLogging: e.target.checked }))}
+              />
             </div>
 
             <div>
@@ -129,10 +141,10 @@ export const Settings: React.FC = () => {
         </Card>
 
         {/* Notification Settings */}
-        <Card>
+        <Card className="shadow-md bg-white">
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Bell className="h-5 w-5 mr-2" />
+              <Bell className="h-5 w-5 mr-2 text-sky-600" />
               Notifications
             </CardTitle>
           </CardHeader>
@@ -142,24 +154,19 @@ export const Settings: React.FC = () => {
                 <p className="font-medium">System Notifications</p>
                 <p className="text-sm text-gray-600">Receive alerts and updates</p>
               </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={settings.enableNotifications}
-                  onChange={(e) => setSettings(prev => ({ ...prev, enableNotifications: e.target.checked }))}
-                  className="sr-only peer"
-                />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-sky-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-sky-600"></div>
-              </label>
+              <Toggle
+                checked={settings.enableNotifications}
+                onChange={(e) => setSettings(prev => ({ ...prev, enableNotifications: e.target.checked }))}
+              />
             </div>
           </CardContent>
         </Card>
 
         {/* Backup Settings */}
-        <Card>
+        <Card className="shadow-md bg-white">
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Database className="h-5 w-5 mr-2" />
+              <Database className="h-5 w-5 mr-2 text-sky-600" />
               Backup & Recovery
             </CardTitle>
           </CardHeader>
@@ -169,15 +176,10 @@ export const Settings: React.FC = () => {
                 <p className="font-medium">Automatic Backup</p>
                 <p className="text-sm text-gray-600">Schedule regular backups</p>
               </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={settings.enableBackup}
-                  onChange={(e) => setSettings(prev => ({ ...prev, enableBackup: e.target.checked }))}
-                  className="sr-only peer"
-                />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-sky-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-sky-600"></div>
-              </label>
+              <Toggle
+                checked={settings.enableBackup}
+                onChange={(e) => setSettings(prev => ({ ...prev, enableBackup: e.target.checked }))}
+              />
             </div>
 
             <div>
@@ -194,7 +196,7 @@ export const Settings: React.FC = () => {
               </select>
             </div>
 
-            <Button variant="outline" className="w-full">
+            <Button className="w-full bg-gradient-to-r from-sky-600 to-blue-600 text-white hover:from-sky-700 hover:to-blue-700">
               <RefreshCw className="h-4 w-4 mr-2" />
               Create Backup Now
             </Button>
@@ -204,7 +206,12 @@ export const Settings: React.FC = () => {
 
       {/* Save Button */}
       <div className="flex justify-end">
-        <Button onClick={handleSave} disabled={isSaving} size="lg">
+        <Button
+          onClick={handleSave}
+          disabled={isSaving}
+          size="lg"
+          className="bg-sky-600 text-white hover:bg-sky-700"
+        >
           <Save className="h-4 w-4 mr-2" />
           {isSaving ? 'Saving...' : 'Save Settings'}
         </Button>

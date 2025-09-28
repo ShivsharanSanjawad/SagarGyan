@@ -1,8 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/input";
 import { Upload, FileText, X, Database, MapPin } from "lucide-react";
+
+/* Utility helpers */
+const formatBytes = (bytes: number) =>
+  bytes < 1024 ? `${bytes} B` : bytes < 1024 * 1024 ? `${(bytes / 1024).toFixed(1)} KB` : `${(bytes / 1024 / 1024).toFixed(2)} MB`;
+
+const extBadge = (name: string) => {
+  const ext = (name.split(".").pop() || "").toLowerCase();
+  const color =
+    ext === "csv" || ext === "xlsx" ? "bg-sky-50 text-sky-700" :
+    ext === "nc" ? "bg-purple-50 text-purple-700" :
+    ext === "json" ? "bg-slate-50 text-slate-700" :
+    ext === "zip" || ext === "gz" ? "bg-amber-50 text-amber-700" :
+    "bg-slate-50 text-slate-700";
+  return <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${color} border border-slate-100`}>.{ext}</span>;
+};
 
 export const StoreData: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -13,298 +28,314 @@ export const StoreData: React.FC = () => {
     dataFormat: "",
   });
   const [files, setFiles] = useState<File[]>([]);
+  const [dragActive, setDragActive] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadMessage, setUploadMessage] = useState<string | null>(null);
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((p) => ({ ...p, [name]: value }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFiles(Array.from(e.target.files));
+  const addFiles = useCallback((incoming: FileList | File[]) => {
+    const arr = Array.from(incoming);
+    const existingKey = (f: File) => `${f.name}|${f.size}`;
+    const existingSet = new Set(files.map(existingKey));
+    const unique = arr.filter((f) => !existingSet.has(existingKey(f)));
+    if (unique.length) setFiles((p) => [...p, ...unique].slice(0, 20));
+  }, [files]);
+
+  const onFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) addFiles(e.target.files);
+    e.currentTarget.value = "";
+  };
+
+  const onDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setDragActive(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length) addFiles(e.dataTransfer.files);
+  };
+
+  const onDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    if (!dragActive) setDragActive(true);
+  };
+
+  const onDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    if ((e.target as HTMLElement).getAttribute("data-dropzone") === "true") setDragActive(false);
+  };
+
+  const removeFile = (idx: number) => setFiles((p) => p.filter((_, i) => i !== idx));
+  const resetForm = () => {
+    setFormData({ projectName: "", datasetName: "", latitude: "", longitude: "", dataFormat: "" });
+    setFiles([]);
+    setUploadProgress(0);
+    setUploadMessage(null);
+  };
+
+  const simulateUpload = async (endpoint: string, body: FormData) => {
+    setIsUploading(true);
+    setUploadMessage(null);
+    setUploadProgress(2);
+    await new Promise((r) => setTimeout(r, 200));
+    for (let p of [8, 16, 26, 38, 52, 66, 78, 88, 94, 98]) {
+      setUploadProgress(p);
+      // eslint-disable-next-line no-await-in-loop
+      await new Promise((r) => setTimeout(r, 140 + Math.random() * 120));
+    }
+
+    try {
+      await fetch(endpoint, { method: "POST", body });
+      setUploadProgress(100);
+      setUploadMessage("Upload complete. Files queued for processing.");
+    } catch {
+      setUploadProgress(100);
+      setUploadMessage("Upload finished locally, but server request failed. Check network.");
+    } finally {
+      setTimeout(() => setIsUploading(false), 500);
     }
   };
 
-  const removeFile = (index: number) => {
-    setFiles(files.filter((_, i) => i !== index));
-  };
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!files.length) return setUploadMessage("Please attach at least one file.");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsUploading(true);
-    setUploadProgress(0);
+    let endpoint = "http://localhost:3000/api/ingestdata";
+    const ext = files[0].name.split(".").pop()?.toLowerCase();
+    switch (ext) {
+      case "csv":
+      case "xlsx":
+        endpoint = "http://localhost:3000/api/ingestcsv";
+        break;
+      case "zip":
+      case "gz":
+        endpoint = "http://localhost:3000/api/ingestdwca";
+        break;
+      case "json":
+        endpoint = "http://localhost:3000/api/ingestjson";
+        break;
+      case "nc":
+        endpoint = "http://localhost:3000/api/ingestnetcdf";
+        break;
+      case "txt":
+        endpoint = "http://localhost:3000/api/ingesttxt";
+        break;
+      default:
+        endpoint = "http://localhost:3000/api/ingestdata";
+    }
 
-    // Simulate upload progress
-    const interval = setInterval(() => {
-      setUploadProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsUploading(false);
-          alert("Data uploaded successfully!");
-          setFormData({
-            projectName: "",
-            datasetName: "",
-            latitude: "",
-            longitude: "",
-            dataFormat: "",
-          });
-          setFiles([]);
-          return 100;
-        }
-        return prev + 10;
-      });
-    }, 200);
-
-    // Actual upload call
     const form = new FormData();
     form.append("projectName", formData.projectName);
     form.append("datasetName", formData.datasetName);
     form.append("latitude", formData.latitude);
     form.append("longitude", formData.longitude);
     form.append("dataFormat", formData.dataFormat);
-    files.forEach((file) => form.append("files", file));
+    files.forEach((f) => form.append("files", f));
 
-    let endpoint = "http://localhost:3000/api/ingestdata";
-    if (files.length > 0) {
-      const ext = files[0].name.split(".").pop()?.toLowerCase();
-      switch (ext) {
-        case "csv":
-        case "xlsx":
-          endpoint = "http://localhost:3000/api/ingestcsv";
-          break;
-        case "zip":
-        case "gz":
-          endpoint = "http://localhost:3000/api/ingestdwca";
-          break;
-        case "json":
-          endpoint = "http://localhost:3000/api/ingestjson";
-          break;
-        case "nc":
-          endpoint = "http://localhost:3000/api/ingestnetcdf";
-          break;
-        case "txt":
-          endpoint = "http://localhost:3000/api/ingesttxt";
-          break;
-        default:
-          endpoint = "http://localhost:3000/api/ingestdata";
-      }
-    }
-
-    await fetch(endpoint, {
-      method: "POST",
-      body: form,
-    });
+    await simulateUpload(endpoint, form);
+    if (uploadMessage?.includes("Upload complete")) setTimeout(resetForm, 1200);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 p-6">
-      {/* Header Section */}
-      <div className="max-w-6xl mx-auto mb-8">
-        <div className="text-center space-y-4">
-          <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-6 py-3 rounded-full shadow-lg">
-            <Database className="h-6 w-6" />
-            <h1 className="text-2xl font-bold">Oceanographic Data Storage</h1>
+    <div className="min-h-screen bg-[#fdf2df]">
+      {/* Cream header band like RetrieveData/AdminDashboard */}
+      <section className="py-6 px-6 border-b border-slate-100">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-slate-900">Oceanographic Data Storage</h1>
+              <p className="text-slate-600 mt-1">Upload your datasets. Supported: CSV, XLSX, NETCDF, JSON, TXT, ZIP/GZ.</p>
+            </div>
+            <div className="hidden md:block">
+              {/* Optional right-side CTA kept subtle to match RetrieveData layout */}
+              <Button
+                type="button"
+                className="bg-white border border-slate-200 text-slate-900 px-3 py-2 rounded-lg shadow-sm hover:shadow-md"
+                onClick={() => window.scrollTo({ top: 600, behavior: "smooth" })}
+              >
+                Upload Dataset
+              </Button>
+            </div>
           </div>
-          <p className="text-slate-600 text-lg max-w-2xl mx-auto">
-            Upload and store your marine research datasets in our secure cloud infrastructure
-          </p>
         </div>
-      </div>
+      </section>
 
-      <form onSubmit={handleSubmit} className="max-w-6xl mx-auto">
+      <form onSubmit={handleSubmit} className="max-w-6xl mx-auto p-6 space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
-          {/* File Upload Section */}
           <div className="lg:col-span-2">
-            <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-              <CardHeader className="bg-gradient-to-r text-cyan-600 rounded-t-lg">
-                <CardTitle className="flex items-center space-x-2">
-                  <Upload className="h-5 w-5" />
-                  <span>Dataset Upload</span>
+            <Card className="shadow-xl bg-white border border-slate-200">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-slate-900">
+                  <Upload className="h-5 w-5 text-sky-600" />
+                  Dataset Upload
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-8">
-                {/* Upload Area */}
-                <div className="relative group">
-                  <div className="flex flex-col items-center justify-center border-2 border-dashed border-blue-300 rounded-xl p-12 hover:border-blue-500 transition-all duration-300 bg-gradient-to-br from-blue-50 to-cyan-50 group-hover:from-blue-100 group-hover:to-cyan-100">
-                    <div className="bg-white rounded-full p-4 shadow-lg mb-4 group-hover:scale-110 transition-transform duration-300">
-                      <Upload className="h-6 w-6 text-blue-600" />
+
+              <CardContent>
+                <div
+                  data-dropzone="true"
+                  onDrop={onDrop}
+                  onDragOver={onDragOver}
+                  onDragLeave={onDragLeave}
+                  className={`rounded-xl border-2 p-10 text-center transition-all duration-150 ${
+                    dragActive ? "border-sky-400 bg-sky-50/40 shadow-inner" : "border-dashed border-slate-200 bg-white"
+                  }`}
+                  role="region"
+                  aria-label="File dropzone"
+                >
+                  <div className="mx-auto max-w-xl">
+                    <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full mb-4 ${dragActive ? "bg-sky-600 text-white" : "bg-slate-50 text-sky-600"} shadow-sm`}>
+                      <Upload className="h-5 w-5" />
                     </div>
-                    <label className="cursor-pointer text-center">
-                      <span className="text-xl font-semibold text-blue-700 hover:text-blue-800 block mb-2">
-                        Drop files here or click to browse
-                      </span>
-                      <span className="text-sm text-slate-500 block mb-4">
-                        Support for multiple file formats
-                      </span>
-                      <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:from-blue-700 hover:to-cyan-700">
-                        <Upload className="h-4 w-4 mr-2" />
-                        Select Files
-                      </div>
-                      <input
-                        type="file"
-                        multiple
-                        onChange={handleFileChange}
-                        className="sr-only"
-                        accept=".csv,.xlsx,.nc,.json,.txt,.zip,.gz,.png"
-                      />
-                    </label>
-                    <div className="flex flex-wrap justify-center gap-2 mt-6">
-                      {['.csv', '.xlsx', '.nc', '.json', '.txt', '.zip'].map((ext) => (
-                        <span key={ext} className="px-3 py-1 bg-white/70 text-blue-600 text-xs rounded-full border border-blue-200">
-                          {ext}
+
+                    <p className="text-lg font-semibold text-slate-900 mb-1">
+                      {dragActive ? "Release to upload files" : "Drop files here or click to browse"}
+                    </p>
+                    <p className="text-sm text-slate-500 mb-4">Support for multiple file formats and bulk uploads</p>
+
+                    <div className="flex items-center justify-center gap-3">
+                      <label className="inline-flex items-center gap-2">
+                        <input
+                          type="file"
+                          multiple
+                          onChange={onFileInputChange}
+                          className="sr-only"
+                          accept=".csv,.xlsx,.nc,.json,.txt,.zip,.gz"
+                        />
+                        <Button type="button" className="inline-flex items-center gap-2 bg-gradient-to-r from-sky-600 to-blue-600 text-white px-4 py-2 rounded-lg shadow">
+                          <Upload className="h-4 w-4" />
+                          Select files
+                        </Button>
+                      </label>
+
+                      <button
+                        type="button"
+                        onClick={() => setFiles([])}
+                        disabled={!files.length || isUploading}
+                        className="px-3 py-2 text-sm rounded-md border border-slate-200 hover:bg-slate-50 disabled:opacity-50"
+                      >
+                        Clear
+                      </button>
+                    </div>
+
+                    <div className="mt-6 flex flex-wrap justify-center gap-2">
+                      {[".csv", ".xlsx", ".nc", ".json", ".txt", ".zip"].map((e) => (
+                        <span key={e} className="px-3 py-1 text-xs rounded-full bg-slate-50 text-sky-700 border border-slate-100">
+                          {e}
                         </span>
                       ))}
                     </div>
                   </div>
                 </div>
 
-                {/* Selected Files */}
                 {files.length > 0 && (
-                  <div className="mt-8 space-y-4">
-                    <h4 className="font-semibold text-slate-700 flex items-center">
-                      <FileText className="h-4 w-4 mr-2 text-blue-600" />
-                      Selected Files ({files.length})
-                    </h4>
-                    <div className="space-y-2 max-h-40 overflow-y-auto">
-                      {files.map((file, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3 group hover:bg-blue-100 transition-colors duration-200">
-                          <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                              <FileText className="h-4 w-4 text-white" />
+                  <div className="mt-6">
+                    <h4 className="text-sm font-semibold text-slate-800 mb-3">Files ({files.length})</h4>
+                    <div className="space-y-2 max-h-48 overflow-y-auto">
+                      {files.map((f, i) => (
+                        <div key={`${f.name}-${f.size}-${i}`} className="flex items-center justify-between gap-4 bg-white border border-slate-100 rounded-lg p-3">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-10 h-10 rounded-md bg-sky-600 flex items-center justify-center text-white">
+                              <FileText className="h-4 w-4" />
                             </div>
-                            <div>
-                              <span className="text-sm font-medium text-slate-700">{file.name}</span>
-                              <span className="text-xs text-slate-500 block">
-                                {(file.size / 1024 / 1024).toFixed(2)} MB
-                              </span>
+                            <div className="min-w-0">
+                              <div className="text-sm font-medium text-slate-900 truncate">{f.name}</div>
+                              <div className="text-xs text-slate-500">{formatBytes(f.size)}</div>
                             </div>
                           </div>
-                          <button
-                            type="button"
-                            onClick={() => removeFile(index)}
-                            className="p-1 text-red-500 hover:bg-red-100 rounded-full transition-colors duration-200"
-                          >
-                            <X className="h-4 w-4" />
-                          </button>
+
+                          <div className="flex items-center gap-3">
+                            {extBadge(f.name)}
+                            <button
+                              type="button"
+                              onClick={() => removeFile(i)}
+                              className="p-1 rounded-full text-rose-500 hover:bg-rose-50 transition-colors disabled:opacity-50"
+                              disabled={isUploading}
+                              aria-label={`Remove ${f.name}`}
+                            >
+                              <X className="h-4 w-4" />
+                            </button>
+                          </div>
                         </div>
                       ))}
                     </div>
                   </div>
                 )}
 
-                {/* Progress */}
-                {isUploading && (
-                  <div className="mt-8">
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-slate-600 font-medium">Uploading Dataset...</span>
-                      <span className="text-blue-700 font-bold">{uploadProgress}%</span>
-                    </div>
-                    <div className="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
-                      <div
-                        className="bg-gradient-to-r from-blue-500 to-cyan-500 h-3 rounded-full transition-all duration-500 ease-out"
-                        style={{ width: `${uploadProgress}%` }}
-                      />
-                    </div>
-                  </div>
-                )}
+                <div className="mt-6">
+                  {isUploading ? (
+                    <>
+                      <div className="flex justify-between items-center mb-2">
+                        <div className="text-sm text-slate-700 font-medium">Uploading...</div>
+                        <div className="text-sm text-slate-800 font-semibold">{uploadProgress}%</div>
+                      </div>
+                      <div className="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
+                        <div className="h-3 rounded-full bg-gradient-to-r from-sky-600 to-blue-600 transition-all" style={{ width: `${uploadProgress}%` }} />
+                      </div>
+                    </>
+                  ) : uploadMessage ? (
+                    <div className="text-sm text-slate-700 py-2">{uploadMessage}</div>
+                  ) : null}
+                </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Metadata Section */}
           <div className="space-y-6">
-            <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-              <CardHeader className="bg-gradient-to-r text-cyan-600 rounded-t-lg">
-                <CardTitle className="flex items-center space-x-2">
-                  <Database className="h-5 w-5" />
-                  <span>Dataset Information</span>
+            <Card className="shadow-xl bg-white border border-slate-200">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-slate-900">
+                  <Database className="h-5 w-5 text-sky-600" />
+                  Dataset Information
                 </CardTitle>
               </CardHeader>
-              <CardContent className="px-6 space-y-2">
-                {/* Project Name */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Project Name</label>
-                  <Input
-                    name="projectName"
-                    value={formData.projectName}
-                    onChange={handleInputChange}
-                    placeholder="Enter project name"
-                    required
-                    className="h-10 bg-white/90 backdrop-blur-sm border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"/>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Dataset Name</label>
-                  <Input
-                    name="datasetName"
-                    value={formData.datasetName}
-                    onChange={handleInputChange}
-                    placeholder="Enter dataset name"
-                    required
-                    className="h-10 bg-white/90 backdrop-blur-sm border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                  />
-                </div>
+              <CardContent>
+                <label className="block text-sm text-slate-700 mb-1">Project Name</label>
+                <Input name="projectName" value={formData.projectName} onChange={handleInputChange} placeholder="Enter project name" required className="mb-3 h-10" />
+
+                <label className="block text-sm text-slate-700 mb-1">Dataset Name</label>
+                <Input name="datasetName" value={formData.datasetName} onChange={handleInputChange} placeholder="Enter dataset name" required className="mb-3 h-10" />
               </CardContent>
             </Card>
 
-            {/* Location Section */}
-            <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-              <CardHeader className="bg-gradient-to-r text-cyan-600 rounded-t-lg">
-                <CardTitle className="flex items-center space-x-2">
-                  <MapPin className="h-5 w-5" />
-                  <span>Geographic Location</span>
+            <Card className="shadow-xl bg-white border border-slate-200">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-slate-900">
+                  <MapPin className="h-5 w-5 text-sky-600" />
+                  Geographic Location
                 </CardTitle>
               </CardHeader>
-              <CardContent className="px-6">
-                <div className="grid grid-cols-1 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Latitude</label>
-                    <Input
-                      name="latitude"
-                      value={formData.latitude}
-                      onChange={handleInputChange}
-                      placeholder="e.g. 19.0760"
-                      required
-                      className="h-12 bg-white/90 backdrop-blur-sm border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Longitude</label>
-                    <Input
-                      name="longitude"
-                      value={formData.longitude}
-                      onChange={handleInputChange}
-                      placeholder="e.g. 72.8777"
-                      required
-                      className="h-12 bg-white/90 backdrop-blur-sm border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                    />
-                  </div>
-                </div>
+              <CardContent>
+                <label className="block text-sm text-slate-700 mb-1">Latitude</label>
+                <Input name="latitude" value={formData.latitude} onChange={handleInputChange} placeholder="e.g. 19.0760" required className="mb-3 h-10" />
+
+                <label className="block text-sm text-slate-700 mb-1">Longitude</label>
+                <Input name="longitude" value={formData.longitude} onChange={handleInputChange} placeholder="e.g. 72.8777" required className="mb-3 h-10" />
               </CardContent>
             </Card>
 
-            <Button
-              type="submit"
-              disabled={isUploading || files.length === 0}
-              className="w-full h-14 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold text-lg rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
-              {isUploading ? (
-                <div className="flex items-center space-x-2">
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>Uploading...</span>
-                </div>
-              ) : (
-                <div className="flex items-center space-x-2">
-                  <Upload className="h-5 w-5" />
-                  <span>Upload Dataset</span>
-                </div>
-              )}
-            </Button>
+            <div>
+              <Button
+                type="button"
+                onClick={handleSubmit}
+                disabled={isUploading || !files.length}
+                className="w-full h-14 bg-gradient-to-r from-sky-600 to-blue-600 text-white font-semibold text-lg rounded-xl shadow-xl hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isUploading ? (
+                  <div className="flex items-center justify-center gap-3">
+                    <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                    Uploading...
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center gap-3">
+                    <Upload className="h-5 w-5" />
+                    Upload Dataset
+                  </div>
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       </form>

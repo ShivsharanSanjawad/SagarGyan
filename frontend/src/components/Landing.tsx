@@ -58,7 +58,7 @@ export const Landing: React.FC<LandingPageProps> = ({ onLoginClick }) => {
   const [queryResult, setQueryResult] = useState<string | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
 
-  // UI state for header opacity on scroll
+  // UI state for header elevation on scroll
   const [headerElevated, setHeaderElevated] = useState(false)
 
   // stats visibility
@@ -209,47 +209,81 @@ export const Landing: React.FC<LandingPageProps> = ({ onLoginClick }) => {
           --primary: #15609d;
           --teal: #008ca6;
           --cta: #0270e0;
-          --white-hero: rgba(255,255,255,0.98);
+          --white-hero: #ffffff;
           --text-dark: #111827;
           --muted: #6b7280;
         }
 
-        /* top navbar container styling */
-        .site-top {
+        /* header fixed at top full width (solid, no opacity) */
+        .site-header {
           position: fixed;
-          inset: 12px 0 auto 0;
-          z-index: 70;
-          display: flex;
-          justify-content: center;
-          pointer-events: none;
+          top: 0;
+          left: 0;
+          right: 0;
+          z-index: 90;
+          background: var(--white-hero);
+          border-bottom: 1px solid rgba(0,0,0,0.04);
+          transition: box-shadow .18s ease, transform .18s ease;
         }
-        .site-top .inner {
-          pointer-events: auto;
-          width: calc(100% - 48px);
+        .site-header.elevated { box-shadow: 0 12px 36px rgba(2,6,23,0.08); transform: translateY(-1px); }
+        .site-header .inner {
+          width: 100%;
           max-width: 1400px;
+          margin: 0 auto;
+          padding: 12px 20px;
           display:flex;
           justify-content:space-between;
           align-items:center;
-          background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.4));
-          padding: 10px 18px;
-          border-radius: 12px;
-          box-shadow: 0 12px 30px rgba(2,6,23,0.08);
-          transition: transform .18s ease, backdrop-filter .18s ease, opacity .18s ease;
-        }
-        .site-top.elevated .inner {
-          transform: translateY(-4px);
-          box-shadow: 0 22px 46px rgba(2,6,23,0.12);
         }
 
-        .nav-links a { margin-right: 18px; color: var(--text-dark); font-weight:600; text-decoration:none; }
+        .nav-links a { margin-right: 18px; color: var(--text-dark); font-weight:700; text-decoration:none; }
         .nav-links a:hover { text-decoration: underline; }
 
-        .headline-hero {
-          background: linear-gradient(90deg, rgba(255,255,255,1), rgba(235,248,255,0.95), rgba(255,255,255,1));
+        /* shiny white heading rules — stronger, less faded highlight */
+        .shiny-heading {
+          position: relative;
+          display: inline-block;
+          -webkit-font-smoothing: antialiased;
+          letter-spacing: -0.025em;
+
+          /* keep main text bold white so it's always visible */
+          color: #ffffff;
+
+          /* create a high-contrast moving highlight using background-clip on a pseudo element */
+          text-shadow: 0 10px 28px rgba(2,6,23,0.18);
+        }
+
+        /* the moving bright band (clipped to text using background-clip) */
+        .shiny-heading::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          display: block;
+          background: linear-gradient(
+            90deg,
+            rgba(255,255,255,0) 0%,
+            rgba(255,255,255,0.98) 45%,
+            rgba(255,255,255,0.98) 55%,
+            rgba(255,255,255,0) 100%
+          );
+          transform: skewX(-12deg);
+          mix-blend-mode: screen;
+          filter: blur(6px);
+          pointer-events: none;
+          opacity: 1; /* fully visible band */
+          background-size: 220% 100%;
           -webkit-background-clip: text;
           background-clip: text;
-          color: transparent;
-          text-shadow: 0 12px 40px rgba(2,6,23,0.06);
+          animation: shiny-slide 1400ms linear infinite;
+          /* clip the background to text glyphs on modern browsers */
+          -webkit-text-fill-color: transparent;
+          -webkit-background-clip: text;
+        }
+
+        @keyframes shiny-slide {
+          0%   { background-position: -90% 0; transform: translateX(-40%) skewX(-12deg); }
+          50%  { transform: translateX(0%) skewX(-12deg); }
+          100% { background-position: 200% 0; transform: translateX(120%) skewX(-12deg); }
         }
 
         /* stats card style */
@@ -267,16 +301,15 @@ export const Landing: React.FC<LandingPageProps> = ({ onLoginClick }) => {
         .stat-card:hover { transform: translateY(-6px); box-shadow: 0 26px 60px rgba(2,6,23,0.08); }
 
         @media (max-width: 1024px) {
-          .site-top { inset: 8px 0 auto 0; }
-          .site-top .inner { width: calc(100% - 32px); }
+          .site-header .inner { padding: 10px 16px; }
         }
       `}</style>
 
-      {/* HERO */}
-      <header className={`site-top ${headerElevated ? "elevated" : ""}`} role="banner" aria-label="Main header">
+      {/* HEADER: fixed at top, full-width solid color */}
+      <header className={`site-header ${headerElevated ? "elevated" : ""}`} role="banner" aria-label="Main header">
         <div className="inner">
           <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-            <div style={{ width: 44, height: 44, borderRadius: 10, overflow: "hidden", background: "white", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ width: 44, height: 44, borderRadius: 10, overflow: "hidden", background: "white", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 14px rgba(2,6,23,0.06)" }}>
               <img src="/sidebarlogo.png" alt="logo" style={{ width: 34, height: 34, objectFit: "contain" }} />
             </div>
             <div>
@@ -300,7 +333,7 @@ export const Landing: React.FC<LandingPageProps> = ({ onLoginClick }) => {
         </div>
       </header>
 
-      <section id="hero-section" ref={heroRef} className="relative h-[100vh] w-full overflow-hidden">
+      <section id="hero-section" ref={heroRef} className="relative h-[100vh] w-full overflow-hidden" style={{ paddingTop: 88 }}>
         {loadVideo && !prefersReducedMotion ? (
           <video className="absolute inset-0 h-full w-full object-cover" autoPlay loop muted playsInline preload="metadata" poster="/waves-poster.jpg" aria-hidden="true">
             <source src="/videos/waves.mp4" type="video/mp4" />
@@ -312,13 +345,23 @@ export const Landing: React.FC<LandingPageProps> = ({ onLoginClick }) => {
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.26), rgba(255,255,255,0.02) 40%, rgba(255,255,255,0.02) 100%)" }} />
 
         <div className="relative z-20 h-full w-full flex flex-col items-center justify-center text-center px-6">
-          <motion.h1 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-6xl md:text-7xl font-extrabold headline-hero" style={{ lineHeight: 0.98, textAlign: "center" }}>
+          <motion.h1
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-6xl md:text-7xl font-extrabold shiny-heading"
+            style={{
+              lineHeight: 0.98,
+              textAlign: "center",
+              fontWeight: 900,
+            }}
+          >
             Unified Ocean
             <br />
             Intelligence
           </motion.h1>
 
-          <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.12 }} className="mt-6 text-white/90 text-lg md:text-xl max-w-3xl" style={{ lineHeight: 1.6 }}>
+          <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.12 }} className="mt-6 text-white/90 text-lg md:text-xl max-w-3xl" style={{ lineHeight: 1.6, fontWeight: 700 }}>
             Harness the power of AI to unlock insights from oceanographic, fisheries, and biodiversity data. Make informed decisions for marine conservation and sustainable resource management across Indian Ocean waters.
           </motion.p>
 
@@ -326,7 +369,7 @@ export const Landing: React.FC<LandingPageProps> = ({ onLoginClick }) => {
             <Button onClick={() => (onLoginClick ? onLoginClick() : (window.location.href = "/login"))} style={{ background: "linear-gradient(90deg,var(--teal),var(--cta))", color: "white", borderRadius: 8, padding: "10px 16px" }}>
               Get Full Access <ArrowRight className="h-4 w-4" />
             </Button>
-            <Button onClick={() => { const el = document.getElementById("features"); if (el) el.scrollIntoView({ behavior: "smooth" }) }} style={{ background: "white", color: "var(--text-dark)", border: "1px solid rgba(0,0,0,0.06)", borderRadius: 8, padding: "10px 16px" }}>
+            <Button onClick={() => { const el = document.getElementById("features"); if (el) el.scrollIntoView({ behavior: "smooth" }) }} style={{ background: "white", color: "var(--text-dark)", border: "1px solid rgba(0,0,0,0.06)", borderRadius: 8, padding: "10px 16px", fontWeight: 700 }}>
               Learn More
             </Button>
           </div>
@@ -346,11 +389,11 @@ export const Landing: React.FC<LandingPageProps> = ({ onLoginClick }) => {
                 { value: 83, suffix: ".3%", label: "AI Accuracy", color: "#008ca6", dur: 2400 },
               ].map((stat, i) => (
                 <div key={i} className="stat-card" style={{ textAlign: "center" }}>
-                  <div style={{ fontSize: 40, fontWeight: 800, color: stat.color }}>
+                  <div style={{ fontSize: 40, fontWeight: 900, color: stat.color }}>
                     {statsVisible ? <AnimatedNumber value={stat.value} duration={stat.dur} /> : 0}
                     {stat.suffix}
                   </div>
-                  <div style={{ marginTop: 6, color: "var(--muted)", fontWeight: 600 }}>{stat.label}</div>
+                  <div style={{ marginTop: 6, color: "var(--muted)", fontWeight: 700 }}>{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -361,8 +404,8 @@ export const Landing: React.FC<LandingPageProps> = ({ onLoginClick }) => {
         <section id="features" className="py-16" style={{ background: "var(--cream)" }}>
           <div style={{ width: "100%", maxWidth: "1400px", margin: "0 auto", padding: "0 20px" }}>
             <div style={{ textAlign: "center", marginBottom: 28 }}>
-              <h2 style={{ fontSize: 28, fontWeight: 800, color: "var(--text-dark)", marginBottom: 8 }}>Platform Features</h2>
-              <p style={{ color: "var(--muted)" }}>Comprehensive tools for marine research and analysis</p>
+              <h2 style={{ fontSize: 30, fontWeight: 900, color: "var(--text-dark)", marginBottom: 8 }}>Platform Features</h2>
+              <p style={{ color: "var(--muted)", fontWeight: 700 }}>Comprehensive tools for marine research and analysis</p>
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 20 }}>
@@ -370,15 +413,15 @@ export const Landing: React.FC<LandingPageProps> = ({ onLoginClick }) => {
                 const Icon = feature.icon
                 return (
                   <motion.div key={feature.title} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.32, delay: index * 0.06 }}>
-                    <Card className="h-60" style={{ cursor: "pointer" }}>
+                    <Card className="h-60" style={{ cursor: "pointer", background: "#ffffff" }}>
                       <CardContent className="p-6">
                         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                           <div style={{ padding: 12, borderRadius: 9999, background: "rgba(21,96,157,0.06)" }}>
                             <Icon className="h-6 w-6" />
                           </div>
                           <div>
-                            <h3 style={{ fontSize: 18, fontWeight: 700, color: "var(--text-dark)", marginBottom: 6 }}>{feature.title}</h3>
-                            <p style={{ color: "var(--muted)" }}>{feature.description}</p>
+                            <h3 style={{ fontSize: 18, fontWeight: 900, color: "var(--text-dark)", marginBottom: 6 }}>{feature.title}</h3>
+                            <p style={{ color: "var(--muted)", fontWeight: 700 }}>{feature.description}</p>
                           </div>
                         </div>
                       </CardContent>
@@ -391,24 +434,24 @@ export const Landing: React.FC<LandingPageProps> = ({ onLoginClick }) => {
         </section>
 
         {/* Demo */}
-        <section id="demo" className="py-16" style={{ background: "white" }}>
+        <section id="demo" className="py-16" style={{ background: "#ffffff" }}>
           <div style={{ width: "100%", maxWidth: "1200px", margin: "0 auto", padding: "0 20px" }}>
             <div style={{ textAlign: "center", marginBottom: 28 }}>
-              <h2 style={{ fontSize: 28, fontWeight: 800, color: "var(--text-dark)", marginBottom: 8 }}>Try Our AI Features</h2>
-              <p style={{ color: "var(--muted)" }}>Experience the power of our AI-driven analysis tools</p>
+              <h2 style={{ fontSize: 30, fontWeight: 900, color: "var(--text-dark)", marginBottom: 8 }}>Try Our AI Features</h2>
+              <p style={{ color: "var(--muted)", fontWeight: 700 }}>Experience the power of our AI-driven analysis tools</p>
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-              <Card>
+              <Card style={{ background: "#ffffff" }}>
                 <CardHeader>
-                  <CardTitle className="flex items-center">
+                  <CardTitle className="flex items-center" style={{ fontWeight: 800 }}>
                     <Microscope className="h-5 w-5 mr-2" />
                     Species Taxonomical Classification
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                    <p style={{ color: "var(--muted)" }} className="text-sm">Enter a marine species name to see AI-powered taxonomic classification</p>
+                    <p style={{ color: "var(--muted)", fontWeight: 700 }} className="text-sm">Enter a marine species name to see AI-powered taxonomic classification</p>
                     <div style={{ display: "flex", gap: 8 }}>
                       <Input placeholder="e.g., sardinella longiceps" value={taxonomyInput} onChange={(e) => setTaxonomyInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleTaxonomyDemo()} />
                       <Button onClick={handleTaxonomyDemo} disabled={!taxonomyInput.trim() || isProcessing}>{isProcessing ? "Processing..." : "Classify"}</Button>
@@ -419,27 +462,27 @@ export const Landing: React.FC<LandingPageProps> = ({ onLoginClick }) => {
                         <div style={{ display: "flex", gap: 8 }}>
                           <Microscope className="h-5 w-5" />
                           <div>
-                            <div style={{ fontWeight: 700, color: "var(--primary)" }}>Classification Result:</div>
+                            <div style={{ fontWeight: 800, color: "var(--primary)" }}>Classification Result:</div>
                             <div style={{ color: "var(--primary)" }} className="text-sm whitespace-pre-line">{taxonomyResult}</div>
                           </div>
                         </div>
                       </motion.div>
                     )}
-                    <div style={{ fontSize: 12, color: "var(--muted)" }}>* Limited species query only</div>
+                    <div style={{ fontSize: 12, color: "var(--muted)", fontWeight: 600 }}>* Limited species query only</div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card style={{ background: "#ffffff" }}>
                 <CardHeader>
-                  <CardTitle className="flex items-center">
+                  <CardTitle className="flex items-center" style={{ fontWeight: 800 }}>
                     <Search className="h-5 w-5 mr-2" />
                     Smart Query Engine
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                    <p style={{ color: "var(--muted)" }} className="text-sm">Ask questions about oceanographic data in natural language</p>
+                    <p style={{ color: "var(--muted)", fontWeight: 700 }} className="text-sm">Ask questions about oceanographic data in natural language</p>
                     <div style={{ display: "flex", gap: 8 }}>
                       <Input placeholder="e.g., give me an indian ocean fish..." value={queryInput} onChange={(e) => setQueryInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleQueryDemo()} />
                       <Button onClick={handleQueryDemo} disabled={!queryInput.trim() || isProcessing}>{isProcessing ? "Searching..." : "Query"}</Button>
@@ -450,7 +493,7 @@ export const Landing: React.FC<LandingPageProps> = ({ onLoginClick }) => {
                         <div style={{ display: "flex", gap: 8 }}>
                           <Map className="h-5 w-5" />
                           <div>
-                            <div style={{ fontWeight: 700, color: "var(--teal)" }}>Query Result:</div>
+                            <div style={{ fontWeight: 800, color: "var(--teal)" }}>Query Result:</div>
                             <div style={{ color: "var(--teal)" }} className="text-sm">{queryResult}</div>
                           </div>
                         </div>
@@ -466,8 +509,8 @@ export const Landing: React.FC<LandingPageProps> = ({ onLoginClick }) => {
         {/* CTA */}
         <section className="py-16" style={{ background: "linear-gradient(90deg,var(--teal),var(--cta))", color: "white" }}>
           <div style={{ width: "100%", maxWidth: "1000px", margin: "0 auto", padding: "0 20px", textAlign: "center" }}>
-            <h2 style={{ fontSize: 28, fontWeight: 800, marginBottom: 8 }}>Ready to Dive Deeper?</h2>
-            <p style={{ opacity: 0.95, marginBottom: 16 }}>Access the full platform for analysing species, visualisation tools, and comprehensive ocean data analysis.</p>
+            <h2 style={{ fontSize: 28, fontWeight: 900, marginBottom: 8 }}>Ready to Dive Deeper?</h2>
+            <p style={{ opacity: 0.95, marginBottom: 16, fontWeight: 700 }}>Access the full platform for analysing species, visualisation tools, and comprehensive ocean data analysis.</p>
             <Button onClick={() => (onLoginClick ? onLoginClick() : (window.location.href = "/login"))} style={{ background: "white", color: "var(--teal)", padding: "10px 18px", fontWeight: 700 }}>
               Get Full Platform Access <ArrowRight className="h-4 w-4" />
             </Button>
@@ -490,7 +533,7 @@ export const Landing: React.FC<LandingPageProps> = ({ onLoginClick }) => {
             </div>
 
             <div>
-              <h4 style={{ fontWeight: 700, marginBottom: 8 }}>Platform</h4>
+              <h4 style={{ fontWeight: 800, marginBottom: 8 }}>Platform</h4>
               <ul style={{ listStyle: "none", padding: 0, margin: 0, color: "var(--text-dark)" }}>
                 <li>Data Analytics</li>
                 <li>Species Classification</li>
@@ -500,7 +543,7 @@ export const Landing: React.FC<LandingPageProps> = ({ onLoginClick }) => {
             </div>
 
             <div>
-              <h4 style={{ fontWeight: 700, marginBottom: 8 }}>Support</h4>
+              <h4 style={{ fontWeight: 800, marginBottom: 8 }}>Support</h4>
               <ul style={{ listStyle: "none", padding: 0, margin: 0, color: "var(--text-dark)" }}>
                 <li>Documentation</li>
                 <li>API Reference</li>

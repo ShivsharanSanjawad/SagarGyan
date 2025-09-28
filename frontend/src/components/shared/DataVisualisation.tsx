@@ -1,17 +1,52 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/Button";
-import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue,
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
-import {LineChart,Line,XAxis,YAxis,CartesianGrid,Tooltip,BarChart,Bar,ResponsiveContainer,AreaChart,Area,Scatter,ScatterChart
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  BarChart,
+  Bar,
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  Scatter,
+  ScatterChart,
 } from "recharts";
-import {BarChart3,Globe,Layers,Droplet,Fish,Thermometer,MapPin,TrendingUp,Calendar,
+import {
+  BarChart3,
+  Globe,
+  Layers,
+  Droplet,
+  Fish,
+  Thermometer,
+  MapPin,
+  TrendingUp,
+  Calendar,
 } from "lucide-react";
 import Interactive3DView from "./interactive";
-import { MapContainer, TileLayer, CircleMarker, Popup, Tooltip as LTooltip, useMap } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  CircleMarker,
+  Popup,
+  Tooltip as LTooltip,
+  useMap,
+} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import CrossDomain from "@/components/shared/CrossDomain";
 
+/* ---- mock data (unchanged) ---- */
 const oceanData = {
   temperature: [
     { month: "Jan", surface: 24.2, mid: 22.8, deep: 18.5, region: "Arabian Sea" },
@@ -71,34 +106,33 @@ const oceanData = {
     { range: "500m+", temp: 15.8, salinity: 35.8, fishCount: 15, ph: 7.6 },
   ],
   pH: [
-  { month: "Jan", surface: 8.12, mid: 8.05, deep: 7.85, region: "Arabian Sea" },
-  { month: "Feb", surface: 8.15, mid: 8.08, deep: 7.88, region: "Arabian Sea" },
-  { month: "Mar", surface: 8.18, mid: 8.12, deep: 7.92, region: "Arabian Sea" },
-  { month: "Apr", surface: 8.22, mid: 8.15, deep: 7.95, region: "Arabian Sea" },
-  { month: "May", surface: 8.25, mid: 8.18, deep: 7.98, region: "Arabian Sea" },
-  { month: "Jun", surface: 8.20, mid: 8.13, deep: 7.93, region: "Arabian Sea" },
-  { month: "Jul", surface: 8.16, mid: 8.09, deep: 7.89, region: "Arabian Sea" },
-  { month: "Aug", surface: 8.14, mid: 8.07, deep: 7.87, region: "Arabian Sea" },
-  { month: "Sep", surface: 8.17, mid: 8.10, deep: 7.90, region: "Arabian Sea" },
-  { month: "Oct", surface: 8.19, mid: 8.12, deep: 7.92, region: "Arabian Sea" },
-  { month: "Nov", surface: 8.16, mid: 8.09, deep: 7.89, region: "Arabian Sea" },
-  { month: "Dec", surface: 8.13, mid: 8.06, deep: 7.86, region: "Arabian Sea" },
-],
-
-nutrients: [
-  { month: "Jan", nitrate: 15.2, phosphate: 1.8, silicate: 28.5, chlorophyll: 0.35, region: "Arabian Sea" },
-  { month: "Feb", nitrate: 14.8, phosphate: 1.7, silicate: 27.2, chlorophyll: 0.32, region: "Arabian Sea" },
-  { month: "Mar", nitrate: 12.5, phosphate: 1.5, silicate: 24.8, chlorophyll: 0.45, region: "Arabian Sea" },
-  { month: "Apr", nitrate: 10.2, phosphate: 1.2, silicate: 21.5, chlorophyll: 0.58, region: "Arabian Sea" },
-  { month: "May", nitrate: 8.8, phosphate: 1.0, silicate: 18.9, chlorophyll: 0.72, region: "Arabian Sea" },
-  { month: "Jun", nitrate: 11.5, phosphate: 1.3, silicate: 23.2, chlorophyll: 0.62, region: "Arabian Sea" },
-  { month: "Jul", nitrate: 13.8, phosphate: 1.6, silicate: 26.1, chlorophyll: 0.48, region: "Arabian Sea" },
-  { month: "Aug", nitrate: 14.2, phosphate: 1.7, silicate: 27.8, chlorophyll: 0.42, region: "Arabian Sea" },
-  { month: "Sep", nitrate: 13.1, phosphate: 1.5, silicate: 25.5, chlorophyll: 0.38, region: "Arabian Sea" },
-  { month: "Oct", nitrate: 11.8, phosphate: 1.4, silicate: 23.8, chlorophyll: 0.41, region: "Arabian Sea" },
-  { month: "Nov", nitrate: 13.5, phosphate: 1.6, silicate: 26.5, chlorophyll: 0.36, region: "Arabian Sea" },
-  { month: "Dec", nitrate: 14.9, phosphate: 1.8, silicate: 28.1, chlorophyll: 0.33, region: "Arabian Sea" },
-],
+    { month: "Jan", surface: 8.12, mid: 8.05, deep: 7.85, region: "Arabian Sea" },
+    { month: "Feb", surface: 8.15, mid: 8.08, deep: 7.88, region: "Arabian Sea" },
+    { month: "Mar", surface: 8.18, mid: 8.12, deep: 7.92, region: "Arabian Sea" },
+    { month: "Apr", surface: 8.22, mid: 8.15, deep: 7.95, region: "Arabian Sea" },
+    { month: "May", surface: 8.25, mid: 8.18, deep: 7.98, region: "Arabian Sea" },
+    { month: "Jun", surface: 8.20, mid: 8.13, deep: 7.93, region: "Arabian Sea" },
+    { month: "Jul", surface: 8.16, mid: 8.09, deep: 7.89, region: "Arabian Sea" },
+    { month: "Aug", surface: 8.14, mid: 8.07, deep: 7.87, region: "Arabian Sea" },
+    { month: "Sep", surface: 8.17, mid: 8.10, deep: 7.90, region: "Arabian Sea" },
+    { month: "Oct", surface: 8.19, mid: 8.12, deep: 7.92, region: "Arabian Sea" },
+    { month: "Nov", surface: 8.16, mid: 8.09, deep: 7.89, region: "Arabian Sea" },
+    { month: "Dec", surface: 8.13, mid: 8.06, deep: 7.86, region: "Arabian Sea" },
+  ],
+  nutrients: [
+    { month: "Jan", nitrate: 15.2, phosphate: 1.8, silicate: 28.5, chlorophyll: 0.35, region: "Arabian Sea" },
+    { month: "Feb", nitrate: 14.8, phosphate: 1.7, silicate: 27.2, chlorophyll: 0.32, region: "Arabian Sea" },
+    { month: "Mar", nitrate: 12.5, phosphate: 1.5, silicate: 24.8, chlorophyll: 0.45, region: "Arabian Sea" },
+    { month: "Apr", nitrate: 10.2, phosphate: 1.2, silicate: 21.5, chlorophyll: 0.58, region: "Arabian Sea" },
+    { month: "May", nitrate: 8.8, phosphate: 1.0, silicate: 18.9, chlorophyll: 0.72, region: "Arabian Sea" },
+    { month: "Jun", nitrate: 11.5, phosphate: 1.3, silicate: 23.2, chlorophyll: 0.62, region: "Arabian Sea" },
+    { month: "Jul", nitrate: 13.8, phosphate: 1.6, silicate: 26.1, chlorophyll: 0.48, region: "Arabian Sea" },
+    { month: "Aug", nitrate: 14.2, phosphate: 1.7, silicate: 27.8, chlorophyll: 0.42, region: "Arabian Sea" },
+    { month: "Sep", nitrate: 13.1, phosphate: 1.5, silicate: 25.5, chlorophyll: 0.38, region: "Arabian Sea" },
+    { month: "Oct", nitrate: 11.8, phosphate: 1.4, silicate: 23.8, chlorophyll: 0.41, region: "Arabian Sea" },
+    { month: "Nov", nitrate: 13.5, phosphate: 1.6, silicate: 26.5, chlorophyll: 0.36, region: "Arabian Sea" },
+    { month: "Dec", nitrate: 14.9, phosphate: 1.8, silicate: 28.1, chlorophyll: 0.33, region: "Arabian Sea" },
+  ],
 };
 
 const crossDomainData = [
@@ -135,6 +169,7 @@ const parameters = [
 ];
 
 const INDIA_CENTER: [number, number] = [20.5937, 78.9629];
+
 const dummyPoints = {
   temperature: [
     { lat: 18.95, lng: 72.65, value: 29.1 }, // Mumbai coast - warm
@@ -180,31 +215,26 @@ const dummyPoints = {
     { lat: 19.6, lng: 86.7, value: 8.0 },
   ],
   nutrients: [
-    { lat: 19.0, lng: 72.7, value: 1.2 }, 
-    { lat: 16.8, lng: 74.1, value: 1.5 }, 
-    { lat: 14.7, lng: 80.3, value: 2.1 }, 
+    { lat: 19.0, lng: 72.7, value: 1.2 },
+    { lat: 16.8, lng: 74.1, value: 1.5 },
+    { lat: 14.7, lng: 80.3, value: 2.1 },
     { lat: 11.0, lng: 92.7, value: 0.9 },
-    { lat: 21.6, lng: 86.7, value: 2.8 }, 
+    { lat: 21.6, lng: 86.7, value: 2.8 },
   ],
 };
 
 const markerRadiusFor = (param: string, value: number) => {
   switch (param) {
     case "temperature":
-      // temp range ~ 24 - 31 -> scale to 5..16
       return Math.max(4, Math.round(((value - 22) / 10) * 14));
     case "salinity":
-      // salinity ~ 34 - 36 -> scale to 4..12
       return Math.max(3, Math.round(((value - 33) / 4) * 12));
     case "fishCount":
-      // fish abundance 0-120 scale
       return Math.max(4, Math.round((value / 120) * 18));
     case "eDNA":
-      // eDNA ~1.5 - 4 -> scale
       return Math.max(3, Math.round(((value - 1) / 3) * 12));
     case "depth":
-      // depth value large -> smaller radii for deeper points
-      return Math.max(3, Math.round(Math.min(18, (1000 / (value + 50)))));
+      return Math.max(3, Math.round(Math.min(18, 1000 / (value + 50))));
     case "ph":
       return Math.max(3, Math.round(((value - 7) / 1.5) * 12));
     case "nutrients":
@@ -214,7 +244,6 @@ const markerRadiusFor = (param: string, value: number) => {
   }
 };
 
-// color pallette per parameter for pathOptions
 const colorFor = (param: string) => {
   switch (param) {
     case "temperature":
@@ -236,12 +265,11 @@ const colorFor = (param: string) => {
   }
 };
 
-// small component to update map view when center changes
 const MapUpdater: React.FC<{ center: [number, number] | null; zoom?: number }> = ({ center, zoom = 5 }) => {
   const map = useMap();
   useEffect(() => {
     if (center && map) {
-      map.setView(center, zoom, { animate: true });
+      try { map.setView(center, zoom, { animate: true }); } catch {}
     }
   }, [center, zoom, map]);
   return null;
@@ -254,12 +282,11 @@ export const DataVisualization: React.FC = () => {
   const [yParameter, setYParameter] = useState("salinity");
   const [selectedOtolith, setSelectedOtolith] = useState("");
 
-  // correlation data for cross-domain charts
   const correlationData = useMemo(() => {
     return crossDomainData.map((item) => ({
       ...item,
-      x: item[xParameter as keyof typeof item] as number,
-      y: item[yParameter as keyof typeof item] as number,
+      x: (item as any)[xParameter] as number,
+      y: (item as any)[yParameter] as number,
     }));
   }, [xParameter, yParameter]);
 
@@ -267,46 +294,31 @@ export const DataVisualization: React.FC = () => {
     return parameters.find((p) => p.value === param)?.label || param;
   };
 
-  // dataset to display on the Indian map based on selectedParameter
   const activeMapPoints = useMemo(() => {
-    // ensure fallback if key missing
     // @ts-ignore
     return dummyPoints[selectedParameter] || [];
   }, [selectedParameter]);
 
-  // Auto-center on cluster of active points (mean lat/lng)
   const activeCenter: [number, number] | null = useMemo(() => {
-    const pts = activeMapPoints;
+    const pts: any[] = activeMapPoints || [];
     if (!pts || pts.length === 0) return INDIA_CENTER;
-    const avgLat = pts.reduce((s: number, p: any) => s + p.lat, 0) / pts.length;
-    const avgLng = pts.reduce((s: number, p: any) => s + p.lng, 0) / pts.length;
+    const avgLat = pts.reduce((s, p) => s + p.lat, 0) / pts.length;
+    const avgLng = pts.reduce((s, p) => s + p.lng, 0) / pts.length;
     return [avgLat, avgLng];
   }, [activeMapPoints]);
 
-  // ---------------------------
-  // IndianMapVisualization: uses react-leaflet to render a real map
-  // ---------------------------
   const IndianMapVisualization = () => (
     <div className="relative">
       <div className="w-full h-80 rounded-lg relative overflow-hidden">
-        <MapContainer
-          center={INDIA_CENTER}
-          zoom={5}
-          style={{ height: "100%", width: "100%" }}
-          scrollWheelZoom={true}
-        >
+        <MapContainer center={INDIA_CENTER} zoom={5} style={{ height: "100%", width: "100%" }} scrollWheelZoom>
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-
-          {/* Automatically update map view to activeCenter whenever parameter changes */}
           <MapUpdater center={activeCenter} zoom={5} />
-
-          {/* Render markers for currently selected parameter */}
           {activeMapPoints.map((p: any, idx: number) => (
             <CircleMarker
               key={`pt-${selectedParameter}-${idx}`}
               center={[p.lat, p.lng]}
               radius={markerRadiusFor(selectedParameter, p.value)}
-              pathOptions={{ color: colorFor(selectedParameter), fillColor: colorFor(selectedParameter), fillOpacity: 0.75 }}
+              pathOptions={{ color: colorFor(selectedParameter), fillColor: colorFor(selectedParameter), fillOpacity: 0.85 }}
             >
               <LTooltip direction="top" offset={[0, -10]} opacity={1}>
                 <div className="text-xs">
@@ -326,43 +338,62 @@ export const DataVisualization: React.FC = () => {
           ))}
         </MapContainer>
 
-        {/* Legend (kept visually similar to original) */}
-        <div className="absolute bottom-2 left-2 bg-white bg-opacity-90 p-2 rounded text-xs">
+        <div className="absolute bottom-2 left-2 bg-white bg-opacity-90 p-2 rounded text-xs shadow-sm">
           <div className="flex items-center mb-1">
-            <div className="w-2 h-2 bg-red-500 rounded-full mr-1" /> Temperature
+            <div className="w-2 h-2 bg-red-500 rounded-full mr-2" /> Temperature
           </div>
           <div className="flex items-center mb-1">
-            <div className="w-2 h-2 bg-blue-500 rounded-full mr-1" /> Salinity
+            <div className="w-2 h-2 bg-blue-500 rounded-full mr-2" /> Salinity
           </div>
           <div className="flex items-center mb-1">
-            <div className="w-2 h-2 bg-green-500 rounded-full mr-1" /> Fish Activity
-          </div>
-          <div className="flex items-center mb-1">
-            <div className="w-2 h-2 bg-purple-500 rounded-full mr-1" /> eDNA
+            <div className="w-2 h-2 bg-green-500 rounded-full mr-2" /> Fish Activity
           </div>
           <div className="flex items-center">
-            <div className="w-2 h-2 bg-amber-500 rounded-full mr-1" /> Nutrients
+            <div className="w-2 h-2 bg-purple-500 rounded-full mr-2" /> eDNA
           </div>
         </div>
       </div>
     </div>
   );
 
+  const correlationTooltipContent = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      return (
+        <div className="bg-white p-3 border rounded shadow">
+          <p className="font-semibold">{data.region}</p>
+          <p>{getParameterLabel(xParameter)}: {data.x}</p>
+          <p>{getParameterLabel(yParameter)}: {data.y}</p>
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <div className="space-y-6">
+      {/* theme variables + page layout wrapper */}
+      <style>{`
+        :root {
+          --cream: #fdf2df;
+          --accent: #0ea5e9;
+          --accent-2: #15609d;
+          --muted: #6b7280;
+          --card-radius: 14px;
+        }
+      `}</style>
+
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Ocean Data Visualization</h1>
         <p className="text-gray-600">Interactive analysis of marine ecosystem parameters</p>
       </div>
 
-      {/* Tab Navigation */}
-      <CardContent className="p-0">
+      {/* top tabs */}
+      <div className="max-w-full">
         <div className="flex w-full">
           <Button
             variant="ghost"
-            className={`flex-1 rounded-none border-b-2 flex items-center justify-center ${
-              activeView === "individual" ? "border-sky-500 text-sky-600 font-semibold" : "border-transparent text-gray-600 hover:text-sky-500"
-            }`}
+            className={`flex-1 rounded-none border-b-2 flex items-center justify-center ${activeView === "individual" ? "border-sky-500 text-sky-600 font-semibold" : "border-transparent text-gray-600 hover:text-sky-500"}`}
             onClick={() => setActiveView("individual")}
           >
             <BarChart3 className="h-4 w-4 mr-2" /> Individual Parameters
@@ -370,448 +401,410 @@ export const DataVisualization: React.FC = () => {
 
           <Button
             variant="ghost"
-            className={`flex-1 rounded-none border-b-2 flex items-center justify-center ${
-              activeView === "cross-domain" ? "border-sky-500 text-sky-600 font-semibold" : "border-transparent text-gray-600 hover:text-sky-500"
-            }`}
-            onClick={() => setActiveView("cross-domain")}>
-            <Layers className="h-4 w-4 mr-2"/>Cross-Domain Analysis
+            className={`flex-1 rounded-none border-b-2 flex items-center justify-center ${activeView === "cross-domain" ? "border-sky-500 text-sky-600 font-semibold" : "border-transparent text-gray-600 hover:text-sky-500"}`}
+            onClick={() => setActiveView("cross-domain")}
+          >
+            <Layers className="h-4 w-4 mr-2" /> Cross-Domain Analysis
           </Button>
 
           <Button
             variant="ghost"
-            className={`flex-1 rounded-none border-b-2 flex items-center justify-center ${
-              activeView === "3d" ? "border-sky-500 text-sky-600 font-semibold" : "border-transparent text-gray-600 hover:text-sky-500"
-            }`}
-            onClick={() => setActiveView("3d")}>
+            className={`flex-1 rounded-none border-b-2 flex items-center justify-center ${activeView === "3d" ? "border-sky-500 text-sky-600 font-semibold" : "border-transparent text-gray-600 hover:text-sky-500"}`}
+            onClick={() => setActiveView("3d")}
+          >
             <Globe className="h-4 w-4 mr-2" /> 3D Interactive
           </Button>
         </div>
-      </CardContent>
+      </div>
 
-      {/* Individual Parameters View */}
-      {activeView === "individual" && (
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <BarChart3 className="h-5 w-5 mr-2" /> Select Parameter to Visualize
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Select value={selectedParameter} onValueChange={(v) => setSelectedParameter(String(v))}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Choose ocean parameter" />
-                </SelectTrigger>
-                <SelectContent>
-                  {parameters.map((param) => (
-                    <SelectItem key={param.value} value={param.value}>
-                      <div className="flex items-center">
-                        <param.icon className="h-4 w-4 mr-2" /> {param.label}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </CardContent>
-          </Card>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Main Parameter Chart */}
-            <Card>
-              <CardHeader>
-                <CardTitle>{getParameterLabel(selectedParameter)} - Temporal Variation</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={350}>
-                  {selectedParameter === "temperature" ? (
-                    <LineChart data={oceanData.temperature}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="month" />
-                      <YAxis />
-                      <Tooltip />
-                      <Line type="monotone" dataKey="surface" stroke="#ef4444" name="Surface (°C)" />
-                      <Line type="monotone" dataKey="mid" stroke="#f59e0b" name="Mid-water (°C)" />
-                      <Line type="monotone" dataKey="deep" stroke="#3b82f6" name="Deep (°C)" />
-                    </LineChart>
-                  ) : selectedParameter === "salinity" ? (
-                    <AreaChart data={oceanData.salinity}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="month" />
-                      <YAxis />
-                      <Tooltip />
-                      <Area type="monotone" dataKey="surface" stackId="1" stroke="#0ea5e9" fill="#0ea5e9" />
-                      <Area type="monotone" dataKey="mid" stackId="1" stroke="#06b6d4" fill="#06b6d4" />
-                      <Area type="monotone" dataKey="deep" stackId="1" stroke="#0891b2" fill="#0891b2" />
-                    </AreaChart>
-                  ) : selectedParameter === "fishCount" ? (
-                    <BarChart data={oceanData.fishAbundance}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="species" />
-                      <YAxis />
-                      <Tooltip />
-                      <Bar dataKey="jan" fill="#0ea5e9" />
-                      <Bar dataKey="jun" fill="#10b981" />
-                      <Bar dataKey="dec" fill="#f59e0b" />
-                    </BarChart>
-                  ) : selectedParameter === "eDNA" ? (
-                    <LineChart data={oceanData.eDNA}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="month" />
-                      <YAxis />
-                      <Tooltip />
-                      <Line type="monotone" dataKey="concentration" stroke="#8b5cf6" name="Concentration" />
-                      <Line type="monotone" dataKey="diversity" stroke="#06b6d4" name="Diversity Index" />
-                    </LineChart>
-                  ) : selectedParameter === "depth" ? (
-                    <BarChart data={oceanData.depth}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="range" />
-                      <YAxis />
-                      <Tooltip />
-                      <Bar dataKey="fishCount" fill="#10b981" />
-                    </BarChart>
-                  ) : null}
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-
-            {/* Indian Ocean Map (interactive) */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <MapPin className="h-11 w-5 mr-2" /> Indian Ocean Regional Distribution
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <IndianMapVisualization />
-              </CardContent>
-            </Card>
-
-            {/* Abundance Trends */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <TrendingUp className="h-5 w-5 mr-2" /> Fish Abundance Trends
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {oceanData.fishAbundance.map((species) => (
-                    <div key={species.species} className="flex items-center justify-between">
-                      <span className="font-medium">{species.species}</span>
-                      <div className="flex items-center space-x-3">
-                        <div className="w-32 bg-gray-200 rounded-full h-2">
-                          <div
-                            className="h-2 rounded-full bg-gradient-to-r from-sky-500 to-emerald-500"
-                            style={{ width: `${(species.jan / 120) * 100}%` }}
-                          />
-                        </div>
-                        <span className="text-sm font-medium w-8">{species.jan}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Seasonal Variations */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Calendar className="h-5 w-5 mr-2" /> Seasonal Variations
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={200}>
-                  <BarChart data={seasonalTrends}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="season" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="biodiversity" fill="#10b981" />
-                    <Bar dataKey="fishActivity" fill="#0ea5e9" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-
-            {/* Water Quality */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Water Quality & pH Levels</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div className="text-center p-4 bg-blue-50 rounded-lg">
-                    <p className="text-2xl font-bold text-blue-600">7.8</p>
-                    <p className="text-sm text-blue-800">pH Level</p>
-                  </div>
-                  <div className="text-center p-4 bg-green-50 rounded-lg">
-                    <p className="text-2xl font-bold text-green-600">8.2</p>
-                    <p className="text-sm text-green-800">Dissolved O2</p>
-                  </div>
-                  <div className="text-center p-4 bg-purple-50 rounded-lg">
-                    <p className="text-2xl font-bold text-purple-600">35.1</p>
-                    <p className="text-sm text-purple-800">Salinity (psu)</p>
-                  </div>
-                  <div className="text-center p-4 bg-amber-50 rounded-lg">
-                    <p className="text-2xl font-bold text-amber-600">2.1</p>
-                    <p className="text-sm text-amber-800">Turbidity</p>
-                  </div>
-                </div>
-                <ResponsiveContainer width="100%" height={150}>
-                  <LineChart data={oceanData.depth}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="range" />
-                    <YAxis />
-                    <Tooltip />
-                    <Line type="monotone" dataKey="ph" stroke="#8b5cf6" name="pH Level" />
-                  </LineChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-
-            {/* Nutrients Distribution */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Nutrient Levels</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {nutrients.map((nutrient) => (
-                    <div key={nutrient.name} className="flex items-center justify-between">
-                      <span className="font-medium">{nutrient.name}</span>
-                      <div className="flex items-center space-x-3">
-                        <div className="w-24 bg-gray-200 rounded-full h-2">
-                          <div
-                            className="h-2 rounded-full"
-                            style={{ width: `${(nutrient.value / 10) * 100}%`, backgroundColor: nutrient.color }}
-                          />
-                        </div>
-                        <span className="text-sm font-medium w-16">{nutrient.value} {nutrient.unit}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      )}
-
-      {/* Cross-Domain Analysis View */}
-      {activeView === 'cross-domain' && (
-        <div className="space-y-6">
-          {/* Parameter Selection for Correlation */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Parameter Correlation Analysis</CardTitle>
-              <p className="text-sm text-gray-600">Select two parameters to analyze their correlation</p>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2">X-Axis Parameter</label>
-                  <Select value={xParameter} onValueChange={setXParameter}>
-                    <SelectTrigger>
-                      <SelectValue />
+      {/* main cream band */}
+      <section style={{ backgroundColor: "var(--cream)" }} className="p-6 rounded-md">
+        <div className="max-w-full mx-auto px-2" style={{ maxWidth: 1200 }}>
+          {/* Individual view */}
+          {activeView === "individual" && (
+            <div className="space-y-6">
+              <Card className="shadow-xl bg-white rounded-2xl border border-gray-100">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <BarChart3 className="h-5 w-5 text-sky-600" />
+                    <span className="font-semibold text-gray-800">Select Parameter to Visualize</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Select value={selectedParameter} onValueChange={(v) => setSelectedParameter(String(v))}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Choose ocean parameter" />
                     </SelectTrigger>
                     <SelectContent>
                       {parameters.map((param) => (
                         <SelectItem key={param.value} value={param.value}>
                           <div className="flex items-center">
-                            <param.icon className="h-4 w-4 mr-2" />
-                            {param.label}
+                            <param.icon className="h-4 w-4 mr-2" /> {param.label}
                           </div>
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Y-Axis Parameter</label>
-                  <Select value={yParameter} onValueChange={setYParameter}>
-                    <SelectTrigger>
-                      <SelectValue />
+                </CardContent>
+              </Card>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card className="shadow-xl bg-white rounded-2xl border border-gray-100">
+                  <CardHeader>
+                    <CardTitle className="font-semibold text-gray-800">{getParameterLabel(selectedParameter)} - Temporal Variation</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ResponsiveContainer width="100%" height={350}>
+                      {selectedParameter === "temperature" ? (
+                        <LineChart data={oceanData.temperature}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="month" />
+                          <YAxis />
+                          <Tooltip />
+                          <Line type="monotone" dataKey="surface" stroke="#ef4444" name="Surface (°C)" />
+                          <Line type="monotone" dataKey="mid" stroke="#f59e0b" name="Mid-water (°C)" />
+                          <Line type="monotone" dataKey="deep" stroke="#3b82f6" name="Deep (°C)" />
+                        </LineChart>
+                      ) : selectedParameter === "salinity" ? (
+                        <AreaChart data={oceanData.salinity}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="month" />
+                          <YAxis />
+                          <Tooltip />
+                          <Area type="monotone" dataKey="surface" stackId="1" stroke="#0ea5e9" fill="#0ea5e9" />
+                          <Area type="monotone" dataKey="mid" stackId="1" stroke="#06b6d4" fill="#06b6d4" />
+                          <Area type="monotone" dataKey="deep" stackId="1" stroke="#0891b2" fill="#0891b2" />
+                        </AreaChart>
+                      ) : selectedParameter === "fishCount" ? (
+                        <BarChart data={oceanData.fishAbundance}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="species" />
+                          <YAxis />
+                          <Tooltip />
+                          <Bar dataKey="jan" fill="#0ea5e9" />
+                          <Bar dataKey="jun" fill="#10b981" />
+                          <Bar dataKey="dec" fill="#f59e0b" />
+                        </BarChart>
+                      ) : selectedParameter === "eDNA" ? (
+                        <LineChart data={oceanData.eDNA}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="month" />
+                          <YAxis />
+                          <Tooltip />
+                          <Line type="monotone" dataKey="concentration" stroke="#8b5cf6" name="Concentration" />
+                          <Line type="monotone" dataKey="diversity" stroke="#06b6d4" name="Diversity Index" />
+                        </LineChart>
+                      ) : selectedParameter === "depth" ? (
+                        <BarChart data={oceanData.depth}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="range" />
+                          <YAxis />
+                          <Tooltip />
+                          <Bar dataKey="fishCount" fill="#10b981" />
+                        </BarChart>
+                      ) : null}
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+
+                <Card className="shadow-xl bg-white rounded-2xl border border-gray-100">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <MapPin className="h-5 w-5 text-sky-600" />
+                      <span className="font-semibold text-gray-800">Indian Ocean Regional Distribution</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <IndianMapVisualization />
+                  </CardContent>
+                </Card>
+
+                <Card className="shadow-xl bg-white rounded-2xl border border-gray-100">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <TrendingUp className="h-5 w-5 text-sky-600" />
+                      <span className="font-semibold text-gray-800">Fish Abundance Trends</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {oceanData.fishAbundance.map((species) => (
+                        <div key={species.species} className="flex items-center justify-between">
+                          <span className="font-medium">{species.species}</span>
+                          <div className="flex items-center space-x-3">
+                            <div className="w-32 bg-gray-200 rounded-full h-2">
+                              <div
+                                className="h-2 rounded-full bg-gradient-to-r from-sky-500 to-emerald-500"
+                                style={{ width: `${(species.jan / 120) * 100}%` }}
+                              />
+                            </div>
+                            <span className="text-sm font-medium w-8">{species.jan}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="shadow-xl bg-white rounded-2xl border border-gray-100">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Calendar className="h-5 w-5 text-sky-600" />
+                      <span className="font-semibold text-gray-800">Seasonal Variations</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ResponsiveContainer width="100%" height={200}>
+                      <BarChart data={seasonalTrends}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="season" />
+                        <YAxis />
+                        <Tooltip />
+                        <Bar dataKey="biodiversity" fill="#10b981" />
+                        <Bar dataKey="fishActivity" fill="#0ea5e9" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+
+                <Card className="shadow-xl bg-white rounded-2xl border border-gray-100">
+                  <CardHeader>
+                    <CardTitle className="font-semibold text-gray-800">Water Quality & pH Levels</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div className="text-center p-4 bg-blue-50 rounded-lg">
+                        <p className="text-2xl font-bold text-blue-600">7.8</p>
+                        <p className="text-sm text-blue-800">pH Level</p>
+                      </div>
+                      <div className="text-center p-4 bg-green-50 rounded-lg">
+                        <p className="text-2xl font-bold text-green-600">8.2</p>
+                        <p className="text-sm text-green-800">Dissolved O2</p>
+                      </div>
+                      <div className="text-center p-4 bg-purple-50 rounded-lg">
+                        <p className="text-2xl font-bold text-purple-600">35.1</p>
+                        <p className="text-sm text-purple-800">Salinity (psu)</p>
+                      </div>
+                      <div className="text-center p-4 bg-amber-50 rounded-lg">
+                        <p className="text-2xl font-bold text-amber-600">2.1</p>
+                        <p className="text-sm text-amber-800">Turbidity</p>
+                      </div>
+                    </div>
+                    <ResponsiveContainer width="100%" height={150}>
+                      <LineChart data={oceanData.depth}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="range" />
+                        <YAxis />
+                        <Tooltip />
+                        <Line type="monotone" dataKey="ph" stroke="#8b5cf6" name="pH Level" />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+
+                <Card className="shadow-xl bg-white rounded-2xl border border-gray-100">
+                  <CardHeader>
+                    <CardTitle className="font-semibold text-gray-800">Nutrient Levels</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {nutrients.map((nutrient) => (
+                        <div key={nutrient.name} className="flex items-center justify-between">
+                          <span className="font-medium">{nutrient.name}</span>
+                          <div className="flex items-center space-x-3">
+                            <div className="w-24 bg-gray-200 rounded-full h-2">
+                              <div
+                                className="h-2 rounded-full"
+                                style={{ width: `${(nutrient.value / 10) * 100}%`, backgroundColor: nutrient.color }}
+                              />
+                            </div>
+                            <span className="text-sm font-medium w-16">{nutrient.value} {nutrient.unit}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          )}
+
+          {/* Cross-domain view */}
+          {activeView === "cross-domain" && (
+            <div className="space-y-6">
+              <Card className="shadow-xl bg-white rounded-2xl border border-gray-100">
+                <CardHeader>
+                  <CardTitle className="font-semibold text-gray-800">Parameter Correlation Analysis</CardTitle>
+                  <p className="text-sm text-gray-600">Select two parameters to analyze their correlation</p>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2">X-Axis Parameter</label>
+                      <Select value={xParameter} onValueChange={(v) => setXParameter(String(v))}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {parameters.map((param) => (
+                            <SelectItem key={param.value} value={param.value}>
+                              <div className="flex items-center">
+                                <param.icon className="h-4 w-4 mr-2" />
+                                {param.label}
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Y-Axis Parameter</label>
+                      <Select value={yParameter} onValueChange={(v) => setYParameter(String(v))}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {parameters.map((param) => (
+                            <SelectItem key={param.value} value={param.value}>
+                              <div className="flex items-center">
+                                <param.icon className="h-4 w-4 mr-2" />
+                                {param.label}
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="shadow-xl bg-white rounded-2xl border border-gray-100">
+                <CardHeader>
+                  <CardTitle className="font-semibold text-gray-800">{getParameterLabel(xParameter)} vs {getParameterLabel(yParameter)} Correlation</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="90%" height={350}>
+                    <ScatterChart data={correlationData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="x" name={getParameterLabel(xParameter)} type="number" domain={["dataMin", "dataMax"]} />
+                      <YAxis dataKey="y" name={getParameterLabel(yParameter)} type="number" domain={["dataMin", "dataMax"]} />
+                      <Tooltip cursor={{ strokeDasharray: "3 3" }} content={correlationTooltipContent} />
+                      <Scatter dataKey="x" fill="#0ea5e9" />
+                    </ScatterChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+
+              <Card className="shadow-xl bg-white rounded-2xl border border-gray-100">
+                <CardHeader>
+                  <CardTitle className="font-semibold text-gray-800">Parameter Relationships Overview</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-4 gap-2 text-xs">
+                    {["Temp", "Salinity", "Fish", "eDNA"].map((param1, i) =>
+                      ["Temp", "Salinity", "Fish", "eDNA"].map((param2, j) => (
+                        <div key={`${i}-${j}`} className={`p-2 text-center rounded ${i === j ? "bg-gray-200" : Math.random() > 0.5 ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+                          {i === j ? "1.00" : (Math.random() * 2 - 1).toFixed(2)}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                  <div className="mt-2 text-xs text-gray-600">Green: Positive correlation, Red: Negative correlation</div>
+                </CardContent>
+              </Card>
+
+              <Card className="shadow-xl bg-white rounded-2xl border border-gray-100">
+                <CardHeader>
+                  <CardTitle className="font-semibold text-gray-800">Multi-Parameter Regional Comparison</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {crossDomainData.map((region, index) => (
+                      <div key={index} className="border rounded-lg p-4">
+                        <h3 className="font-semibold mb-3">{region.region}</h3>
+                        <div className="grid grid-cols-2 gap-2 text-sm">
+                          <div>
+                            <p className="text-gray-600">Temperature</p>
+                            <p className="font-bold text-red-600">{region.temp}°C</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-600">Salinity</p>
+                            <p className="font-bold text-blue-600">{region.salinity} psu</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-600">Fish Count</p>
+                            <p className="font-bold text-green-600">{region.fishCount}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-600">eDNA</p>
+                            <p className="font-bold text-purple-600">{region.eDNA}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-600">pH Level</p>
+                            <p className="font-bold text-amber-600">{region.ph}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-600">Nutrients</p>
+                            <p className="font-bold text-pink-600">{region.nutrients}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* optionally render CrossDomain component (keeps same behavior) */}
+          {activeView === "cross-domain" && <CrossDomain />}
+
+          {/* 3D interactive view */}
+          {activeView === "3d" && (
+            <Card className="shadow-xl bg-white rounded-2xl border border-gray-100">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="font-semibold text-gray-800">Interactive 3D Segmentation Visualization</CardTitle>
+                  <Select onValueChange={(value) => setSelectedOtolith(String(value))} value={selectedOtolith}>
+                    <SelectTrigger className="w-48">
+                      <SelectValue placeholder="Select Otolith" />
                     </SelectTrigger>
                     <SelectContent>
-                      {parameters.map((param) => (
-                        <SelectItem key={param.value} value={param.value}>
-                          <div className="flex items-center">
-                            <param.icon className="h-4 w-4 mr-2" />
-                            {param.label}
-                          </div>
-                        </SelectItem>
-                      ))}
+                      <SelectItem value="Indian Cod">Indian Cod</SelectItem>
+                      <SelectItem value="Haddock">Haddock</SelectItem>
+                      <SelectItem value="Pollock">Pollock</SelectItem>
+                      <SelectItem value="Mackerel">Mackerel</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardHeader>
 
-          {/* Correlation Scatter Plot */}
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                {getParameterLabel(xParameter)} vs {getParameterLabel(yParameter)} Correlation
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="90%" height={350}>
-                <ScatterChart data={correlationData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="x" 
-                    name={getParameterLabel(xParameter)}
-                    type="number"
-                    domain={['dataMin', 'dataMax']}
-                  />
-                  <YAxis 
-                    dataKey="y" 
-                    name={getParameterLabel(yParameter)}
-                    type="number"
-                    domain={['dataMin', 'dataMax']}
-                  />
-                  <Tooltip 
-                    cursor={{ strokeDasharray: '3 3' }}
-                    content={({ active, payload }) => {
-                      if (active && payload && payload.length) {
-                        const data = payload[0].payload;
-                        return (
-                          <div className="bg-white p-3 border rounded shadow">
-                            <p className="font-semibold">{data.region}</p>
-                            <p>{getParameterLabel(xParameter)}: {data.x}</p>
-                            <p>{getParameterLabel(yParameter)}: {data.y}</p>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
-                  />
-                  <Scatter dataKey="x" fill="#0ea5e9" />
-                </ScatterChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-          {/* Correlation Matrix Heatmap */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Parameter Relationships Overview</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-4 gap-2 text-xs">
-                {['Temp', 'Salinity', 'Fish', 'eDNA'].map((param1, i) =>
-                  ['Temp', 'Salinity', 'Fish', 'eDNA'].map((param2, j) => (
-                    <div 
-                      key={`${i}-${j}`}
-                      className={`p-2 text-center rounded ${
-                        i === j ? 'bg-gray-200' : 
-                        Math.random() > 0.5 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                      }`}
-                    >
-                      {i === j ? '1.00' : (Math.random() * 2 - 1).toFixed(2)}
+              <CardContent>
+                <div className="space-y-6">
+                  <Interactive3DView activeView={activeView} />
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="bg-blue-50 rounded-lg p-4">
+                      <h4 className="font-semibold mb-2 text-blue-800">PLY Point Cloud</h4>
+                      <p className="text-sm text-blue-600">Native PLY file format support with vertex colors</p>
                     </div>
-                  ))
-                )}
-              </div>
-              <div className="mt-2 text-xs text-gray-600">
-                Green: Positive correlation, Red: Negative correlation
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Regional Comparison */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Multi-Parameter Regional Comparison</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {crossDomainData.map((region, index) => (
-                  <div key={index} className="border rounded-lg p-4">
-                    <h3 className="font-semibold mb-3">{region.region}</h3>
-                    <div className="grid grid-cols-2 gap-2 text-sm">
-                      <div>
-                        <p className="text-gray-600">Temperature</p>
-                        <p className="font-bold text-red-600">{region.temp}°C</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-600">Salinity</p>
-                        <p className="font-bold text-blue-600">{region.salinity} psu</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-600">Fish Count</p>
-                        <p className="font-bold text-green-600">{region.fishCount}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-600">eDNA</p>
-                        <p className="font-bold text-purple-600">{region.eDNA}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-600">pH Level</p>
-                        <p className="font-bold text-amber-600">{region.ph}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-600">Nutrients</p>
-                        <p className="font-bold text-pink-600">{region.nutrients}</p>
-                      </div>
+                    <div className="bg-green-50 rounded-lg p-4">
+                      <h4 className="font-semibold mb-2 text-green-800">Interactive Controls</h4>
+                      <p className="text-sm text-green-600">Mouse drag to rotate, scroll to zoom</p>
                     </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>       
-        </div>
-      )}
-      {activeView === 'cross-domain' &&       
-      <CrossDomain/>
-    }
-     
-
-      {/* 3D Interactive View */}
-        {activeView === '3d' && (
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Interactive 3D Segmentation Visualization</CardTitle>
-                
-                 <Select onValueChange={(value) => setSelectedOtolith(value)} value={selectedOtolith}>
-                   <SelectTrigger className="w-48">
-                    <SelectValue placeholder="Select Otolith" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Indian Cod">Indian Cod</SelectItem>
-                    <SelectItem value="Haddock">Haddock</SelectItem>
-                    <SelectItem value="Pollock">Pollock</SelectItem>
-                    <SelectItem value="Mackerel">Mackerel</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                <Interactive3DView activeView={activeView} />
-                
-                {/* Info cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="bg-blue-50 rounded-lg p-4">
-                    <h4 className="font-semibold mb-2 text-blue-800">PLY Point Cloud</h4>
-                    <p className="text-sm text-blue-600">Native PLY file format support with vertex colors</p>
-                  </div>
-                  <div className="bg-green-50 rounded-lg p-4">
-                    <h4 className="font-semibold mb-2 text-green-800">Interactive Controls</h4>
-                    <p className="text-sm text-green-600">Mouse drag to rotate, scroll to zoom</p>
-                  </div>
-                  <div className="bg-purple-50 rounded-lg p-4">
-                    <h4 className="font-semibold mb-2 text-purple-800">Real-time Rendering</h4>
-                    <p className="text-sm text-purple-600">WebGL-powered Three.js visualization</p>
+                    <div className="bg-purple-50 rounded-lg p-4">
+                      <h4 className="font-semibold mb-2 text-purple-800">Real-time Rendering</h4>
+                      <p className="text-sm text-purple-600">WebGL-powered Three.js visualization</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </section>
     </div>
   );
 };

@@ -2,13 +2,13 @@ import express from "express";
 const router = express.Router();
 
 const speciesData = {
-  "mullus_barbatus": {
+  "scomberomorus guttatus": {
     "files": {
-      "otholith": ["C:\\GitHub\\CodeNerds-SIH2025\\data\\Mulbar_99_216mm_04-08-18_STATION38_MEDITS_R.png"],
-      "image": ["C:\\GitHub\\CodeNerds-SIH2025\\data\\Mullus-barbatus-barbatus-2-724x449.jpg"],
-      "fasta_sequence": ["C:\\GitHub\\CodeNerds-SIH2025\\data\\NR_119296.fasta"]
+      "otholith": ["C:\\GitHub\\CodeNerds-SIH2025\\data\\Comgut_99_216mm_04-08-18_STATION38_MEDITS_R.png"],
+      "image": ["C:\\GitHub\\CodeNerds-SIH2025\\data\\Indian_Kingfish.jpg"],
+      "fasta_sequence": ["C:\\GitHub\\CodeNerds-SIH2025\\data\\GCA_038419695.1.fasta"]
     },
-    "description": "Mullus barbatus, commonly known as the red mullet, is a small demersal fish found in the Mediterranean Sea and eastern North Atlantic. It feeds on benthic invertebrates and is valued commercially for its meat."
+    "description": "The Indian king mackerel (Scomberomorus guttatus) is a large, fast-swimming predatory fish found in the warm coastal waters of the Indian Ocean and western Pacific. It has a long, streamlined silvery body with bluish-green back and distinctive wavy vertical bands. Highly prized as seafood across South Asia, it is known as Surmai in India and is valued both commercially and recreationally."
   }
 };
 

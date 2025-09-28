@@ -12,7 +12,6 @@ import { MapContainer, TileLayer, CircleMarker, Popup, Tooltip as LTooltip, useM
 import "leaflet/dist/leaflet.css";
 import CrossDomain from "@/components/shared/CrossDomain";
 
-
 const oceanData = {
   temperature: [
     { month: "Jan", surface: 24.2, mid: 22.8, deep: 18.5, region: "Arabian Sea" },
@@ -161,7 +160,7 @@ const dummyPoints = {
   ],
   eDNA: [
     { lat: 18.5, lng: 72.6, value: 3.2 },
-    { lat: 15.2, lng: 75.3, value: 2.9 },
+    { lat: 15.2, lng: 71.3, value: 2.9 },
     { lat: 9.0, lng: 73.0, value: 3.5 },
     { lat: 21.7, lng: 86.8, value: 2.4 },
     { lat: 7.5, lng: 79.7, value: 2.1 },
@@ -178,18 +177,17 @@ const dummyPoints = {
     { lat: 14.7, lng: 80.3, value: 7.9 },
     { lat: 9.1, lng: 72.8, value: 8.2 },
     { lat: 11.0, lng: 92.7, value: 7.7 },
-    { lat: 21.6, lng: 86.7, value: 8.0 },
+    { lat: 19.6, lng: 86.7, value: 8.0 },
   ],
   nutrients: [
-    { lat: 19.0, lng: 72.7, value: 1.2 }, // nitrates
-    { lat: 16.8, lng: 74.1, value: 1.5 }, // phosphates
-    { lat: 14.7, lng: 80.3, value: 2.1 }, // higher nutrients
-    { lat: 11.0, lng: 92.7, value: 0.9 }, // lower nutrients
-    { lat: 21.6, lng: 86.7, value: 2.8 }, // coastal rich
+    { lat: 19.0, lng: 72.7, value: 1.2 }, 
+    { lat: 16.8, lng: 74.1, value: 1.5 }, 
+    { lat: 14.7, lng: 80.3, value: 2.1 }, 
+    { lat: 11.0, lng: 92.7, value: 0.9 },
+    { lat: 21.6, lng: 86.7, value: 2.8 }, 
   ],
 };
 
-// helper to compute radius for circle markers given a value and parameter
 const markerRadiusFor = (param: string, value: number) => {
   switch (param) {
     case "temperature":
@@ -254,6 +252,7 @@ export const DataVisualization: React.FC = () => {
   const [selectedParameter, setSelectedParameter] = useState("temperature");
   const [xParameter, setXParameter] = useState("temperature");
   const [yParameter, setYParameter] = useState("salinity");
+  const [selectedOtolith, setSelectedOtolith] = useState("");
 
   // correlation data for cross-domain charts
   const correlationData = useMemo(() => {
@@ -289,7 +288,7 @@ export const DataVisualization: React.FC = () => {
   // ---------------------------
   const IndianMapVisualization = () => (
     <div className="relative">
-      <div className="w-full h-64 rounded-lg relative overflow-hidden">
+      <div className="w-full h-80 rounded-lg relative overflow-hidden">
         <MapContainer
           center={INDIA_CENTER}
           zoom={5}
@@ -423,7 +422,7 @@ export const DataVisualization: React.FC = () => {
                 <CardTitle>{getParameterLabel(selectedParameter)} - Temporal Variation</CardTitle>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
+                <ResponsiveContainer width="100%" height={350}>
                   {selectedParameter === "temperature" ? (
                     <LineChart data={oceanData.temperature}>
                       <CartesianGrid strokeDasharray="3 3" />
@@ -480,7 +479,7 @@ export const DataVisualization: React.FC = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <MapPin className="h-9 w-5 mr-2" /> Indian Ocean Regional Distribution
+                  <MapPin className="h-11 w-5 mr-2" /> Indian Ocean Regional Distribution
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -768,10 +767,7 @@ export const DataVisualization: React.FC = () => {
       {activeView === 'cross-domain' &&       
       <CrossDomain/>
     }
-
-
-
-      
+     
 
       {/* 3D Interactive View */}
         {activeView === '3d' && (
@@ -780,15 +776,15 @@ export const DataVisualization: React.FC = () => {
               <div className="flex items-center justify-between">
                 <CardTitle>Interactive 3D Segmentation Visualization</CardTitle>
                 
-                <Select>
-                  <SelectTrigger className="w-48">
+                 <Select onValueChange={(value) => setSelectedOtolith(value)} value={selectedOtolith}>
+                   <SelectTrigger className="w-48">
                     <SelectValue placeholder="Select Otolith" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="otolith1">Indian Cod</SelectItem>
-                    <SelectItem value="otolith2">Haddock</SelectItem>
-                    <SelectItem value="otolith3">Pollock</SelectItem>
-                    <SelectItem value="otolith4">Mackerel</SelectItem>
+                    <SelectItem value="Indian Cod">Indian Cod</SelectItem>
+                    <SelectItem value="Haddock">Haddock</SelectItem>
+                    <SelectItem value="Pollock">Pollock</SelectItem>
+                    <SelectItem value="Mackerel">Mackerel</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

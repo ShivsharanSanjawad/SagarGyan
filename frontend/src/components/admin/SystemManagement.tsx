@@ -55,7 +55,7 @@ export const SystemManagement: React.FC = () => {
   const systemAlerts = [
     { id: 1, type: 'warning', message: 'Storage usage above 80%', time: '2 hours ago' },
     { id: 2, type: 'info', message: 'System backup completed successfully', time: '6 hours ago' },
-    { id: 3, type: 'error', message: 'Failed to process 2 data uploads', time: '1 day ago' },
+    { id: 3, type: 'error', message: 'Failed to process 1 data upload', time: '1 day ago' },
   ];
 
   const COLORS = ['#0ea5e9', '#10b981', '#f59e0b', '#8b5cf6'];

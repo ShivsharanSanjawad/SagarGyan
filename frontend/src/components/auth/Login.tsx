@@ -3,7 +3,7 @@ import { useAuth } from '../../context/authContext';
 import { Button } from '../ui/Button';
 import { CustomInput } from '../ui/CustomInput';
 import { Card, CardContent } from '../ui/card';
-import { Waves, Cloud } from 'lucide-react';
+import { Cloud } from 'lucide-react';
 
 export const LoginForm: React.FC = () => {
   const { login } = useAuth();
@@ -65,11 +65,15 @@ export const LoginForm: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-cyan-50">
       <div className="w-full max-w-md mx-4">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center mb-4">
-            <div className="p-3 bg-blue-600 rounded-full shadow-lg">
-              <Waves className="h-8 w-8 text-primary-foreground" />
-            </div>
+        <div className="text-center mb-3">
+          <div className="flex items-center justify-center mb-1.5">
+            <div className="mt-1 w-12 h-12 rounded-full bg-white/10 flex items-center justify-center overflow-hidden">
+            <img
+              src="/sidebarlogo.png"
+              alt="Wave logo"
+              className="w-full h-full object-cover"
+            />
+          </div>
           </div>
           <h1 className="text-2xl font-bold text-blue-950">SagarGyaan</h1>
           <p className="text-gray-600 mt-2">Oceanographic Data Platform</p>

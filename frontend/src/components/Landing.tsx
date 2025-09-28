@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Waves, Database, Brain, BarChart3, Search, Eye, Users,ArrowRight,Fish,Microscope,Map,Droplets,Compass} from 'lucide-react';
+import { Database, Brain, BarChart3, Search, Eye, Users,ArrowRight,Fish,Microscope,Map,Droplets,Compass} from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/input';
@@ -181,8 +181,11 @@ export const Landing: React.FC<LandingPageProps> = ({ onLoginClick }) => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6 }}
                 className="flex items-center space-x-3">
-                <div className="bg-gradient-to-r from-blue-600 to-teal-600 p-2 rounded-full shadow-lg">
-                  <Waves className="h-8 w-8 text-white" />
+                <div className="w-11 h-11 rounded-full bg-white/10 flex items-center justify-center overflow-hidden">
+                  <img
+                    src="/sidebarlogo.png"
+                    alt="Wave logo"
+                    className="w-full h-full object-cover"/>
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-700 to-teal-600 bg-clip-text text-transparent">
@@ -469,7 +472,13 @@ export const Landing: React.FC<LandingPageProps> = ({ onLoginClick }) => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div>
                 <div className="flex items-center space-x-3 mb-4">
-                  <Waves className="h-6 w-6 text-teal-400" />
+                  <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center overflow-hidden">
+                    <img
+                      src="/sidebarlogo.png"
+                      alt="Wave logo"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                   <span className="text-xl font-bold">SagarGyaan</span>
                 </div>
                 <p className="text-slate-300">

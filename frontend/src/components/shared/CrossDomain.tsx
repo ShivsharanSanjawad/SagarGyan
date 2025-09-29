@@ -1,4 +1,5 @@
-// CrossDomain.tsx - Enhanced NOAA-style animated Indian Ocean dashboard with improved gradients and timeline logic
+// CrossDomain.tsx - same logic as before; header and layer chips restyled (white header card, pill buttons, subtle shadows).
+// NO functional logic was changed — only styles.
 
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import {
@@ -23,11 +24,10 @@ import {
   ResponsiveContainer,
   BarChart,
   Bar,
-  Legend,
   Cell,
 } from 'recharts';
 import { Slider, Button, Box, Typography, Card, CardContent, Chip } from '@mui/material';
-import { PlayArrow, Pause, Speed, GetApp } from '@mui/icons-material';
+import { PlayArrow, Pause, Speed, GetApp, FileDownload } from '@mui/icons-material';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
@@ -79,6 +79,37 @@ interface HeatmapLayerProps {
   opacity?: number;
 }
 
+/* AnimatedNumber: lightweight count-up for small dashboard counters */
+const AnimatedNumber: React.FC<{ value: number; duration?: number; className?: string }> = ({ value, duration = 900, className }) => {
+  const target = typeof value === 'number' ? value : parseFloat(String(value)) || 0;
+  const [display, setDisplay] = useState(0);
+  const rafRef = useRef<number | null>(null);
+  const startRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    startRef.current = null;
+    if (isNaN(target)) {
+      setDisplay(0);
+      return;
+    }
+    const step = (t: number) => {
+      if (!startRef.current) startRef.current = t;
+      const elapsed = t - (startRef.current ?? 0);
+      const prog = Math.min(1, elapsed / duration);
+      const eased = Math.pow(prog, 0.78);
+      const cur = Math.round(eased * target);
+      setDisplay(cur);
+      if (prog < 1) rafRef.current = requestAnimationFrame(step);
+    };
+    rafRef.current = requestAnimationFrame(step);
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [target, duration]);
+
+  return <span className={className}>{display}</span>;
+};
+
 // Enhanced Heatmap Layer with variable-specific gradients
 const HeatmapLayer: React.FC<HeatmapLayerProps> = ({ data, color, variable, opacity = 0.9 }) => {
   const map = useMap();
@@ -89,81 +120,81 @@ const HeatmapLayer: React.FC<HeatmapLayerProps> = ({ data, color, variable, opac
     switch(varName) {
       case 'SST':
         return {
-          0.0: '#2166ac', // Deep blue (cold)
-          0.2: '#4393c3', // Light blue
-          0.4: '#92c5de', // Pale blue
-          0.5: '#d1e5f0', // Very pale blue
-          0.6: '#fdbf6f', // Light orange
-          0.7: '#fd8d3c', // Orange
-          0.8: '#f03b20', // Red-orange
-          0.9: '#bd0026', // Dark red
-          1.0: '#800026'  // Deep red (hot)
+          0.0: '#2166ac',
+          0.2: '#4393c3',
+          0.4: '#92c5de',
+          0.5: '#d1e5f0',
+          0.6: '#fdbf6f',
+          0.7: '#fd8d3c',
+          0.8: '#f03b20',
+          0.9: '#bd0026',
+          1.0: '#800026'
         };
       case 'Salinity':
         return {
-          0.0: '#f7fbff', // Almost white (low salinity)
-          0.2: '#deebf7', // Very light blue
-          0.4: '#c6dbef', // Light blue
-          0.6: '#9ecae1', // Medium blue
-          0.8: '#4292c6', // Blue
-          1.0: '#08519c'  // Dark blue (high salinity)
+          0.0: '#f7fbff',
+          0.2: '#deebf7',
+          0.4: '#c6dbef',
+          0.6: '#9ecae1',
+          0.8: '#4292c6',
+          1.0: '#08519c'
         };
       case 'Chlorophyll':
         return {
-          0.0: '#fff7ec', // Very light cream (low chlorophyll)
-          0.3: '#fee8c8', // Light peach
-          0.5: '#fdd49e', // Peach
-          0.7: '#fdbb84', // Orange-peach
-          0.8: '#fc8d59', // Orange
-          0.9: '#e34a33', // Red-orange
-          1.0: '#b30000'  // Dark red (high chlorophyll)
+          0.0: '#fff7ec',
+          0.3: '#fee8c8',
+          0.5: '#fdd49e',
+          0.7: '#fdbb84',
+          0.8: '#fc8d59',
+          0.9: '#e34a33',
+          1.0: '#b30000'
         };
       case 'pH':
         return {
-          0.0: '#d7191c', // Red (acidic)
-          0.2: '#fdae61', // Orange
-          0.4: '#ffffbf', // Yellow (neutral)
-          0.6: '#abd9e9', // Light blue
-          0.8: '#74add1', // Blue
-          1.0: '#2c7bb6'  // Dark blue (basic)
+          0.0: '#d7191c',
+          0.2: '#fdae61',
+          0.4: '#ffffbf',
+          0.6: '#abd9e9',
+          0.8: '#74add1',
+          1.0: '#2c7bb6'
         };
       case 'Oxygen':
         return {
-          0.0: '#a50026', // Dark red (low oxygen)
-          0.2: '#d73027', // Red
-          0.4: '#f46d43', // Orange
-          0.6: '#fee08b', // Yellow
-          0.8: '#c7e9b4', // Light green
-          1.0: '#006837'  // Dark green (high oxygen)
+          0.0: '#a50026',
+          0.2: '#d73027',
+          0.4: '#f46d43',
+          0.6: '#fee08b',
+          0.8: '#c7e9b4',
+          1.0: '#006837'
         };
       case 'Nitrate':
         return {
-          0.0: '#f7fcf5', // Very light green
-          0.3: '#e5f5e0', // Light green
-          0.5: '#c7e9c0', // Medium light green
-          0.7: '#a1d99b', // Medium green
-          0.8: '#74c476', // Green
-          0.9: '#41ab5d', // Dark green
-          1.0: '#238b45'  // Very dark green
+          0.0: '#f7fcf5',
+          0.3: '#e5f5e0',
+          0.5: '#c7e9c0',
+          0.7: '#a1d99b',
+          0.8: '#74c476',
+          0.9: '#41ab5d',
+          1.0: '#238b45'
         };
       case 'Phosphate':
         return {
-          0.0: '#fcfbfd', // Almost white
-          0.3: '#efedf5', // Very light purple
-          0.5: '#dadaeb', // Light purple
-          0.7: '#bcbddc', // Medium purple
-          0.8: '#9e9ac8', // Purple
-          0.9: '#807dba', // Dark purple
-          1.0: '#54278f'  // Very dark purple
+          0.0: '#fcfbfd',
+          0.3: '#efedf5',
+          0.5: '#dadaeb',
+          0.7: '#bcbddc',
+          0.8: '#9e9ac8',
+          0.9: '#807dba',
+          1.0: '#54278f'
         };
       default:
         return {
-          0.0: '#ffffcc', // Light yellow
-          0.3: '#fed976', // Yellow
-          0.5: '#fd8d3c', // Orange
-          0.7: '#fc4e2a', // Red-orange
-          0.9: '#e31a1c', // Red
-          1.0: '#800026'  // Dark red
+          0.0: '#ffffcc',
+          0.3: '#fed976',
+          0.5: '#fd8d3c',
+          0.7: '#fc4e2a',
+          0.9: '#e31a1c',
+          1.0: '#800026'
         };
     }
   };
@@ -175,17 +206,14 @@ const HeatmapLayer: React.FC<HeatmapLayerProps> = ({ data, color, variable, opac
     }
     if (!data.length) return;
 
-    // Enhanced normalization for better color distribution
     const values = data.map(d => d[2]);
     const maxValue = Math.max(...values);
     const minValue = Math.min(...values);
     const range = maxValue - minValue;
     
-    // Apply logarithmic scaling for better visual distribution
     const normalizedData = data.map(([lat, lon, val]) => {
       if (range === 0) return [lat, lon, 0.5];
       const normalized = (val - minValue) / range;
-      // Apply power scaling for better visual density
       const enhanced = Math.pow(normalized, 0.7);
       return [lat, lon, enhanced];
     });
@@ -294,7 +322,7 @@ function generateRealisticTimeSeries(lat: number, lon: number): Record<string, T
   return out;
 }
 
-// Timeline Component with corrected logic
+// ---------- Upgraded TimelineControls (UI only; props & logic preserved) ----------
 const TimelineControls: React.FC<{
   dateArray: string[];
   currentDateIndex: number;
@@ -328,175 +356,179 @@ const TimelineControls: React.FC<{
     }
   }, [dateRange, currentDateIndex, setCurrentDateIndex]);
 
+  const formatShortDate = (d?: string) => d ? new Date(d).toLocaleDateString('en-CA') : '—';
+
   return (
-    <Card sx={{ margin: '16px 24px 24px 24px', backgroundColor: 'white', border: '1px solid #e2e8f0' }}>
-      <CardContent sx={{ padding: '20px !important' }}>
-        {/* Current Date Display */}
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center',
-          marginBottom: '20px'
-        }}>
-          <div>
-            <Typography variant="h5" sx={{ color: '#0f172a', fontWeight: '700', marginBottom: '4px' }}>
-              {formattedDate}
+    <Card sx={{ backgroundColor: 'white', border: '1px solid #e6edf3', borderRadius: 2 }}>
+      <CardContent sx={{ p: 3 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2, mb: 2 }}>
+          <Box>
+            <Typography variant="h6" sx={{ fontWeight: 700, color: '#0f172a' }}>
+              {formattedDate || 'No date selected'}
             </Typography>
             <Typography variant="body2" sx={{ color: '#64748b' }}>
-              Current: Day {currentDateIndex + 1} of {dateArray.length} • {currentDate}
+              Current: Day {currentDateIndex + 1} of {dateArray.length} • {currentDate || '—'}
             </Typography>
-          </div>
-          
-          {/* Play Controls */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          </Box>
+
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Button
               variant="contained"
               startIcon={isPlaying ? <Pause /> : <PlayArrow />}
               onClick={() => setIsPlaying(!isPlaying)}
-              sx={{ 
-                backgroundColor: '#3b82f6',
-                '&:hover': { backgroundColor: '#2563eb' },
-                borderRadius: '8px',
+              sx={{
+                background: isPlaying
+                  ? 'linear-gradient(90deg,#2563eb,#1e40af)'
+                  : 'linear-gradient(90deg,#3b82f6,#2563eb)',
+                boxShadow: '0 6px 18px rgba(37,99,235,0.18)',
+                color: 'white',
                 textTransform: 'none',
-                fontWeight: '600'
+                borderRadius: 2,
+                px: 2.5,
+                py: 1
               }}
             >
-              {isPlaying ? 'Pause Animation' : 'Play Animation'}
+              {isPlaying ? 'Pause' : 'Play'}
             </Button>
-            
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Speed style={{ fontSize: '20px', color: '#64748b' }} />
-              <input 
-                type="range" 
-                min="200" 
-                max="2000" 
-                step="100"
-                value={speed} 
-                onChange={e => setSpeed(Number(e.target.value))}
-                style={{ 
-                  width: '120px', 
-                  height: '6px',
-                  borderRadius: '3px',
-                  background: '#e2e8f0',
-                  outline: 'none'
+
+            <Box sx={{ width: 220, display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography variant="caption" sx={{ color: '#64748b', minWidth: 36 }}>
+                Speed
+              </Typography>
+              <Slider
+                value={speed}
+                onChange={(_, val) => setSpeed(Number(val))}
+                min={200}
+                max={2000}
+                step={100}
+                sx={{
+                  '& .MuiSlider-track': { backgroundColor: '#60a5fa' },
+                  '& .MuiSlider-thumb': { bgcolor: '#1e40af' },
+                  '& .MuiSlider-rail': { bgcolor: '#e6eefc' },
+                  height: 8
                 }}
               />
-              <span style={{ fontSize: '14px', minWidth: '60px', color: '#64748b' }}>
+              <Typography variant="caption" sx={{ color: '#334155', minWidth: 48, textAlign: 'right' }}>
                 {speed}ms
-              </span>
-            </div>
-          </div>
-        </div>
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
 
-        {/* Range Selector  */}
-        <Card 
-          sx={{
-            margin: '16px 24px 24px 24px', 
-            backgroundColor: 'white', 
-            border: '1px solid #e2e8f0',
-            padding: '28px 16px'
-          }}
-        >
-          <CardContent>
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '40px',   // Ensures enough vertical space between sliders
-              alignItems: 'stretch',
-              width: '100%'
-            }}>
-              {/* Range Selector (Animation range) */}
-              <div style={{ width: '100%' }}>
-                <Typography sx={{ fontWeight: 500, mb: 1 }}>Set the date range for animation playback:</Typography>
-                <Slider
-                  value={dateRange}
-                  onChange={(_, val) => setDateRange(val as [number, number])}
-                  valueLabelDisplay="auto"
-                  valueLabelFormat={(value) => dateArray[value]}
-                  min={0}
-                  max={dateArray.length - 1}
-                  sx={{
-                    color: '#10b981', height: '8px', mb: 2,
-                    '& .MuiSlider-thumb': { width: 24, height: 24 }
-                  }}
-                />
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: '-8px', px: 1 }}>
-                  <Typography fontSize={13}>{dateArray[dateRange[0]]}</Typography>
-                  <Typography fontSize={13}>{dateArray[dateRange[1]]}</Typography>
-                </Box>
-              </div>
+        {/* Range selector card */}
+        <Card sx={{ backgroundColor: '#fbfdff', border: '1px solid #eef6ff', mb: 2 }}>
+          <CardContent sx={{ p: 2 }}>
+            <Typography variant="subtitle2" sx={{ color: '#0f172a', fontWeight: 600, mb: 1 }}>
+              Set the date range for animation playback
+            </Typography>
 
-              {/* Current Date Navigation (manual date jump) */}
-              <div style={{ width: '100%' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                  <Box sx={{ bgcolor: '#EEF4FF', p: '2px 8px', borderRadius: '8px' }}>
-                    <Typography sx={{ color: '#2563eb', fontWeight: 700, fontSize: 17 }}>Current Date Navigation</Typography>
-                  </Box>
-                </Box>
-                <Typography fontSize={14} color="text.secondary" mb={1}>
-                  Navigate to specific date within selected range
+            <Box sx={{ px: 1 }}>
+              <Slider
+                value={dateRange}
+                onChange={(_, val) => setDateRange(val as [number, number])}
+                min={0}
+                max={Math.max(0, dateArray.length - 1)}
+                valueLabelDisplay="off"
+                sx={{
+                  '& .MuiSlider-thumb': { bgcolor: '#059669', boxShadow: '0 6px 12px rgba(5,150,105,0.18)' },
+                  '& .MuiSlider-track': { bgcolor: '#10b981' },
+                  '& .MuiSlider-rail': { bgcolor: '#e6f6ef' },
+                  height: 8
+                }}
+              />
+
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+                <Typography variant="caption" sx={{ color: '#475569' }}>
+                  {formatShortDate(dateArray[dateRange[0]])}
                 </Typography>
-                <Slider
-                  value={currentDateIndex}
-                  onChange={(_, val) => setCurrentDateIndex(val as number)}
-                  min={dateRange[0]}
-                  max={dateRange[1]}
-                  valueLabelDisplay="auto"
-                  valueLabelFormat={(value) => dateArray[value]}
-                  sx={{
-                    color: '#2563eb', height: '10px', mb: 2,
-                    '& .MuiSlider-thumb': { width: 28, height: 28 }
-                  }}
-                />
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: '-8px', px: 1 }}>
-                  <Typography fontSize={13}>{dateArray[dateRange[0]]}</Typography>
-                  <Typography fontSize={13}>{dateArray[dateRange[1]]}</Typography>
-                </Box>
-              </div>
-            </div>
+                <Typography variant="caption" sx={{ color: '#475569' }}>
+                  {formatShortDate(dateArray[dateRange[1]])}
+                </Typography>
+              </Box>
+            </Box>
           </CardContent>
         </Card>
 
-        {/* Status Information */}
-        <div style={{ 
-          marginTop: '16px',
-          padding: '16px',
-          backgroundColor: '#f8fafc',
-          borderRadius: '8px',
-          border: '1px solid #e2e8f0',
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '16px'
-        }}>
-          <div>
-            <Typography variant="body2" sx={{ color: '#475569', fontWeight: '600', marginBottom: '4px' }}>
-               Current Status
-            </Typography>
-            <Typography variant="body2" sx={{ color: '#64748b' }}>
-              Viewing: {formattedDate}
-            </Typography>
-            <Typography variant="body2" sx={{ color: '#64748b' }}>
-              Animation: {isPlaying ? '▶️ Playing' : '⏸️ Paused'}
-            </Typography>
-          </div>
-          <div>
-            <Typography variant="body2" sx={{ color: '#475569', fontWeight: '600', marginBottom: '4px' }}>
-               Range Info
-            </Typography>
-            <Typography variant="body2" sx={{ color: '#64748b' }}>
-              From: {dateArray[dateRange[0]]}
-            </Typography>
-            <Typography variant="body2" sx={{ color: '#64748b' }}>
-              To: {dateArray[dateRange[1]]}
-            </Typography>
-          </div>
-        </div>
+        {/* Current date navigation */}
+        <Card sx={{ backgroundColor: '#fff', border: '1px solid #eef2ff', mb: 2 }}>
+          <CardContent sx={{ p: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+              <Box>
+                <Typography variant="subtitle2" sx={{ color: '#0f172a', fontWeight: 700 }}>
+                  Current Date Navigation
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#64748b' }}>
+                  Navigate to specific date within selected range
+                </Typography>
+              </Box>
+              <Chip label={`Day ${currentDateIndex + 1}`} sx={{ bgcolor: '#eef4ff', color: '#2563eb', fontWeight: 600 }} />
+            </Box>
+
+            <Box sx={{ px: 1 }}>
+              <Slider
+                value={currentDateIndex}
+                onChange={(_, val) => setCurrentDateIndex(val as number)}
+                min={dateRange[0]}
+                max={dateRange[1]}
+                step={1}
+                valueLabelDisplay="auto"
+                valueLabelFormat={(v) => dateArray[v] ?? ''}
+                sx={{
+                  '& .MuiSlider-thumb': { bgcolor: '#2563eb', boxShadow: '0 8px 18px rgba(37,99,235,0.16)' },
+                  '& .MuiSlider-track': { bgcolor: '#93c5fd' },
+                  '& .MuiSlider-rail': { bgcolor: '#eef6ff' },
+                  height: 10
+                }}
+              />
+
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+                <Typography variant="caption" sx={{ color: '#475569' }}>
+                  {formatShortDate(dateArray[dateRange[0]])}
+                </Typography>
+                <Typography variant="caption" sx={{ color: '#475569' }}>
+                  {formatShortDate(dateArray[dateRange[1]])}
+                </Typography>
+              </Box>
+            </Box>
+          </CardContent>
+        </Card>
+
+        {/* Compact status / range info row */}
+        <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
+          <Card sx={{ flex: 1, backgroundColor: '#fbfdff', border: '1px solid #eef6ff' }}>
+            <CardContent sx={{ p: 1.5 }}>
+              <Typography variant="subtitle2" sx={{ color: '#0f172a', fontWeight: 700 }}>
+                Current Status
+              </Typography>
+              <Typography variant="body2" sx={{ color: '#64748b', mt: 0.5 }}>
+                Viewing: {formattedDate || '—'}
+              </Typography>
+              <Typography variant="body2" sx={{ color: '#64748b' }}>
+                Animation: {isPlaying ? 'Playing' : 'Paused'}
+              </Typography>
+            </CardContent>
+          </Card>
+
+          <Card sx={{ width: 260, backgroundColor: '#fff', border: '1px solid #eef2ff' }}>
+            <CardContent sx={{ p: 1.5 }}>
+              <Typography variant="subtitle2" sx={{ color: '#0f172a', fontWeight: 700 }}>
+                Range Info
+              </Typography>
+              <Typography variant="body2" sx={{ color: '#64748b', mt: 0.5 }}>
+                From: {formatShortDate(dateArray[dateRange[0]])}
+              </Typography>
+              <Typography variant="body2" sx={{ color: '#64748b' }}>
+                To: {formatShortDate(dateArray[dateRange[1]])}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Box>
       </CardContent>
     </Card>
   );
 };
+// -------------------------------------------------------------------------------
 
-// Main Component
 const CrossDomain: React.FC = () => {
   const DEFAULT_CENTER: [number, number] = [15.0, 75.0];
   const DEFAULT_ZOOM = 5;
@@ -504,13 +536,13 @@ const CrossDomain: React.FC = () => {
   const ATTRIBUTION = 'Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics';
 
   const layerColors: Record<string, string> = {
-    SST: '#d73027', Salinity: '#1a9850', Chlorophyll: '#2ca02c',
-    pH: '#8856a7', Oxygen: '#2166ac', Nitrate: '#f46d43', Phosphate: '#a0522d'
+    SST: '#1e40af', Salinity: '#2563eb', Chlorophyll: '#2ca02c',
+    pH: '#4f46e5', Oxygen: '#0ea5e9', Nitrate: '#0891b2', Phosphate: '#7c3aed'
   };
 
   const speciesColors: Record<string, string> = {
-    'Blue Whale': '#d62728', 'Bottlenose Dolphin': '#2ca02c', 'Great White Shark': '#ff7f0e',
-    'Loggerhead Turtle': '#1f77b4', 'Harbor Seal': '#9467bd'
+    'Blue Whale': '#2563eb', 'Bottlenose Dolphin': '#1f77b4', 'Great White Shark': '#0ea5e9',
+    'Loggerhead Turtle': '#3b82f6', 'Harbor Seal': '#60a5fa'
   };
 
   // Fix leaflet icons
@@ -603,67 +635,76 @@ const CrossDomain: React.FC = () => {
         display: 'flex', 
         flexDirection: 'column', 
         fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
-        backgroundColor: '#f8fafc'
+        backgroundColor: '#fdf2df' // creme background to match theme
       }}
     >
-      {/* Header */}
-      <div style={{
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
-        color: 'white',
-        padding: '16px 24px',
-        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-          <div>
-            <h1 style={{ margin: 0, fontSize: '28px', fontWeight: '700', letterSpacing: '-0.025em' }}>
-              Indian Ocean Marine Observatory
-            </h1>
-            <p style={{ margin: '4px 0 0 0', fontSize: '16px', opacity: 0.8 }}>
-              Real-time Environmental Data & Species Monitoring with eDNA Analysis
-            </p>
-          </div>
-          
-          <Button
-            variant="outlined"
-            startIcon={<GetApp />}
-            onClick={exportPDF}
-            sx={{ 
-              color: 'white', 
-              borderColor: 'rgba(255, 255, 255, 0.3)',
-              '&:hover': { borderColor: 'rgba(255, 255, 255, 0.5)' },
-              textTransform: 'none'
-            }}
-          >
-            Export PDF
-          </Button>
-        </div>
-        
-        {/* Layer Controls */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', alignItems: 'center' }}>
-          <span style={{ fontSize: '14px', fontWeight: '600', marginRight: '8px' }}>Data Layers:</span>
-          {Object.entries(layers).map(([key, val]) => (
-            <Chip
-              key={key}
-              label={key}
-              variant={val ? 'filled' : 'outlined'}
-              onClick={() => setLayers(prev => ({ ...prev, [key]: !prev[key] }))}
-              sx={{
-                backgroundColor: val ? (layerColors[key] || '#3b82f6') : 'transparent',
-                borderColor: layerColors[key] || '#3b82f6',
-                color: val ? 'white' : (layerColors[key] || '#3b82f6'),
-                '&:hover': { 
-                  backgroundColor: val ? (layerColors[key] || '#3b82f6') + 'dd' : (layerColors[key] || '#3b82f6') + '20' 
-                },
-                cursor: 'pointer'
-              }}
-            />
-          ))}
-        </div>
+      {/* Header as a white card with rounded corners and subtle shadow */}
+      <div style={{ padding: '24px' }}>
+        <Card sx={{ borderRadius: 2.5, boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)', overflow: 'visible' }}>
+          <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, backgroundColor: 'white', borderRadius: 2.5 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+              <div>
+                <h1 style={{ margin: 0, fontSize: '26px', fontWeight: 800, letterSpacing: '-0.02em', color: '#0f172a' }}>
+                  Indian Ocean Marine Observatory
+                </h1>
+                <p style={{ margin: '6px 0 0 0', fontSize: '14px', color: '#455569' }}>
+                  Real-time Environmental Data & Species Monitoring with eDNA Analysis
+                </p>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <Button
+                  variant="contained"
+                  startIcon={<FileDownload />}
+                  onClick={exportPDF}
+                  sx={{
+                    background: 'linear-gradient(90deg,#3b82f6,#2563eb)',
+                    color: 'white',
+                    textTransform: 'none',
+                    borderRadius: 2,
+                    boxShadow: '0 8px 18px rgba(37,99,235,0.18)'
+                  }}
+                >
+                  Export PDF
+                </Button>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginTop: 6 }}>
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#0f172a' }}>Data Layers:</div>
+
+              {/* prettier styling for the layer pills - only visual changes */}
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                {Object.entries(layers).map(([key, val]) => (
+                  <button
+                    key={key}
+                    onClick={() => setLayers(prev => ({ ...prev, [key]: !prev[key] }))}
+                    style={{
+                      border: val ? 'none' : `1px solid ${layerColors[key] || '#c7d2fe'}`,
+                      background: val ? `linear-gradient(90deg, ${layerColors[key] || '#2563eb'}, ${shadeColor(layerColors[key] || '#2563eb', -12)})` : 'transparent',
+                      color: val ? 'white' : (layerColors[key] || '#2563eb'),
+                      padding: '8px 12px',
+                      borderRadius: 9999,
+                      fontSize: 13,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      boxShadow: val ? '0 6px 18px rgba(15, 23, 42, 0.07)' : 'none',
+                      transition: 'all 160ms ease'
+                    }}
+                    title={key}
+                  >
+                    {key}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      <div style={{ flex: 1, display: 'flex', gap: '16px', padding: '16px 24px 0 24px' }}>
+      <div style={{ flex: 1, display: 'flex', gap: '16px', padding: '0 24px 16px 24px' }}>
         {/* Map Container */}
-        <Card sx={{ flex: 1, overflow: 'hidden' }}>
+        <Card sx={{ flex: 1, overflow: 'hidden', backgroundColor: 'white', border: '1px solid #e6e9ee', borderRadius: 2 }}>
           <MapContainer center={DEFAULT_CENTER} zoom={DEFAULT_ZOOM} style={{ height: '100%', width: '100%' }}>
             <TileLayer url={TILE_URL} attribution={ATTRIBUTION} />
             <MapResizer />
@@ -790,7 +831,7 @@ const CrossDomain: React.FC = () => {
         </Card>
 
         {/* Sidebar */}
-        <Card sx={{ width: '450px', display: 'flex', flexDirection: 'column' }}>
+        <Card sx={{ width: '450px', display: 'flex', flexDirection: 'column', border: '1px solid #e6e9ee', borderRadius: 2 }}>
           <CardContent sx={{ flex: 1, padding: '24px !important', overflowY: 'auto' }}>
             {!info ? (
               <>
@@ -838,23 +879,23 @@ const CrossDomain: React.FC = () => {
                   </div>
                 )}
                 
-                <Card sx={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                <Card sx={{ backgroundColor: 'white', border: '1px solid #e6e9ee', borderRadius: 2 }}>
                   <CardContent sx={{ padding: '16px !important' }}>
                     <Typography variant="h6" sx={{ marginBottom: '12px', color: '#0f172a', fontWeight: '600' }}>
                       Dataset Summary
                     </Typography>
                     <div style={{ fontSize: '14px', color: '#475569' }}>
                       <p style={{ margin: '6px 0' }}>
-                        • <strong>{sightData.length}</strong> species sightings with eDNA data
+                        • <strong><AnimatedNumber value={sightData.length} /></strong> species sightings with eDNA data
                       </p>
                       <p style={{ margin: '6px 0' }}>
-                        • <strong>{Object.keys(envData).length}</strong> environmental variables monitored
+                        • <strong><AnimatedNumber value={Object.keys(envData).length} /></strong> environmental variables monitored
                       </p>
                       <p style={{ margin: '6px 0' }}>
-                        • <strong>{currData.length}</strong> ocean current vectors mapped
+                        • <strong><AnimatedNumber value={currData.length} /></strong> ocean current vectors mapped
                       </p>
                       <p style={{ margin: '6px 0' }}>
-                        • <strong>{dateArray.length}</strong> days of temporal data
+                        • <strong><AnimatedNumber value={dateArray.length} /></strong> days of temporal data
                       </p>
                     </div>
                   </CardContent>
@@ -964,3 +1005,20 @@ const CrossDomain: React.FC = () => {
 };
 
 export default CrossDomain;
+
+/**
+ * Helper: small color shading utility used to produce a slightly darker gradient
+ * purely for visual polish of active pills. Does not alter logic.
+ */
+function shadeColor(hex: string, percent: number) {
+  // simple hex shade: percent negative => darker; positive => lighter
+  const h = hex.replace('#','');
+  const num = parseInt(h,16);
+  let r = (num >> 16) + Math.round((percent/100)*255);
+  let g = ((num >> 8) & 0x00FF) + Math.round((percent/100)*255);
+  let b = (num & 0x0000FF) + Math.round((percent/100)*255);
+  r = Math.max(0, Math.min(255, r));
+  g = Math.max(0, Math.min(255, g));
+  b = Math.max(0, Math.min(255, b));
+  return '#' + ( (r<<16) | (g<<8) | b ).toString(16).padStart(6,'0');
+}

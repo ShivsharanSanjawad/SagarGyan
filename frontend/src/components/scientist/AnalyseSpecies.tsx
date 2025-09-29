@@ -1,8 +1,41 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/input';
 import { Upload, Search, FileSearch, Database, FolderOutput, Fish, Dna, FileImage } from 'lucide-react';
+
+const AnimatedNumber: React.FC<{ value: number; duration?: number; className?: string }> = ({ value, duration = 900, className }) => {
+  const target = typeof value === 'number' ? value : parseFloat(String(value)) || 0;
+  const [display, setDisplay] = useState(0);
+  const rafRef = useRef<number | null>(null);
+  const startRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    startRef.current = null;
+    if (isNaN(target)) {
+      setDisplay(0);
+      return;
+    }
+    const step = (t: number) => {
+      if (!startRef.current) startRef.current = t;
+      const elapsed = t - (startRef.current || 0);
+      const prog = Math.min(1, elapsed / duration);
+      const eased = Math.pow(prog, 0.78);
+      const cur = Math.round(eased * target);
+      setDisplay(cur);
+      if (prog < 1) {
+        rafRef.current = requestAnimationFrame(step) as unknown as number;
+      }
+    };
+    rafRef.current = requestAnimationFrame(step) as unknown as number;
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [target, duration]);
+
+  const formatted = Number.isNaN(display) ? String(value) : `${display}`;
+  return <span className={className}>{formatted}</span>;
+};
 
 export const AnalyseSpecies: React.FC = () => {
   const [analysisType, setAnalysisType] = useState('image');
@@ -18,6 +51,32 @@ export const AnalyseSpecies: React.FC = () => {
   const [analysisResults, setAnalysisResults] = useState<AnalysisResult[]>([]);
   const [showImageResults, setShowImageResults] = useState(false);
   const [showDnaResults, setShowDnaResults] = useState(false);
+
+  // dynamic stats (you can replace these with props or API-driven values)
+  const [totalSpecies, setTotalSpecies] = useState(0);
+  const [fishSpecies, setFishSpecies] = useState(0);
+  const [invertebrates, setInvertebrates] = useState(0);
+  const [otherTaxa, setOtherTaxa] = useState(0);
+
+  // simulate loading the stats dynamically from zero to target
+  useEffect(() => {
+    // targets - keep numbers same as before but animate from zero
+    const targets = {
+      total: 100,
+      fish: 70,
+      invert: 13,
+      other: 18
+    };
+
+    // small staggered start to feel dynamic
+    const timers: number[] = [];
+    timers.push(window.setTimeout(() => setTotalSpecies(targets.total), 150));
+    timers.push(window.setTimeout(() => setFishSpecies(targets.fish), 300));
+    timers.push(window.setTimeout(() => setInvertebrates(targets.invert), 450));
+    timers.push(window.setTimeout(() => setOtherTaxa(targets.other), 600));
+
+    return () => timers.forEach(t => clearTimeout(t));
+  }, []);
 
   const sampleSequence = "ATGTTCGACCTGCCCAACGCCCGATGAACCTGCCCAAACTCAAGATCTTCGGCAAACACGACGCCGGCACGCCGATCAACCCGTTCGGCAACAACATCACGGCAACGGCATCGGCATCGACGGCAACGGCATCGGCATCGACGGCAAGGCATCGACGGCAACGGCATCGGCATCGACGGCAACGGC";
 
@@ -100,37 +159,35 @@ export const AnalyseSpecies: React.FC = () => {
   };
 
   return (
-    <div 
-      className="min-h-screen"
-      style={{
-        backgroundImage: "url('/ocean-backgrou1nd.jpg')",
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        backgroundAttachment: 'fixed'
-      }}
-    >
-      <div 
-        className="min-h-screen"
-        style={{
-          backgroundColor: 'rgba(255, 255, 255, 0.9)',
-          backdropFilter: 'blur(2px)'
-        }}
-      >
-        <div className="space-y-6 p-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Analyse Species</h1>
-            <p className="text-gray-600">Identify marine species using advanced AI analysis</p>
+    <div className="min-h-screen p-6 bg-[#fdf2df]">
+      <div className="min-h-screen">
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-slate-900">Analyse Species</h1>
+              <p className="text-slate-600">Identify marine species using advanced AI analysis</p>
+            </div>
+
+            <div className="hidden md:flex items-center gap-3">
+              <Button
+                onClick={() => {}}
+                className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-sky-600 to-blue-600 text-white px-3 py-2 shadow hover:from-sky-700 hover:to-blue-700 active:scale-95 transition"
+                aria-label="Quick action"
+              >
+                <FileSearch className="h-4 w-4" />
+                Quick Analyze
+              </Button>
+            </div>
           </div>
 
           {/* Analysis Type Selector */}
           <CardContent className="p-0 pb-2">
-            <div className="flex w-full">
+            <div className="flex w-full border-b border-slate-100">
               <Button
                 variant="ghost"
                 className={`flex-1 rounded-none border-b-2 ${analysisType === 'image'
-                  ? 'border-sky-500 text-sky-600 font-semibold'
-                  : 'border-transparent text-gray-600 hover:text-sky-500'
+                  ? 'border-sky-500 text-sky-600 font-semibold bg-white'
+                  : 'border-transparent text-slate-600 hover:text-sky-500 bg-white'
                   }`}
                 onClick={() => setAnalysisType('image')}>
                 Image Analysis
@@ -138,8 +195,8 @@ export const AnalyseSpecies: React.FC = () => {
               <Button
                 variant="ghost"
                 className={`flex-1 rounded-none border-b-2 ${analysisType === 'morphometric'
-                  ? 'border-sky-500 text-sky-600 font-semibold'
-                  : 'border-transparent text-gray-600 hover:text-sky-500'
+                  ? 'border-sky-500 text-sky-600 font-semibold bg-white'
+                  : 'border-transparent text-slate-600 hover:text-sky-500 bg-white'
                   }`}
                 onClick={() => setAnalysisType('morphometric')}
               >
@@ -148,8 +205,8 @@ export const AnalyseSpecies: React.FC = () => {
               <Button
                 variant="ghost"
                 className={`flex-1 rounded-none border-b-2 ${analysisType === 'dna'
-                  ? 'border-sky-500 text-sky-600 font-semibold'
-                  : 'border-transparent text-gray-600 hover:text-sky-500'
+                  ? 'border-sky-500 text-sky-600 font-semibold bg-white'
+                  : 'border-transparent text-slate-600 hover:text-sky-500 bg-white'
                   }`}
                 onClick={() => setAnalysisType('dna')}
               >
@@ -158,8 +215,8 @@ export const AnalyseSpecies: React.FC = () => {
               <Button
                 variant="ghost"
                 className={`flex-1 rounded-none border-b-2 ${analysisType === 'search'
-                  ? 'border-sky-500 text-sky-600 font-semibold'
-                  : 'border-transparent text-gray-600 hover:text-sky-500'
+                  ? 'border-sky-500 text-sky-600 font-semibold bg-white'
+                  : 'border-transparent text-slate-600 hover:text-sky-500 bg-white'
                   }`}
                 onClick={() => setAnalysisType('search')}
               >
@@ -171,9 +228,9 @@ export const AnalyseSpecies: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Input Panel */}
             <div className="space-y-6">
-              <Card>
+              <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition">
                 <CardHeader>
-                  <CardTitle>
+                  <CardTitle className="text-slate-800">
                     {analysisType === 'image' && 'Upload Species Image'}
                     {analysisType === 'morphometric' && 'Enter Morphometric Data'}
                     {analysisType === 'dna' && 'DNA Sequence Analysis'}
@@ -183,9 +240,9 @@ export const AnalyseSpecies: React.FC = () => {
                 <CardContent className="space-y-4">
                   {analysisType === 'image' && (
                     <>
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
+                      <div className="border-2 border-dashed border-slate-200 rounded-lg p-6 bg-white">
                         <div className="text-center">
-                          <Upload className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                          <Upload className="h-12 w-12 mx-auto text-slate-400 mb-4" />
                           <label className="cursor-pointer">
                             <span className="text-sm font-medium text-sky-600 hover:text-sky-500">
                               Upload fish/marine species image
@@ -197,14 +254,14 @@ export const AnalyseSpecies: React.FC = () => {
                               accept=".jpg,.jpeg,.png,.tiff"
                             />
                           </label>
-                          <p className="text-xs text-gray-500 mt-2">
+                          <p className="text-xs text-slate-500 mt-2">
                             JPG, PNG, TIFF up to 10MB
                           </p>
                         </div>
                       </div>
 
                       {uploadedFile && (
-                        <div className="text-sm text-green-600 bg-green-50 p-3 rounded-lg">
+                        <div className="text-sm text-green-700 bg-green-50 p-3 rounded-lg">
                           ✓ {uploadedFile.name} uploaded successfully
                         </div>
                       )}
@@ -223,7 +280,7 @@ export const AnalyseSpecies: React.FC = () => {
 
                       <Button
                         onClick={handleAnalysis}
-                        className="w-full"
+                        className="w-full rounded-lg bg-gradient-to-r from-sky-600 to-blue-600 text-white px-4 py-2 shadow hover:from-sky-700 hover:to-blue-700 active:scale-95 transition"
                         disabled={!uploadedFile}>
                         <FileSearch className="h-4 w-4 mr-2" />
                         Analyze Species
@@ -244,8 +301,8 @@ export const AnalyseSpecies: React.FC = () => {
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Body Shape</label>
-                          <select className="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                          <label className="block text-sm font-medium text-slate-700 mb-1">Body Shape</label>
+                          <select className="block w-full rounded-md border-slate-200 shadow-sm focus:border-sky-500 focus:ring-sky-500">
                             <option>Select body shape</option>
                             <option>Streamlined (fusiform)</option>
                             <option>Compressed laterally</option>
@@ -255,10 +312,10 @@ export const AnalyseSpecies: React.FC = () => {
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Fin Configuration</label>
+                          <label className="block text-sm font-medium text-slate-700 mb-1">Fin Configuration</label>
                           <textarea
                             rows={3}
-                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500"
+                            className="block w-full rounded-md border-slate-200 shadow-sm focus:border-sky-500 focus:ring-sky-500"
                             placeholder="Describe fin types and positions..."
                           />
                         </div>
@@ -266,7 +323,7 @@ export const AnalyseSpecies: React.FC = () => {
 
                       <Button
                         onClick={handleAnalysis}
-                        className="w-full"
+                        className="w-full rounded-lg bg-gradient-to-r from-sky-600 to-blue-600 text-white px-4 py-2 shadow hover:from-sky-700 hover:to-blue-700 active:scale-95 transition"
                         disabled={!uploadedFile}>
                         <FileSearch className="h-4 w-4 mr-2" />
                         Analyze Species
@@ -278,19 +335,20 @@ export const AnalyseSpecies: React.FC = () => {
                     <>
                       <div className="space-y-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">DNA Sequence</label>
+                          <label className="block text-sm font-medium text-slate-700 mb-1">DNA Sequence</label>
                           <textarea
                             rows={8}
                             value={dnaSequence}
                             onChange={(e) => setDnaSequence(e.target.value)}
-                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 font-mono text-xs"
+                            className="block w-full rounded-md border-slate-200 shadow-sm focus:border-sky-500 focus:ring-sky-500 font-mono text-xs"
                             placeholder="Paste FASTA sequence or raw DNA sequence here..."/>
                         </div>
 
                         <Button
                           onClick={handleTrySampleSequence}
                           variant="outline"
-                          className="w-full">
+                          className="w-full rounded-md border-slate-200"
+                        >
                           Try Sample Sequence
                         </Button>
                         <Input
@@ -299,7 +357,7 @@ export const AnalyseSpecies: React.FC = () => {
                       </div>
                       <Button
                         onClick={handleAnalysis}
-                        className="w-full"
+                        className="w-full rounded-lg bg-gradient-to-r from-sky-600 to-blue-600 text-white px-4 py-2 shadow hover:from-sky-700 hover:to-blue-700 active:scale-95 transition"
                         disabled={!dnaSequence.trim()}>
                         <FileSearch className="h-4 w-4 mr-2" />
                         Analyze DNA Sequence
@@ -311,7 +369,7 @@ export const AnalyseSpecies: React.FC = () => {
                     <>
                       <div className="space-y-4">
                         <div className="relative">
-                          <Search className="h-4 w-4 absolute left-3 top-3 text-gray-400" />
+                          <Search className="h-4 w-4 absolute left-3 top-3 text-slate-400" />
                           <Input
                             placeholder="Search by scientific name, common name, or characteristics..."
                             value={searchQuery}
@@ -328,8 +386,8 @@ export const AnalyseSpecies: React.FC = () => {
                             placeholder="e.g., Arabian Sea, Bay of Bengal"/>
 
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Classification</label>
-                            <select className="block h-10 w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Classification</label>
+                            <select className="block h-10 w-full rounded-md border-slate-200 shadow-sm focus:border-sky-500 focus:ring-sky-500">
                               <option>All</option>
                               <option>Fish</option>
                               <option>Crustacean</option>
@@ -343,7 +401,7 @@ export const AnalyseSpecies: React.FC = () => {
 
                       <Button
                         onClick={handleAnalysis}
-                        className="w-full">
+                        className="w-full rounded-lg bg-gradient-to-r from-sky-600 to-blue-600 text-white px-4 py-2 shadow hover:from-sky-700 hover:to-blue-700 active:scale-95 transition">
                         <FileSearch className="h-4 w-4 mr-2" />
                         Search Database
                       </Button>
@@ -353,17 +411,17 @@ export const AnalyseSpecies: React.FC = () => {
               </Card>
 
               {/* Otolith Section */}
-              {(showDnaResults && analysisType === 'dna') || (showImageResults && analysisType === 'image') && (
-                <Card>
+              {((showDnaResults && analysisType === 'dna') || (showImageResults && analysisType === 'image')) && (
+                <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition">
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <FileImage className="h-5 w-5 text-purple-600" />
+                    <CardTitle className="flex items-center gap-2 text-slate-800">
+                      <FileImage className="h-5 w-5 text-sky-600" />
                       Otolith Analysis
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-                      <div className="bg-purple-600 text-white p-3">
+                      <div className="bg-sky-600 text-white p-3">
                         <div className="flex items-center gap-2">
                           <FileImage className="h-4 w-4" />
                           <span className="text-sm font-medium">Otolith Structure</span>
@@ -378,10 +436,10 @@ export const AnalyseSpecies: React.FC = () => {
                             style={{ imageRendering: 'crisp-edges' }}
                           />
                         </div>
-                        <p className="text-sm text-gray-700 mb-2">
+                        <p className="text-sm text-slate-700 mb-2">
                           <strong>Otolith structure for age determination</strong>
                         </p>
-                        <p className="text-xs text-gray-600">
+                        <p className="text-xs text-slate-600">
                           The otolith (ear stone) shows distinct growth rings that help determine the age of the specimen. 
                           This particular structure is characteristic of Scomberomorus guttatus.
                         </p>
@@ -393,19 +451,19 @@ export const AnalyseSpecies: React.FC = () => {
             </div>
 
             {/* Results Panel */}
-            <Card>
+            <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition">
               <CardHeader>
-                <CardTitle>Analysis Results</CardTitle>
+                <CardTitle className="text-slate-800">Analysis Results</CardTitle>
               </CardHeader>
               <CardContent>
                 {analysisResults.length > 0 ? (
                   <div className="space-y-6">
                     {analysisResults.map((result, index) => (
-                      <div key={index} className="border rounded-lg p-4">
+                      <div key={index} className="border rounded-lg p-4 bg-white">
                         <div className="flex justify-between items-center mb-4">
                           <div>
-                            <h3 className="text-lg font-semibold">{result.class_name}</h3>
-                            <p className="text-sm text-gray-600 italic">Class Index: {result.class_index}</p>
+                            <h3 className="text-lg font-semibold text-slate-900">{result.class_name}</h3>
+                            <p className="text-sm text-slate-500 italic">Class Index: {result.class_index}</p>
                           </div>
                           <span
                             className={`px-3 py-1 text-sm rounded-full ${result.confidence >= 0.9
@@ -445,7 +503,7 @@ export const AnalyseSpecies: React.FC = () => {
                                 style={{ imageRendering: 'crisp-edges' }}
                               />
                             </div>
-                            <p className="text-sm text-gray-700 font-medium text-center">
+                            <p className="text-sm text-slate-700 font-medium text-center">
                               <em>Scomberomorus guttatus</em>
                             </p>
                           </div>
@@ -477,7 +535,7 @@ export const AnalyseSpecies: React.FC = () => {
                               <Button 
                                 size="sm" 
                                 variant="outline" 
-                                className="w-full text-xs mb-2"
+                                className="w-full text-xs mb-2 border-slate-200"
                                 onClick={() => window.open('/indian-kingfish.fasta', '_blank')}
                               >
                                 View Full FASTA File
@@ -487,12 +545,12 @@ export const AnalyseSpecies: React.FC = () => {
                         )}
 
                         <div className="flex space-x-3">
-                          <Button size="sm" variant="outline" className="flex-1">
+                          <Button size="sm" variant="outline" className="flex-1 border-slate-200">
                             View Details
                           </Button>
                           <Button 
                             size="sm" 
-                            className="flex-1 transition-all duration-200 ease-in-out border hover:bg-slate-400 active:scale-95"
+                            className="flex-1 rounded-lg transition-all duration-200 ease-in-out border hover:bg-slate-400 active:scale-95"
                             onClick={handleExport}
                           >
                             <FolderOutput className="h-4 w-4 mr-2" />Export PDF
@@ -502,7 +560,7 @@ export const AnalyseSpecies: React.FC = () => {
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center py-12 text-gray-500">
+                  <div className="text-center py-12 text-slate-500">
                     <Database className="h-12 w-12 mx-auto mb-4 opacity-50" />
                     <p>Upload data or start analysis to see results</p>
                   </div>
@@ -512,27 +570,39 @@ export const AnalyseSpecies: React.FC = () => {
           </div>
 
           {/* Species Database Summary */}
-          <Card>
+          <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition">
             <CardHeader>
-              <CardTitle>Species Database Statistics</CardTitle>
+              <CardTitle className="text-slate-800">Species Database Statistics</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="text-center p-4 bg-blue-50 rounded-lg">
-                  <p className="text-2xl font-bold text-blue-600">100+</p>
-                  <p className="text-sm text-blue-800">Total Species</p>
+                <div className="text-center p-4 bg-[rgba(14,165,233,0.08)] rounded-lg">
+                  <p className="text-2xl font-bold text-sky-600">
+                    <AnimatedNumber value={totalSpecies} />
+                    <span className="ml-1">+</span>
+                  </p>
+                  <p className="text-sm text-sky-800">Total Species</p>
                 </div>
-                <div className="text-center p-4 bg-green-50 rounded-lg">
-                  <p className="text-2xl font-bold text-green-600">70+</p>
-                  <p className="text-sm text-green-800">Fish Species</p>
+                <div className="text-center p-4 bg-[rgba(59,130,246,0.06)] rounded-lg">
+                  <p className="text-2xl font-bold text-blue-600">
+                    <AnimatedNumber value={fishSpecies} />
+                    <span className="ml-1">+</span>
+                  </p>
+                  <p className="text-sm text-blue-800">Fish Species</p>
                 </div>
-                <div className="text-center p-4 bg-purple-50 rounded-lg">
-                  <p className="text-2xl font-bold text-purple-600">13+</p>
-                  <p className="text-sm text-purple-800">Invertebrates</p>
+                <div className="text-center p-4 bg-[rgba(99,102,241,0.06)] rounded-lg">
+                  <p className="text-2xl font-bold text-indigo-600">
+                    <AnimatedNumber value={invertebrates} />
+                    <span className="ml-1">+</span>
+                  </p>
+                  <p className="text-sm text-indigo-800">Invertebrates</p>
                 </div>
-                <div className="text-center p-4 bg-amber-50 rounded-lg">
-                  <p className="text-2xl font-bold text-amber-600">18+</p>
-                  <p className="text-sm text-amber-800">Other Taxa</p>
+                <div className="text-center p-4 bg-[rgba(14,165,233,0.05)] rounded-lg">
+                  <p className="text-2xl font-bold text-sky-700">
+                    <AnimatedNumber value={otherTaxa} />
+                    <span className="ml-1">+</span>
+                  </p>
+                  <p className="text-sm text-sky-800">Other Taxa</p>
                 </div>
               </div>
             </CardContent>

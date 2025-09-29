@@ -268,36 +268,46 @@ export const Classification: React.FC = () => {
       <div className="w-full max-w-screen-2xl mx-auto px-6 pt-8 pb-4">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">Ocean Data Visualization</h1>
-            <p className="mt-1 text-sm text-slate-600">Interactive analysis of marine ecosystem parameters</p>
-          </div>
-
-          <div className="hidden md:flex items-center gap-4">
-            <Button variant="ghost" className="text-slate-600">3D Interactive</Button>
-            <Button variant="ghost" className="text-slate-600">Cross-Domain Analysis</Button>
+            <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">Classification</h1>
+            <p className="mt-1 text-sm text-slate-600">Identify and classify marine species using advanced techniques</p>
           </div>
         </div>
 
-        {/* Replaced tabs: three tabs named exactly as requested */}
-        <div className="mt-6 border-b border-slate-100">
-          <div className="flex gap-8 items-center">
-            <button
+        <div className="mt-6">
+          <div className="flex w-full border-b border-slate-100">
+            <Button
+              variant="ghost"
+              className={`flex-1 rounded-none border-b-2 ${
+                activeModule === "edna"
+                  ? "border-sky-500 text-sky-600 font-semibold bg-white"
+                  : "border-transparent text-slate-600 hover:text-sky-500 bg-white"
+              }`}
               onClick={() => setActiveModule("edna")}
-              className={`pb-3 -mb-px text-sm md:text-base font-medium ${activeModule === "edna" ? "text-sky-600 border-b-2 border-sky-600" : "text-slate-600 hover:text-sky-600"}`}>
+            >
               eDNA Analysis
-            </button>
-
-            <button
+            </Button>
+            <Button
+              variant="ghost"
+              className={`flex-1 rounded-none border-b-2 ${
+                activeModule === "taxonomy"
+                  ? "border-sky-500 text-sky-600 font-semibold bg-white"
+                  : "border-transparent text-slate-600 hover:text-sky-500 bg-white"
+              }`}
               onClick={() => setActiveModule("taxonomy")}
-              className={`pb-3 -mb-px text-sm md:text-base font-medium ${activeModule === "taxonomy" ? "text-sky-600 border-b-2 border-sky-600" : "text-slate-600 hover:text-sky-600"}`}>
+            >
               Taxonomy
-            </button>
-
-            <button
+            </Button>
+            <Button
+              variant="ghost"
+              className={`flex-1 rounded-none border-b-2 ${
+                activeModule === "otolith"
+                  ? "border-sky-500 text-sky-600 font-semibold bg-white"
+                  : "border-transparent text-slate-600 hover:text-sky-500 bg-white"
+              }`}
               onClick={() => setActiveModule("otolith")}
-              className={`ml-auto pb-3 -mb-px text-sm md:text-base font-medium ${activeModule === "otolith" ? "text-sky-600 border-b-2 border-sky-600" : "text-slate-600 hover:text-sky-600"}`}>
+            >
               Otolith Analysis
-            </button>
+            </Button>
           </div>
         </div>
       </div>

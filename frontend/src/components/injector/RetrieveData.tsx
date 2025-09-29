@@ -63,7 +63,7 @@ export const RetrieveData: React.FC = () => {
 
       {/* Search controls (kept compact, styled to match theme) */}
       <Card className="bg-white border border-slate-200 shadow-sm">
-        <CardContent className="p-4">
+        <CardContent className="px-4 py-2">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
             <div className="md:col-span-2">
               <label className="relative block">

@@ -630,8 +630,11 @@ export const DataVisualization: React.FC = () => {
           )}
 
           {/* Cross-domain view */}
+          {/* optionally render CrossDomain component (keeps same behavior) */}
+          {activeView === "cross-domain" && <CrossDomain />}
+
           {activeView === "cross-domain" && (
-            <div className="space-y-6">
+            <div className="space-y-6 mt-6">
               <Card className="shadow-xl bg-white rounded-2xl border border-gray-100">
                 <CardHeader>
                   <CardTitle className="font-semibold text-gray-800">Parameter Correlation Analysis</CardTitle>
@@ -757,9 +760,6 @@ export const DataVisualization: React.FC = () => {
               </Card>
             </div>
           )}
-
-          {/* optionally render CrossDomain component (keeps same behavior) */}
-          {activeView === "cross-domain" && <CrossDomain />}
 
           {/* 3D interactive view */}
           {activeView === "3d" && (

@@ -386,7 +386,7 @@ export const Landing: React.FC<LandingPageProps> = ({ onLoginClick }) => {
                 { value: 20, suffix: "+", label: "Datasets Processed", color: "#008ca6", dur: 1800 },
                 { value: 48, suffix: "+", label: "Species Classified", color: "#15609d", dur: 2100 },
                 { value: 3, suffix: "", label: "Active Projects", color: "#0270e0", dur: 1700 },
-                { value: 83, suffix: ".3%", label: "AI Accuracy", color: "#008ca6", dur: 2400 },
+                { value: 98, suffix: "%", label: "AI Accuracy", color: "#008ca6", dur: 2400 },
               ].map((stat, i) => (
                 <div key={i} className="stat-card" style={{ textAlign: "center" }}>
                   <div style={{ fontSize: 40, fontWeight: 900, color: stat.color }}>

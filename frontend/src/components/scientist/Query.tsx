@@ -92,15 +92,10 @@ export const QuerySearch: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#fdf2df] p-6">
       <div className="max-w-[1200px] mx-auto">
-        {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-extrabold text-slate-900">Scientific Query Engine</h1>
-          <p className="mt-1 text-slate-600">Search our database using Natural language Query for detailed insights.</p>
-        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left: Search & results list */}
-          <div className="lg:col-span-2 space-y-4">
+           <div className="lg:col-span-1 space-y-4">
             <Card className="shadow rounded-2xl border border-slate-100 bg-white">
               <CardContent className="p-6">
                 <h1 className="text-2xl font-bold text-sky-900 mb-2">

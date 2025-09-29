@@ -11,12 +11,6 @@ interface SidebarProps {
   onTabChange: (tab: string) => void;
 }
 
-/**
- * Opaque navy sidebar version — same functionality, only visual changes:
- * - solid opaque navy background (matches your screenshot)
- * - no translucency / no backdrop-blur
- * - preserved active/inactive states and layout
- */
 export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
   const { user, logout } = useAuth();
 
@@ -58,16 +52,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
     <aside
       className={clsx(
         'w-64 min-h-screen flex flex-col',
-        // solid opaque navy — change hex if you want slightly different tone
         'bg-[#11283a]',
-        // subtle separation from main content
         'border-r border-[#0b1b26]',
         // keep a strong shadow for depth
         'shadow-lg',
         'text-slate-100'
       )}
-      aria-label="Main navigation"
-    >
+      aria-label="Main navigation">
       {/* header */}
       <div className="p-6 shrink-0">
         <div className="flex items-center gap-3">
@@ -80,7 +71,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
           </div>
 
           <div>
-            {/* match the cyan/turquoise logo text from screenshot */}
             <h1 className="text-lg font-bold text-[#23a6d9] leading-tight">SagarGyaan</h1>
             <p className="text-xs text-slate-300">Oceanographic Data Platform</p>
           </div>
@@ -95,40 +85,32 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
         </div>
       </div>
 
-      {/* nav */}
-      <nav className="flex-1 overflow-y-auto px-4">
-        <ul className="space-y-2">
+      {/* nav -*/}
+        <ul className="space-y-2 flex-1 overflow-y-auto px-4 scrollbar-hide">
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
-
             return (
               <li key={item.id}>
                 <button
                   onClick={() => onTabChange(item.id)}
                   className={clsx(
-                    'w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors duration-150',
-                    // active style: bright blue pill
+                    'w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors',
                     isActive
-                      ? 'bg-[#0f7fc1] text-white shadow-md'
-                      // inactive: muted text, hover highlight
-                      : 'text-slate-300 hover:bg-[#0f2f45] hover:text-white'
+                      ? 'bg-sky-600 text-white shadow-inner'
+                      : 'text-gray-300 hover:bg-slate-700 hover:text-white'
                   )}
-                  aria-current={isActive ? 'page' : undefined}
-                >
+                  aria-current={isActive ? 'page' : undefined}>
                   <div
                     className={clsx(
                       'flex items-center justify-center w-6 h-6 rounded',
-                      isActive ? 'bg-white/10' : 'bg-transparent'
-                    )}
-                  >
-                    <Icon size={16} className={isActive ? 'text-white' : 'text-[#8fcbe6]'} />
+                      isActive ? 'bg-white/10' : ''
+                    )}>
+                    <Icon size={16} />
                   </div>
-
                   <span className="text-sm flex-1">{item.label}</span>
-
                   {isActive && (
-                    <span className="text-xs bg-white/10 px-2 py-0.5 rounded text-slate-100">
+                    <span className="text-xs bg-white/10 px-2 py-0.5 rounded text-sky-100">
                       Active
                     </span>
                   )}
@@ -137,14 +119,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
             );
           })}
         </ul>
-      </nav>
 
       {/* bottom */}
       <div className="p-4 border-t border-[#0b1b26] shrink-0">
         <button
           onClick={logout}
-          className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-300 hover:bg-[#0f2f45] hover:text-white transition-colors"
-        >
+          className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-300 hover:bg-[#0f2f45] hover:text-white transition-colors">
           <LogOut size={18} className="text-[#8fcbe6]" />
           <span className="text-sm">Logout</span>
         </button>

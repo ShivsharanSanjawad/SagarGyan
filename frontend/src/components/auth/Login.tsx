@@ -75,7 +75,7 @@ export const LoginForm: React.FC = () => {
 
         {/* Login Card */}
         <Card className="shadow-2xl border-0 bg-white/70 backdrop-blur-md">
-          <CardContent className="p-8">
+          <CardContent className="px-8 pt-4 pb-8">
             <div className="mb-6">
               <h2 className="text-xl font-semibold text-slate-900">
                 {!showTwoFactor ? 'Sign In' : 'Two-Factor Authentication'}
@@ -102,8 +102,7 @@ export const LoginForm: React.FC = () => {
                   value={formData.username}
                   onChange={handleInputChange}
                   error={errors.username}
-                  placeholder="Enter your username"
-                />
+                  placeholder="Enter your username"/>
                 <CustomInput
                   label="Password"
                   type="password"
@@ -111,12 +110,10 @@ export const LoginForm: React.FC = () => {
                   value={formData.password}
                   onChange={handleInputChange}
                   error={errors.password}
-                  placeholder="Enter your password"
-                />
+                  placeholder="Enter your password"/>
                 <Button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-teal-600 to-blue-600 text-white font-semibold py-2 rounded-lg shadow-lg hover:scale-105 transition"
-                >
+                  className="w-full mt-3 bg-gradient-to-r from-teal-600 to-blue-600 text-white font-semibold py-2 rounded-lg shadow-lg hover:scale-105 transition">
                   Continue
                 </Button>
               </form>
@@ -131,23 +128,20 @@ export const LoginForm: React.FC = () => {
                   error={errors.twoFactorCode}
                   placeholder="000000"
                   className="text-center"
-                  maxLength={6}
-                />
+                  maxLength={6}/>
 
-                <div className="flex gap-3">
+                <div className="flex gap-3 mt-6">
                   <Button
                     type="button"
                     variant="outline"
                     onClick={() => setShowTwoFactor(false)}
-                    className="flex-1"
-                  >
+                    className="flex-1">
                     Back
                   </Button>
                   <Button
                     type="submit"
                     disabled={isLoading}
-                    className="flex-1 bg-gradient-to-r from-teal-600 to-blue-600 text-white"
-                  >
+                    className="flex-1 bg-gradient-to-r from-teal-600 to-blue-600 text-white">
                     {isLoading ? 'Verifying...' : 'Sign In'}
                   </Button>
                 </div>
@@ -155,7 +149,7 @@ export const LoginForm: React.FC = () => {
             )}
 
             {/* Demo credentials */}
-            <div
+            {/* <div
               className="mt-6 p-4 rounded-lg border"
               style={{ backgroundColor: '#fdf2df' }}
             >
@@ -176,8 +170,8 @@ export const LoginForm: React.FC = () => {
                   <code className="bg-white px-1 rounded">scientist1</code> /{' '}
                   <code className="bg-white px-1 rounded">password123</code>
                 </div>
-              </div>
-            </div>
+              </div> */}
+            {/* </div> */}
           </CardContent>
         </Card>
 

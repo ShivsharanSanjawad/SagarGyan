@@ -430,7 +430,7 @@ const TimelineControls: React.FC<{
               <div style={{ width: '100%' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                   <Box sx={{ bgcolor: '#EEF4FF', p: '2px 8px', borderRadius: '8px' }}>
-                    <Typography sx={{ color: '#2563eb', fontWeight: 700, fontSize: 17 }}>📅 Current Date Navigation</Typography>
+                    <Typography sx={{ color: '#2563eb', fontWeight: 700, fontSize: 17 }}>Current Date Navigation</Typography>
                   </Box>
                 </Box>
                 <Typography fontSize={14} color="text.secondary" mb={1}>
@@ -470,7 +470,7 @@ const TimelineControls: React.FC<{
         }}>
           <div>
             <Typography variant="body2" sx={{ color: '#475569', fontWeight: '600', marginBottom: '4px' }}>
-              📊 Current Status
+               Current Status
             </Typography>
             <Typography variant="body2" sx={{ color: '#64748b' }}>
               Viewing: {formattedDate}
@@ -481,7 +481,7 @@ const TimelineControls: React.FC<{
           </div>
           <div>
             <Typography variant="body2" sx={{ color: '#475569', fontWeight: '600', marginBottom: '4px' }}>
-              🎯 Range Info
+               Range Info
             </Typography>
             <Typography variant="body2" sx={{ color: '#64748b' }}>
               From: {dateArray[dateRange[0]]}
@@ -616,7 +616,7 @@ const CrossDomain: React.FC = () => {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
           <div>
             <h1 style={{ margin: 0, fontSize: '28px', fontWeight: '700', letterSpacing: '-0.025em' }}>
-              🌊 Indian Ocean Marine Observatory
+              Indian Ocean Marine Observatory
             </h1>
             <p style={{ margin: '4px 0 0 0', fontSize: '16px', opacity: 0.8 }}>
               Real-time Environmental Data & Species Monitoring with eDNA Analysis
@@ -795,7 +795,7 @@ const CrossDomain: React.FC = () => {
             {!info ? (
               <>
                 <Typography variant="h5" sx={{ marginBottom: '16px', color: '#0f172a', fontWeight: '600' }}>
-                  📊 Data Overview
+                  Data Overview
                 </Typography>
                 <Typography variant="body1" sx={{ marginBottom: '24px', color: '#64748b', lineHeight: '1.6' }}>
                   Click anywhere on the map to analyze environmental data and view detailed time series for that oceanic location.
@@ -804,7 +804,7 @@ const CrossDomain: React.FC = () => {
                 {speciesDistribution.length > 0 && (
                   <div style={{ marginBottom: '24px' }}>
                     <Typography variant="h6" sx={{ marginBottom: '16px', color: '#0f172a', fontWeight: '600' }}>
-                      🐋 Species Activity for {new Date(currentDate).toLocaleDateString()}
+                      Species Activity for {new Date(currentDate).toLocaleDateString()}
                     </Typography>
                     <ResponsiveContainer width="100%" height={250}>
                       <BarChart data={speciesDistribution} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>

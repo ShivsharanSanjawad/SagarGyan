@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/Button";
 import {
@@ -145,10 +145,10 @@ const crossDomainData = [
 ];
 
 const nutrients = [
-  { name: "Nitrates", value: 2.1, unit: "mg/L", color: "#0ea5e9" },
-  { name: "Phosphates", value: 0.8, unit: "mg/L", color: "#10b981" },
-  { name: "Silicates", value: 1.5, unit: "mg/L", color: "#f59e0b" },
-  { name: "Dissolved O2", value: 8.2, unit: "mg/L", color: "#ef4444" },
+  { name: "Nitrates", value: 2.1, unit: "mg/L", color: "#60a5fa" }, // changed to blue
+  { name: "Phosphates", value: 0.8, unit: "mg/L", color: "#2563eb" }, // blue
+  { name: "Silicates", value: 1.5, unit: "mg/L", color: "#1e40af" }, // deep blue
+  { name: "Dissolved O2", value: 8.2, unit: "mg/L", color: "#1e3a8a" }, // blue
 ];
 
 const seasonalTrends = [
@@ -251,7 +251,7 @@ const colorFor = (param: string) => {
     case "salinity":
       return "#0ea5e9";
     case "fishCount":
-      return "#10b981";
+      return "#2563eb"; // changed fish count from green to blue
     case "eDNA":
       return "#8b5cf6";
     case "depth":
@@ -259,7 +259,7 @@ const colorFor = (param: string) => {
     case "ph":
       return "#7c3aed";
     case "nutrients":
-      return "#f59e0b";
+      return "#60a5fa";
     default:
       return "#3b82f6";
   }
@@ -274,6 +274,42 @@ const MapUpdater: React.FC<{ center: [number, number] | null; zoom?: number }> =
   }, [center, zoom, map]);
   return null;
 };
+
+/* -------------------------
+   AnimatedNumber - presentational only
+   Non-invasive: does not touch any app logic or data flow.
+   ------------------------- */
+const AnimatedNumber: React.FC<{ value: number | string; duration?: number; className?: string }> = ({ value, duration = 900, className }) => {
+  const numeric = typeof value === "number" ? value : parseFloat(String(value)) || 0;
+  const [display, setDisplay] = useState<number>(0);
+  const startRef = useRef<number | null>(null);
+  useEffect(() => {
+    let raf = 0;
+    startRef.current = null;
+    const step = (t: number) => {
+      if (!startRef.current) startRef.current = t;
+      const elapsed = t - (startRef.current ?? 0);
+      const prog = Math.min(1, elapsed / duration);
+      const eased = prog < 0.5 ? 2 * prog * prog : -1 + (4 - 2 * prog) * prog; // easeInOut
+      setDisplay(Math.round(eased * numeric));
+      if (prog < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [numeric, duration]);
+
+  // If original value is not integer, show as decimal (keep look simple).
+  if (!Number.isInteger(numeric)) {
+    // show one decimal — but still animate to integer for speed; final display is decimal
+    return (
+      <span className={className}>
+        {display === numeric ? numeric.toFixed(1) : (display + (numeric - Math.floor(numeric))).toFixed(1)}
+      </span>
+    );
+  }
+  return <span className={className}>{display}</span>;
+};
+/* end AnimatedNumber */
 
 export const DataVisualization: React.FC = () => {
   const [activeView, setActiveView] = useState("individual");
@@ -339,18 +375,10 @@ export const DataVisualization: React.FC = () => {
         </MapContainer>
 
         <div className="absolute bottom-2 left-2 bg-white bg-opacity-90 p-2 rounded text-xs shadow-sm">
-          <div className="flex items-center mb-1">
-            <div className="w-2 h-2 bg-red-500 rounded-full mr-2" /> Temperature
-          </div>
-          <div className="flex items-center mb-1">
-            <div className="w-2 h-2 bg-blue-500 rounded-full mr-2" /> Salinity
-          </div>
-          <div className="flex items-center mb-1">
-            <div className="w-2 h-2 bg-green-500 rounded-full mr-2" /> Fish Activity
-          </div>
-          <div className="flex items-center">
-            <div className="w-2 h-2 bg-purple-500 rounded-full mr-2" /> eDNA
-          </div>
+          <div className="flex items-center mb-1"><div className="w-2 h-2 bg-red-500 rounded-full mr-2" /> Temperature</div>
+          <div className="flex items-center mb-1"><div className="w-2 h-2 bg-blue-500 rounded-full mr-2" /> Salinity</div>
+          <div className="flex items-center mb-1"><div className="w-2 h-2 bg-sky-600 rounded-full mr-2" /> Fish Activity</div>
+          <div className="flex items-center"><div className="w-2 h-2 bg-purple-500 rounded-full mr-2" /> eDNA</div>
         </div>
       </div>
     </div>
@@ -381,6 +409,10 @@ export const DataVisualization: React.FC = () => {
           --muted: #6b7280;
           --card-radius: 14px;
         }
+        /* small cosmetic niceties only (no logic changes) */
+        .top-tab-active { border-bottom-color: var(--accent) !important; color: var(--accent) !important; font-weight: 700; }
+        .cream-band { background-color: var(--cream); border-radius: 12px; padding: 18px; }
+        .stat-tile { border-radius: 12px; background: white; box-shadow: 0 6px 14px rgba(15,23,42,0.03); }
       `}</style>
 
       <div>
@@ -393,7 +425,7 @@ export const DataVisualization: React.FC = () => {
         <div className="flex w-full">
           <Button
             variant="ghost"
-            className={`flex-1 rounded-none border-b-2 flex items-center justify-center ${activeView === "individual" ? "border-sky-500 text-sky-600 font-semibold" : "border-transparent text-gray-600 hover:text-sky-500"}`}
+            className={`flex-1 rounded-none border-b-2 flex items-center justify-center ${activeView === "individual" ? "top-tab-active" : "border-transparent text-gray-600 hover:text-sky-500"}`}
             onClick={() => setActiveView("individual")}
           >
             <BarChart3 className="h-4 w-4 mr-2" /> Individual Parameters
@@ -401,7 +433,7 @@ export const DataVisualization: React.FC = () => {
 
           <Button
             variant="ghost"
-            className={`flex-1 rounded-none border-b-2 flex items-center justify-center ${activeView === "cross-domain" ? "border-sky-500 text-sky-600 font-semibold" : "border-transparent text-gray-600 hover:text-sky-500"}`}
+            className={`flex-1 rounded-none border-b-2 flex items-center justify-center ${activeView === "cross-domain" ? "top-tab-active" : "border-transparent text-gray-600 hover:text-sky-500"}`}
             onClick={() => setActiveView("cross-domain")}
           >
             <Layers className="h-4 w-4 mr-2" /> Cross-Domain Analysis
@@ -409,7 +441,7 @@ export const DataVisualization: React.FC = () => {
 
           <Button
             variant="ghost"
-            className={`flex-1 rounded-none border-b-2 flex items-center justify-center ${activeView === "3d" ? "border-sky-500 text-sky-600 font-semibold" : "border-transparent text-gray-600 hover:text-sky-500"}`}
+            className={`flex-1 rounded-none border-b-2 flex items-center justify-center ${activeView === "3d" ? "top-tab-active" : "border-transparent text-gray-600 hover:text-sky-500"}`}
             onClick={() => setActiveView("3d")}
           >
             <Globe className="h-4 w-4 mr-2" /> 3D Interactive
@@ -418,7 +450,7 @@ export const DataVisualization: React.FC = () => {
       </div>
 
       {/* main cream band */}
-      <section style={{ backgroundColor: "var(--cream)" }} className="p-6 rounded-md">
+      <section className="cream-band">
         <div className="max-w-full mx-auto px-2" style={{ maxWidth: 1200 }}>
           {/* Individual view */}
           {activeView === "individual" && (
@@ -457,50 +489,52 @@ export const DataVisualization: React.FC = () => {
                     <ResponsiveContainer width="100%" height={350}>
                       {selectedParameter === "temperature" ? (
                         <LineChart data={oceanData.temperature}>
-                          <CartesianGrid strokeDasharray="3 3" />
+                          <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" />
                           <XAxis dataKey="month" />
                           <YAxis />
                           <Tooltip />
-                          <Line type="monotone" dataKey="surface" stroke="#ef4444" name="Surface (°C)" />
-                          <Line type="monotone" dataKey="mid" stroke="#f59e0b" name="Mid-water (°C)" />
-                          <Line type="monotone" dataKey="deep" stroke="#3b82f6" name="Deep (°C)" />
+                          {/* Blue-focused palette */}
+                          <Line type="monotone" dataKey="surface" stroke="#0369a1" name="Surface (°C)" strokeWidth={2.4} dot={{ r: 4, stroke: "#0369a1", strokeWidth: 1 }} />
+                          <Line type="monotone" dataKey="mid" stroke="#60a5fa" name="Mid-water (°C)" strokeWidth={2.4} dot={{ r: 4, stroke: "#60a5fa", strokeWidth: 1 }} />
+                          <Line type="monotone" dataKey="deep" stroke="#1e40af" name="Deep (°C)" strokeWidth={2.4} dot={{ r: 4, stroke: "#1e40af", strokeWidth: 1 }} />
                         </LineChart>
                       ) : selectedParameter === "salinity" ? (
                         <AreaChart data={oceanData.salinity}>
-                          <CartesianGrid strokeDasharray="3 3" />
+                          <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" />
                           <XAxis dataKey="month" />
                           <YAxis />
                           <Tooltip />
-                          <Area type="monotone" dataKey="surface" stackId="1" stroke="#0ea5e9" fill="#0ea5e9" />
-                          <Area type="monotone" dataKey="mid" stackId="1" stroke="#06b6d4" fill="#06b6d4" />
-                          <Area type="monotone" dataKey="deep" stackId="1" stroke="#0891b2" fill="#0891b2" />
+                          <Area type="monotone" dataKey="surface" stackId="1" stroke="#0ea5e9" fill="#bfdbfe" />
+                          <Area type="monotone" dataKey="mid" stackId="1" stroke="#60a5fa" fill="#93c5fd" />
+                          <Area type="monotone" dataKey="deep" stackId="1" stroke="#0891b2" fill="#7dd3fc" />
                         </AreaChart>
                       ) : selectedParameter === "fishCount" ? (
                         <BarChart data={oceanData.fishAbundance}>
-                          <CartesianGrid strokeDasharray="3 3" />
+                          <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" />
                           <XAxis dataKey="species" />
                           <YAxis />
                           <Tooltip />
-                          <Bar dataKey="jan" fill="#0ea5e9" />
-                          <Bar dataKey="jun" fill="#10b981" />
-                          <Bar dataKey="dec" fill="#f59e0b" />
+                          {/* Use blue gradient banding instead of green */}
+                          <Bar dataKey="jan" fill="#60a5fa" name="Jan" />
+                          <Bar dataKey="jun" fill="#2563eb" name="Jun" />
+                          <Bar dataKey="dec" fill="#1e40af" name="Dec" />
                         </BarChart>
                       ) : selectedParameter === "eDNA" ? (
                         <LineChart data={oceanData.eDNA}>
-                          <CartesianGrid strokeDasharray="3 3" />
+                          <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" />
                           <XAxis dataKey="month" />
                           <YAxis />
                           <Tooltip />
-                          <Line type="monotone" dataKey="concentration" stroke="#8b5cf6" name="Concentration" />
-                          <Line type="monotone" dataKey="diversity" stroke="#06b6d4" name="Diversity Index" />
+                          <Line type="monotone" dataKey="concentration" stroke="#2563eb" name="Concentration" strokeWidth={2.4} dot={{ r: 4, stroke: "#2563eb", strokeWidth: 1 }} />
+                          <Line type="monotone" dataKey="diversity" stroke="#0ea5e9" name="Diversity Index" strokeWidth={2.4} dot={{ r: 4, stroke: "#0ea5e9", strokeWidth: 1 }} />
                         </LineChart>
                       ) : selectedParameter === "depth" ? (
                         <BarChart data={oceanData.depth}>
-                          <CartesianGrid strokeDasharray="3 3" />
+                          <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" />
                           <XAxis dataKey="range" />
                           <YAxis />
                           <Tooltip />
-                          <Bar dataKey="fishCount" fill="#10b981" />
+                          <Bar dataKey="fishCount" fill="#2563eb" />
                         </BarChart>
                       ) : null}
                     </ResponsiveContainer>
@@ -534,8 +568,8 @@ export const DataVisualization: React.FC = () => {
                           <div className="flex items-center space-x-3">
                             <div className="w-32 bg-gray-200 rounded-full h-2">
                               <div
-                                className="h-2 rounded-full bg-gradient-to-r from-sky-500 to-emerald-500"
-                                style={{ width: `${(species.jan / 120) * 100}%` }}
+                                className="h-2 rounded-full"
+                                style={{ width: `${(species.jan / 120) * 100}%`, background: "linear-gradient(90deg,#60a5fa,#2563eb)" }}
                               />
                             </div>
                             <span className="text-sm font-medium w-8">{species.jan}</span>
@@ -556,12 +590,13 @@ export const DataVisualization: React.FC = () => {
                   <CardContent>
                     <ResponsiveContainer width="100%" height={200}>
                       <BarChart data={seasonalTrends}>
-                        <CartesianGrid strokeDasharray="3 3" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" />
                         <XAxis dataKey="season" />
                         <YAxis />
                         <Tooltip />
-                        <Bar dataKey="biodiversity" fill="#10b981" />
-                        <Bar dataKey="fishActivity" fill="#0ea5e9" />
+                        {/* Both bars in blue family */}
+                        <Bar dataKey="biodiversity" fill="#60a5fa" name="Biodiversity" />
+                        <Bar dataKey="fishActivity" fill="#2563eb" name="Fish Activity" />
                       </BarChart>
                     </ResponsiveContainer>
                   </CardContent>
@@ -573,30 +608,38 @@ export const DataVisualization: React.FC = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-2 gap-4 mb-4">
-                      <div className="text-center p-4 bg-blue-50 rounded-lg">
-                        <p className="text-2xl font-bold text-blue-600">7.8</p>
+                      <div className="text-center p-4 stat-tile">
+                        <p className="text-2xl font-bold text-blue-600">
+                          <AnimatedNumber value={7.8} className="inline-block" />
+                        </p>
                         <p className="text-sm text-blue-800">pH Level</p>
                       </div>
-                      <div className="text-center p-4 bg-green-50 rounded-lg">
-                        <p className="text-2xl font-bold text-green-600">8.2</p>
-                        <p className="text-sm text-green-800">Dissolved O2</p>
+                      <div className="text-center p-4 stat-tile">
+                        <p className="text-2xl font-bold text-sky-700">
+                          <AnimatedNumber value={8.2} className="inline-block" />
+                        </p>
+                        <p className="text-sm text-sky-700">Dissolved O2</p>
                       </div>
-                      <div className="text-center p-4 bg-purple-50 rounded-lg">
-                        <p className="text-2xl font-bold text-purple-600">35.1</p>
+                      <div className="text-center p-4 stat-tile">
+                        <p className="text-2xl font-bold text-purple-600">
+                          <AnimatedNumber value={35.1} className="inline-block" />
+                        </p>
                         <p className="text-sm text-purple-800">Salinity (psu)</p>
                       </div>
-                      <div className="text-center p-4 bg-amber-50 rounded-lg">
-                        <p className="text-2xl font-bold text-amber-600">2.1</p>
+                      <div className="text-center p-4 stat-tile">
+                        <p className="text-2xl font-bold text-amber-600">
+                          <AnimatedNumber value={2.1} className="inline-block" />
+                        </p>
                         <p className="text-sm text-amber-800">Turbidity</p>
                       </div>
                     </div>
                     <ResponsiveContainer width="100%" height={150}>
                       <LineChart data={oceanData.depth}>
-                        <CartesianGrid strokeDasharray="3 3" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" />
                         <XAxis dataKey="range" />
                         <YAxis />
                         <Tooltip />
-                        <Line type="monotone" dataKey="ph" stroke="#8b5cf6" name="pH Level" />
+                        <Line type="monotone" dataKey="ph" stroke="#2563eb" name="pH Level" strokeWidth={2} dot={{ r: 3 }} />
                       </LineChart>
                     </ResponsiveContainer>
                   </CardContent>
@@ -630,7 +673,6 @@ export const DataVisualization: React.FC = () => {
           )}
 
           {/* Cross-domain view */}
-          {/* optionally render CrossDomain component (keeps same behavior) */}
           {activeView === "cross-domain" && <CrossDomain />}
 
           {activeView === "cross-domain" && (
@@ -690,7 +732,7 @@ export const DataVisualization: React.FC = () => {
                 <CardContent>
                   <ResponsiveContainer width="90%" height={350}>
                     <ScatterChart data={correlationData}>
-                      <CartesianGrid strokeDasharray="3 3" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" />
                       <XAxis dataKey="x" name={getParameterLabel(xParameter)} type="number" domain={["dataMin", "dataMax"]} />
                       <YAxis dataKey="y" name={getParameterLabel(yParameter)} type="number" domain={["dataMin", "dataMax"]} />
                       <Tooltip cursor={{ strokeDasharray: "3 3" }} content={correlationTooltipContent} />
@@ -708,13 +750,13 @@ export const DataVisualization: React.FC = () => {
                   <div className="grid grid-cols-4 gap-2 text-xs">
                     {["Temp", "Salinity", "Fish", "eDNA"].map((param1, i) =>
                       ["Temp", "Salinity", "Fish", "eDNA"].map((param2, j) => (
-                        <div key={`${i}-${j}`} className={`p-2 text-center rounded ${i === j ? "bg-gray-200" : Math.random() > 0.5 ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+                        <div key={`${i}-${j}`} className={`p-2 text-center rounded ${i === j ? "bg-gray-200" : Math.random() > 0.5 ? "bg-sky-100 text-sky-800" : "bg-red-100 text-red-800"}`}>
                           {i === j ? "1.00" : (Math.random() * 2 - 1).toFixed(2)}
                         </div>
                       ))
                     )}
                   </div>
-                  <div className="mt-2 text-xs text-gray-600">Green: Positive correlation, Red: Negative correlation</div>
+                  <div className="mt-2 text-xs text-gray-600">Blue: Positive correlation, Red: Negative correlation</div>
                 </CardContent>
               </Card>
 
@@ -738,7 +780,7 @@ export const DataVisualization: React.FC = () => {
                           </div>
                           <div>
                             <p className="text-gray-600">Fish Count</p>
-                            <p className="font-bold text-green-600">{region.fishCount}</p>
+                            <p className="font-bold text-sky-700">{region.fishCount}</p>
                           </div>
                           <div>
                             <p className="text-gray-600">eDNA</p>
@@ -790,9 +832,9 @@ export const DataVisualization: React.FC = () => {
                       <h4 className="font-semibold mb-2 text-blue-800">PLY Point Cloud</h4>
                       <p className="text-sm text-blue-600">Native PLY file format support with vertex colors</p>
                     </div>
-                    <div className="bg-green-50 rounded-lg p-4">
-                      <h4 className="font-semibold mb-2 text-green-800">Interactive Controls</h4>
-                      <p className="text-sm text-green-600">Mouse drag to rotate, scroll to zoom</p>
+                    <div className="bg-sky-50 rounded-lg p-4">
+                      <h4 className="font-semibold mb-2 text-sky-800">Interactive Controls</h4>
+                      <p className="text-sm text-sky-600">Mouse drag to rotate, scroll to zoom</p>
                     </div>
                     <div className="bg-purple-50 rounded-lg p-4">
                       <h4 className="font-semibold mb-2 text-purple-800">Real-time Rendering</h4>

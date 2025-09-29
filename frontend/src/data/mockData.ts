@@ -44,6 +44,36 @@ export const mockDataEntries: DataEntry[] = [
     status: 'completed',
     link: '/temp-storage/nio_goa_archived_data.zip'
   },
+  {
+    id: '2',
+    title: 'Oceanographic Survey – Bay of Bengal',
+    type: 'oceanographic',
+    size: '5.1 MB',
+    uploadDate: '2025-09-22',
+    uploadedBy: 'NIOT Research Team',
+    status: 'processing',
+    link: '/downloads/oceanographic-bob.csv',
+  },
+  {
+    id: '3',
+    title: 'Fisheries Catch Data – Kerala Coast',
+    type: 'fisheries',
+    size: '3.7 MB',
+    uploadDate: '2025-09-24',
+    uploadedBy: 'ICAR-CMFRI',
+    status: 'completed',
+    link: '/downloads/fisheries-kerala.csv',
+  },
+  {
+    id: '4',
+    title: 'Species Occurrence – Andaman & Nicobar',
+    type: 'biodiversity',
+    size: '1.9 MB',
+    uploadDate: '2025-09-25',
+    uploadedBy: 'ZSI Team',
+    status: 'completed',
+    link: '/downloads/species-occurrence-andaman.csv',
+  },
 ];
 
 export const mockSystemMetrics: SystemMetrics = {

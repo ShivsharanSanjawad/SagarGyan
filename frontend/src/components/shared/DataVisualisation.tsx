@@ -744,24 +744,6 @@ export const DataVisualization: React.FC = () => {
 
               <Card className="shadow-xl bg-white rounded-2xl border border-gray-100">
                 <CardHeader>
-                  <CardTitle className="font-semibold text-gray-800">Parameter Relationships Overview</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-4 gap-2 text-xs">
-                    {["Temp", "Salinity", "Fish", "eDNA"].map((param1, i) =>
-                      ["Temp", "Salinity", "Fish", "eDNA"].map((param2, j) => (
-                        <div key={`${i}-${j}`} className={`p-2 text-center rounded ${i === j ? "bg-gray-200" : Math.random() > 0.5 ? "bg-sky-100 text-sky-800" : "bg-red-100 text-red-800"}`}>
-                          {i === j ? "1.00" : (Math.random() * 2 - 1).toFixed(2)}
-                        </div>
-                      ))
-                    )}
-                  </div>
-                  <div className="mt-2 text-xs text-gray-600">Blue: Positive correlation, Red: Negative correlation</div>
-                </CardContent>
-              </Card>
-
-              <Card className="shadow-xl bg-white rounded-2xl border border-gray-100">
-                <CardHeader>
                   <CardTitle className="font-semibold text-gray-800">Multi-Parameter Regional Comparison</CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -811,7 +793,7 @@ export const DataVisualization: React.FC = () => {
                   <CardTitle className="font-semibold text-gray-800">Interactive 3D Segmentation Visualization</CardTitle>
                   <Select onValueChange={(value) => setSelectedOtolith(String(value))} value={selectedOtolith}>
                     <SelectTrigger className="w-48">
-                      <SelectValue placeholder="Select Otolith" />
+                      <SelectValue placeholder="Indian Mackerel" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Indian Cod">Indian Cod</SelectItem>

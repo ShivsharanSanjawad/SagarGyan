@@ -97,11 +97,11 @@ export const RetrieveData: React.FC = () => {
       {/* Results */}
       <Card className="bg-white border border-slate-200 shadow-sm">
         <CardHeader>
-          <CardTitle>Search Results ({filteredData.length})</CardTitle>
+          <CardTitle>Database Folders</CardTitle>
         </CardHeader>
 
         <CardContent>
-          <div className="space-y-4">
+          <div className="space-y-7">
             {filteredData.length === 0 ? (
               <div className="text-center py-12 text-slate-500">
                 <Search className="h-12 w-12 mx-auto mb-4 opacity-50" />

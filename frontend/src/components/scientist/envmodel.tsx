@@ -5,7 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { MapContainer, TileLayer, CircleMarker, Tooltip } from "react-leaflet";
-import { Brain, BarChart3, Map, Database, File, Cloud } from "lucide-react";
+import { Brain, BarChart3, Map, Database, File, Cloud, Thermometer, Waves, Wind, Droplets } from "lucide-react";
 import "leaflet/dist/leaflet.css";
 
 const algorithms = [
@@ -80,6 +80,16 @@ const EnvModel: React.FC = () => {
   const [curveType, setCurveType] = useState("roc");
   const [selectedSpecies, setSelectedSpecies] = useState(speciesList[0]);
   const [uploadMethod, setUploadMethod] = useState("file");
+  const [activeTab, setActiveTab] = useState<'training' | 'distribution'>('training');
+  
+  // New state for environmental parameters
+  const [waterTemp, setWaterTemp] = useState(25);
+  const [salinity, setSalinity] = useState(35);
+  const [currents, setCurrents] = useState(1.5);
+  const [waves, setWaves] = useState(2.0);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [processProgress, setProcessProgress] = useState(0);
+  const [showMaps, setShowMaps] = useState(false);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -100,6 +110,25 @@ const EnvModel: React.FC = () => {
     return () => clearInterval(interval);
   }, [isTraining]);
 
+  // Handle parameter submission
+  const handleSubmitParameters = () => {
+    setIsProcessing(true);
+    setProcessProgress(0);
+    setShowMaps(false);
+    
+    const interval = setInterval(() => {
+      setProcessProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setIsProcessing(false);
+          setShowMaps(true);
+          return 100;
+        }
+        return prev + 5;
+      });
+    }, 150); // ~3 seconds to reach 100%
+  };
+
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#fbf0dc" }}>
       <div className="max-w-[1400px] mx-auto py-8 px-6">
@@ -116,304 +145,478 @@ const EnvModel: React.FC = () => {
           </div>
         </header>
 
-        {/* Main training card */}
-        <Card className="rounded-2xl shadow-lg overflow-hidden mb-6 bg-white border border-slate-100">
-          <CardHeader className="px-6 py-5 border-b bg-white">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-md bg-slate-50 border">
-                <Database className="h-5 w-5 text-sky-600" />
-              </div>
-              <div>
-                <h2 className="text-lg font-semibold text-slate-900">Model Training & Configuration</h2>
-                <p className="text-xs text-slate-500">Upload training data and pick algorithms to train.</p>
-              </div>
-            </div>
-          </CardHeader>
-
-          <CardContent className="px-6 py-6 space-y-6 bg-white">
-            {/* Upload method */}
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
-                Select Data Source
-              </label>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div
-                  className={`rounded-lg p-4 cursor-pointer transition-all border ${uploadMethod === "file" ? "border-sky-300 bg-sky-50" : "border-slate-200 bg-white hover:bg-slate-50"}`}
-                  onClick={() => setUploadMethod("file")}
-                >
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className={`w-4 h-4 rounded-full border-2 ${uploadMethod === "file" ? "border-sky-500 bg-sky-500" : "border-slate-300"}`}/>
-                    <File className="h-5 w-5 text-sky-600" />
-                    <span className="font-semibold text-slate-800">Upload File</span>
-                  </div>
-
-                  {uploadMethod === "file" && (
-                    <>
-                      <div className="border-2 border-dashed border-sky-200 rounded-lg p-3 bg-white">
-                        <input
-                          type="file"
-                          accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                          className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100 cursor-pointer"
-                        />
-                      </div>
-                      <p className="text-xs text-slate-500 mt-2">Supports CSV / Excel files up to 50MB</p>
-                    </>
-                  )}
-                </div>
-
-                <div
-                  className={`rounded-lg p-4 cursor-pointer transition-all border ${uploadMethod === "database" ? "border-sky-300 bg-sky-50" : "border-slate-200 bg-white hover:bg-slate-50"}`}
-                  onClick={() => setUploadMethod("database")}
-                >
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className={`w-4 h-4 rounded-full border-2 ${uploadMethod === "database" ? "border-sky-500 bg-sky-500" : "border-slate-300"}`}/>
-                    <Cloud className="h-5 w-5 text-sky-600" />
-                    <span className="font-semibold text-slate-800">Select from Database</span>
-                  </div>
-
-                  {uploadMethod === "database" && (
-                    <>
-                      <Select>
-                        <SelectTrigger className="w-full bg-white">
-                          <SelectValue placeholder="Choose dataset from database" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="dataset1">Marine Species Dataset 2024</SelectItem>
-                          <SelectItem value="dataset2">Coastal Ecosystem Data</SelectItem>
-                          <SelectItem value="dataset3">Fisheries Survey Results</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <p className="text-xs text-slate-500 mt-2">Access pre-loaded datasets from our database</p>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Algorithms */}
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
-                Select Machine Learning Algorithms ({selectedAlgorithms.length} selected)
-              </label>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                {algorithms.map((algo) => {
-                  const selected = selectedAlgorithms.includes(algo);
-                  return (
-                    <div
-                      key={algo}
-                      onClick={() => {
-                        if (selected) setSelectedAlgorithms(prev => prev.filter(a => a !== algo));
-                        else setSelectedAlgorithms(prev => [...prev, algo]);
-                      }}
-                      className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer border transition ${selected ? "bg-sky-50 border-sky-200 shadow-sm" : "bg-white border-slate-100 hover:bg-slate-50"}`}
-                    >
-                      <Checkbox id={algo} checked={selected} readOnly className="data-[state=checked]:bg-sky-600" />
-                      <label htmlFor={algo} className="text-sm font-medium text-slate-800 flex-1 cursor-pointer">
-                        {algo}
-                      </label>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {selectedAlgorithms.length === 0 && (
-                <div className="text-sm text-amber-700 bg-amber-50 rounded-lg p-3 border border-amber-100 mt-3">
-                  Please select at least one algorithm to proceed with training.
-                </div>
-              )}
-            </div>
-
-            {/* CTA */}
-            <div>
+        {/* Tabs */}
+          <div className="mt-6 mb-6">
+            <div className="flex w-full border-b border-slate-100">
               <Button
-                onClick={() => setIsTraining(true)}
-                disabled={isTraining || selectedAlgorithms.length === 0}
-                className="w-full py-3 rounded-lg font-semibold text-white bg-gradient-to-r from-sky-600 to-sky-500 hover:from-sky-700 hover:to-sky-600 disabled:opacity-50"
-              >
-                {isTraining ? "Training Models..." : "Start Training"}
+                variant="ghost"
+                className={`flex-1 rounded-none p-2 border-b-2 ${
+                  activeTab === 'training'
+                    ? 'border-sky-500 text-sky-600 font-semibold bg-white'
+                    : 'border-transparent text-slate-600 hover:text-sky-500 bg-white'
+                }`}
+                onClick={() => setActiveTab('training')}>
+                Model Training
+              </Button>
+              <Button
+                variant="ghost"
+                className={`flex-1 rounded-none border-b-2 ${
+                  activeTab === 'distribution'
+                    ? 'border-sky-500 text-sky-600 font-semibold bg-white'
+                    : 'border-transparent text-slate-600 hover:text-sky-500 bg-white'
+                }`}
+                onClick={() => setActiveTab('distribution')}>
+                Species Distribution
               </Button>
             </div>
+          </div>
 
-            {/* Progress & Curves */}
-            <div className="space-y-4">
-              {isTraining && (
-                <div className="rounded-lg p-4 bg-sky-50 border-l-4 border-sky-300">
-                  <Progress value={progress} className="h-2 rounded" />
-                  <div className="flex justify-between mt-2 text-xs text-sky-700 font-medium">
-                    <span>Training</span>
-                    <span>{progress}%</span>
-                  </div>
+        {/* Model Training Tab */}
+        {activeTab === 'training' && (
+          <Card className="rounded-2xl shadow-lg overflow-hidden mb-6 bg-white border border-slate-100">
+            <CardHeader className="px-6 py-2 border-b bg-white">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-md bg-slate-50 border">
+                  <Database className="h-5 w-5 text-sky-600" />
                 </div>
-              )}
-
-              {showCurves && (
-                <div className="rounded-lg p-4 bg-white border border-slate-100 shadow-sm">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <BarChart3 className="h-4 w-4 text-slate-700" />
-                      <h4 className="text-sm font-semibold text-slate-900">Model Performance Curves</h4>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                      <label className="text-xs text-slate-600">Curve</label>
-                      <Select value={curveType} onValueChange={setCurveType}>
-                        <SelectTrigger className="w-40">
-                          <SelectValue placeholder="Select Curve" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="roc">ROC Curve</SelectItem>
-                          <SelectItem value="auc">AUC Curve</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div className="mt-3">
-                    <img
-                      src={curveType === "roc" ? "/roc1.jpeg" : "/roc2.jpeg"}
-                      alt={`${curveType} curve`}
-                      className="w-full max-w-3xl rounded border shadow-sm"
-                    />
-                  </div>
+                <div>
+                  <h2 className="text-lg font-semibold text-slate-900">Model Training & Configuration</h2>
+                  <p className="text-xs text-slate-500">Upload training data and pick algorithms to train.</p>
                 </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Species prediction */}
-        <Card className="rounded-2xl shadow-lg overflow-hidden bg-white border border-slate-100">
-          <CardHeader className="px-6 py-5 border-b bg-white">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-md bg-slate-50 border">
-                <Map className="h-5 w-5 text-sky-600" />
               </div>
+            </CardHeader>
+
+            <CardContent className="px-6 py-6 space-y-6 bg-white">
+              {/* Upload method */}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                  Select Data Source
+                </label>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div
+                    className={`rounded-lg p-4 cursor-pointer transition-all border ${uploadMethod === "file" ? "border-sky-300 bg-sky-50" : "border-slate-200 bg-white hover:bg-slate-50"}`}
+                    onClick={() => setUploadMethod("file")}
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className={`w-4 h-4 rounded-full border-2 ${uploadMethod === "file" ? "border-sky-500 bg-sky-500" : "border-slate-300"}`}/>
+                      <File className="h-5 w-5 text-sky-600" />
+                      <span className="font-semibold text-slate-800">Upload File</span>
+                    </div>
+
+                    {uploadMethod === "file" && (
+                      <>
+                        <div className="border-2 border-dashed border-sky-200 rounded-lg p-3 bg-white">
+                          <input
+                            type="file"
+                            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                            className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100 cursor-pointer"
+                          />
+                        </div>
+                        <p className="text-xs text-slate-500 mt-2">Supports CSV / Excel files up to 50MB</p>
+                      </>
+                    )}
+                  </div>
+
+                  <div
+                    className={`rounded-lg p-4 cursor-pointer transition-all border ${uploadMethod === "database" ? "border-sky-300 bg-sky-50" : "border-slate-200 bg-white hover:bg-slate-50"}`}
+                    onClick={() => setUploadMethod("database")}
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className={`w-4 h-4 rounded-full border-2 ${uploadMethod === "database" ? "border-sky-500 bg-sky-500" : "border-slate-300"}`}/>
+                      <Cloud className="h-5 w-5 text-sky-600" />
+                      <span className="font-semibold text-slate-800">Select from Database</span>
+                    </div>
+
+                    {uploadMethod === "database" && (
+                      <>
+                        <Select>
+                          <SelectTrigger className="w-full bg-white">
+                            <SelectValue placeholder="Choose dataset from database" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="dataset1">Marine Species Dataset 2024</SelectItem>
+                            <SelectItem value="dataset2">Coastal Ecosystem Data</SelectItem>
+                            <SelectItem value="dataset3">Fisheries Survey Results</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <p className="text-xs text-slate-500 mt-2">Access pre-loaded datasets from our database</p>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Algorithms */}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                  Select Machine Learning Algorithms ({selectedAlgorithms.length} selected)
+                </label>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  {algorithms.map((algo) => {
+                    const selected = selectedAlgorithms.includes(algo);
+                    return (
+                      <div
+                        key={algo}
+                        onClick={() => {
+                          if (selected) setSelectedAlgorithms(prev => prev.filter(a => a !== algo));
+                          else setSelectedAlgorithms(prev => [...prev, algo]);
+                        }}
+                        className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer border transition ${selected ? "bg-sky-50 border-sky-200 shadow-sm" : "bg-white border-slate-100 hover:bg-slate-50"}`}
+                      >
+                        <Checkbox id={algo} checked={selected} readOnly className="data-[state=checked]:bg-sky-600" />
+                        <label htmlFor={algo} className="text-sm font-medium text-slate-800 flex-1 cursor-pointer">
+                          {algo}
+                        </label>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {selectedAlgorithms.length === 0 && (
+                  <div className="text-sm text-amber-700 bg-amber-50 rounded-lg p-3 border border-amber-100 mt-3">
+                    Please select at least one algorithm to proceed with training.
+                  </div>
+                )}
+              </div>
+
+              {/* CTA */}
               <div>
-                <h2 className="text-lg font-semibold text-slate-900">Species Distribution Prediction</h2>
-                <p className="text-xs text-slate-500">Interactive probability and count maps across ocean regions</p>
+                <Button
+                  onClick={() => setIsTraining(true)}
+                  disabled={isTraining || selectedAlgorithms.length === 0}
+                  className="w-full py-3 rounded-lg font-semibold text-white bg-gradient-to-r from-sky-600 to-sky-500 hover:from-sky-700 hover:to-sky-600 disabled:opacity-50"
+                >
+                  {isTraining ? "Training Models..." : "Start Training"}
+                </Button>
               </div>
-            </div>
-          </CardHeader>
 
-          <CardContent className="px-6 py-6">
-            <div className="mb-6">
-              <label className="block text-sm font-semibold text-slate-700 mb-2">Select Target Species</label>
-              <Select value={selectedSpecies} onValueChange={setSelectedSpecies}>
-                <SelectTrigger className="w-full max-w-md bg-white">
-                  <SelectValue placeholder="Select Species" />
-                </SelectTrigger>
-                <SelectContent>
-                  {speciesList.map((s) => (
-                    <SelectItem key={s} value={s}>{s}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className="shadow-sm">
-                <CardHeader className="bg-sky-50 border-b">
-                  <CardTitle className="text-lg text-sky-800 flex items-center gap-2">
-                    <div className="w-3 h-3 bg-sky-500 rounded-full" />
-                    Probability Map of {selectedSpecies}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-4">
-                  <MapContainer center={INDIA_CENTER} zoom={4} className="h-[400px] w-full rounded-lg" scrollWheelZoom={false}>
-                    <TileLayer
-                      url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-                      attribution="&copy; OpenStreetMap contributors &copy; CARTO"
-                    />
-                    {oceanProbabilityPoints.map((p, idx) => {
-                      const size = 8 + (p.prob * 25);
-                      const opacity = 0.3 + (p.prob * 0.5);
-                      return (
-                        <CircleMarker
-                          key={idx}
-                          center={[p.lat, p.lng]}
-                          radius={size}
-                          fillOpacity={opacity}
-                          fillColor={`hsl(${210 + p.prob * 30}, 85%, ${45 + p.prob * 25}%)`}
-                          stroke={false}
-                        >
-                          <Tooltip>
-                            <div className="text-xs text-center">
-                              <div className="font-semibold">Probability: {(p.prob * 100).toFixed(1)}%</div>
-                              <div className="text-xs text-slate-600">Ocean Location</div>
-                            </div>
-                          </Tooltip>
-                        </CircleMarker>
-                      );
-                    })}
-                  </MapContainer>
-
-                  <div className="mt-3 flex items-center justify-between text-xs text-slate-600">
-                    <span>Low Probability</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-24 h-3 bg-gradient-to-r from-sky-200 via-sky-400 to-sky-700 rounded" />
-                      <div className="ml-2 text-xs text-slate-500">Scale</div>
+              {/* Progress & Curves */}
+              <div className="space-y-4">
+                {isTraining && (
+                  <div className="rounded-lg p-4 bg-sky-50 border-l-4 border-sky-300">
+                    <Progress value={progress} className="h-2 rounded" />
+                    <div className="flex justify-between mt-2 text-xs text-sky-700 font-medium">
+                      <span>Training Progress: </span>
+                      <span>{progress}%</span>
                     </div>
-                    <span>High Probability</span>
+                    <p className="text-xs text-blue-600">Training {selectedAlgorithms.join(', ')} algorithms...</p>
                   </div>
-                </CardContent>
-              </Card>
+                )}
 
-              <Card className="shadow-sm">
-                <CardHeader className="bg-red-50 border-b">
-                  <CardTitle className="text-lg text-red-800 flex items-center gap-2">
-                    <div className="w-3 h-3 bg-red-500 rounded-full" />
-                    Population Count of {selectedSpecies}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-4">
-                  <MapContainer center={INDIA_CENTER} zoom={4} className="h-[400px] w-full rounded-lg" scrollWheelZoom={false}>
-                    <TileLayer
-                      url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-                      attribution="&copy; OpenStreetMap contributors &copy; CARTO"
-                    />
-                    {oceanCountPoints.map((p, idx) => {
-                      const intensity = Math.min(p.count / 160000, 1);
-                      return (
-                        <CircleMarker
-                          key={idx}
-                          center={[p.lat, p.lng]}
-                          radius={Math.max(8, Math.min(25, p.count / 6000))}
-                          fillOpacity={0.6 + intensity * 0.3}
-                          fillColor={`hsl(${0}, ${60 + intensity * 25}%, ${45 + intensity * 20}%)`}
-                          stroke={true}
-                          color="white"
-                          weight={1}
-                        >
-                          <Tooltip>
-                            <div className="text-xs text-center">
-                              <div className="font-semibold">Count: {p.count.toLocaleString()}</div>
-                              <div className="text-xs text-slate-600">Ocean Region</div>
-                            </div>
-                          </Tooltip>
-                        </CircleMarker>
-                      );
-                    })}
-                  </MapContainer>
+                {showCurves && (
+                  <div className="rounded-lg p-4 bg-white border border-slate-100 shadow-sm">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <BarChart3 className="h-4 w-4 text-slate-700" />
+                        <h4 className="text-sm font-semibold text-slate-900">Model Performance Curves</h4>
+                      </div>
 
-                  <div className="mt-3 flex items-center justify-between text-xs text-slate-600">
-                    <span>Low Count</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-24 h-3 bg-gradient-to-r from-red-200 via-red-400 to-red-700 rounded" />
-                      <div className="ml-2 text-xs text-slate-500">Scale</div>
+                      <div className="flex items-center gap-3">
+                        <label className="text-xs text-slate-600">Curve</label>
+                        <Select value={curveType} onValueChange={setCurveType}>
+                          <SelectTrigger className="w-40">
+                            <SelectValue placeholder="Select Curve" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="roc">ROC Curve</SelectItem>
+                            <SelectItem value="auc">AUC Curve</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
-                    <span>High Count</span>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
 
-            <div className="mt-6 p-4 bg-white rounded-lg border border-slate-100 text-sm text-slate-700">
-              <strong>Note:</strong> The maps above show the distribution patterns for <em>{selectedSpecies}</em> based on environmental factors across ocean regions. Gradient rendering highlights areas of higher probability and density.
-            </div>
-          </CardContent>
-        </Card>
+                    <div className="mt-3">
+                      <img
+                        src={curveType === "roc" ? "/roc1.jpeg" : "/roc2.jpeg"}
+                        alt={`${curveType} curve`}
+                        className="w-full max-w-3xl rounded border shadow-sm"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Species Distribution Tab */}
+        {activeTab === 'distribution' && (
+          <Card className="rounded-2xl shadow-lg overflow-hidden bg-white border border-slate-100">
+            <CardHeader className="px-6 py-2 border-b bg-white">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-md bg-slate-50 border">
+                  <Map className="h-5 w-5 text-sky-600" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold text-slate-900">Species Distribution Prediction</h2>
+                  <p className="text-xs text-slate-500">Interactive probability and count maps across ocean regions</p>
+                </div>
+              </div>
+            </CardHeader>
+
+            <CardContent className="px-6 py-6">
+              <div className="mb-6">
+                <label className="block text-sm font-semibold text-slate-700 mb-2">Select Target Species</label>
+                <Select value={selectedSpecies} onValueChange={setSelectedSpecies}>
+                  <SelectTrigger className="w-full max-w-md bg-white">
+                    <SelectValue placeholder="Select Species" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {speciesList.map((s) => (
+                      <SelectItem key={s} value={s}>{s}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Environmental Parameters Section */}
+              <div className="mb-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                <h3 className="text-sm font-semibold text-slate-800 mb-4">Environmental Parameters</h3>
+                
+                <div className="space-y-4">
+                  {/* Water Temperature */}
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <Thermometer className="h-4 w-4 text-sky-600" />
+                        <label className="text-sm font-medium text-slate-700">Water Temperature (°C)</label>
+                      </div>
+                      <span className="text-sm font-medium text-slate-900 w-12">{waterTemp}°</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="40"
+                      step="0.5"
+                      value={waterTemp}
+                      onChange={(e) => setWaterTemp(parseFloat(e.target.value))}
+                      className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-sky-600"
+                    />
+                    <div className="flex justify-between text-xs text-slate-500 mt-1">
+                      <span>0°C</span>
+                      <span>40°C</span>
+                    </div>
+                  </div>
+                  
+                  {/* Salinity */}
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <Droplets className="h-4 w-4 text-sky-600" />
+                        <label className="text-sm font-medium text-slate-700">Salinity (PSU)</label>
+                      </div>
+                      <span className="text-sm font-medium text-slate-900 w-12">{salinity}</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="45"
+                      step="0.5"
+                      value={salinity}
+                      onChange={(e) => setSalinity(parseFloat(e.target.value))}
+                      className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-sky-600"
+                    />
+                    <div className="flex justify-between text-xs text-slate-500 mt-1">
+                      <span>0 PSU</span>
+                      <span>45 PSU</span>
+                    </div>
+                  </div>
+                  
+                  {/* Currents */}
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <Wind className="h-4 w-4 text-sky-600" />
+                        <label className="text-sm font-medium text-slate-700">Currents (m/s)</label>
+                      </div>
+                      <span className="text-sm font-medium text-slate-900 w-12">{currents.toFixed(1)}</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="5"
+                      step="0.1"
+                      value={currents}
+                      onChange={(e) => setCurrents(parseFloat(e.target.value))}
+                      className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-sky-600"
+                    />
+                    <div className="flex justify-between text-xs text-slate-500 mt-1">
+                      <span>0 m/s</span>
+                      <span>5 m/s</span>
+                    </div>
+                  </div>
+                  
+                  {/* Waves */}
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <Waves className="h-4 w-4 text-sky-600" />
+                        <label className="text-sm font-medium text-slate-700">Waves (m)</label>
+                      </div>
+                      <span className="text-sm font-medium text-slate-900 w-12">{waves.toFixed(1)}</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="10"
+                      step="0.1"
+                      value={waves}
+                      onChange={(e) => setWaves(parseFloat(e.target.value))}
+                      className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-sky-600"
+                    />
+                    <div className="flex justify-between text-xs text-slate-500 mt-1">
+                      <span>0 m</span>
+                      <span>10 m</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="mt-6 flex justify-end">
+                  <Button
+                    onClick={handleSubmitParameters}
+                    disabled={isProcessing}
+                    className="px-4 py-2 bg-gradient-to-r from-sky-600 to-sky-500 text-white rounded-lg font-medium hover:from-sky-700 hover:to-sky-600 disabled:opacity-50"
+                  >
+                    {isProcessing ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                        Processing...
+                      </div>
+                    ) : (
+                      "Submit Parameters"
+                    )}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Processing Progress */}
+              {isProcessing && (
+                <div className="mb-6 p-4 bg-sky-50 rounded-lg border border-sky-200">
+                  <div className="flex justify-between mb-2">
+                    <span className="text-sm font-medium text-sky-700">Processing environmental data...</span>
+                    <span className="text-sm font-medium text-sky-700">{processProgress}%</span>
+                  </div>
+                  <Progress value={processProgress} className="h-2 rounded" />
+                </div>
+              )}
+
+              {/* Maps Section */}
+              {showMaps && (
+                <>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <Card className="shadow-sm">
+                      <CardHeader className="bg-sky-50 border-b">
+                        <CardTitle className="text-lg text-sky-800 flex items-center gap-2">
+                          <div className="w-3 h-3 bg-sky-500 rounded-full" />
+                          Probability Map of {selectedSpecies}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-4">
+                        <MapContainer center={INDIA_CENTER} zoom={4} className="h-[400px] w-full rounded-lg" scrollWheelZoom={false}>
+                          <TileLayer
+                            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+                            attribution="&copy; OpenStreetMap contributors &copy; CARTO"
+                          />
+                          {oceanProbabilityPoints.map((p, idx) => {
+                            const size = 8 + (p.prob * 25);
+                            const opacity = 0.3 + (p.prob * 0.5);
+                            return (
+                              <CircleMarker
+                                key={idx}
+                                center={[p.lat, p.lng]}
+                                radius={size}
+                                fillOpacity={opacity}
+                                fillColor={`hsl(${210 + p.prob * 30}, 85%, ${45 + p.prob * 25}%)`}
+                                stroke={false}
+                              >
+                                <Tooltip>
+                                  <div className="text-xs text-center">
+                                    <div className="font-semibold">Probability: {(p.prob * 100).toFixed(1)}%</div>
+                                    <div className="text-xs text-slate-600">Ocean Location</div>
+                                  </div>
+                                </Tooltip>
+                              </CircleMarker>
+                            );
+                          })}
+                        </MapContainer>
+
+                        <div className="mt-3 flex items-center justify-between text-xs text-slate-600">
+                          <span>Low Probability</span>
+                          <div className="flex items-center gap-2">
+                            <div className="w-24 h-3 bg-gradient-to-r from-sky-200 via-sky-400 to-sky-700 rounded" />
+                            <div className="ml-2 text-xs text-slate-500">Scale</div>
+                          </div>
+                          <span>High Probability</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="shadow-sm">
+                      <CardHeader className="bg-red-50 border-b">
+                        <CardTitle className="text-lg text-red-800 flex items-center gap-2">
+                          <div className="w-3 h-3 bg-red-500 rounded-full" />
+                          Population Count of {selectedSpecies}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-4">
+                        <MapContainer center={INDIA_CENTER} zoom={4} className="h-[400px] w-full rounded-lg" scrollWheelZoom={false}>
+                          <TileLayer
+                            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+                            attribution="&copy; OpenStreetMap contributors &copy; CARTO"
+                          />
+                          {oceanCountPoints.map((p, idx) => {
+                            const intensity = Math.min(p.count / 160000, 1);
+                            return (
+                              <CircleMarker
+                                key={idx}
+                                center={[p.lat, p.lng]}
+                                radius={Math.max(8, Math.min(25, p.count / 6000))}
+                                fillOpacity={0.6 + intensity * 0.3}
+                                fillColor={`hsl(${0}, ${60 + intensity * 25}%, ${45 + intensity * 20}%)`}
+                                stroke={true}
+                                color="white"
+                                weight={1}
+                              >
+                                <Tooltip>
+                                  <div className="text-xs text-center">
+                                    <div className="font-semibold">Count: {p.count.toLocaleString()}</div>
+                                    <div className="text-xs text-slate-600">Ocean Region</div>
+                                  </div>
+                                </Tooltip>
+                              </CircleMarker>
+                            );
+                          })}
+                        </MapContainer>
+
+                        <div className="mt-3 flex items-center justify-between text-xs text-slate-600">
+                          <span>Low Count</span>
+                          <div className="flex items-center gap-2">
+                            <div className="w-24 h-3 bg-gradient-to-r from-red-200 via-red-400 to-red-700 rounded" />
+                            <div className="ml-2 text-xs text-slate-500">Scale</div>
+                          </div>
+                          <span>High Count</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  <div className="mt-6 p-4 bg-white rounded-lg border border-slate-100 text-sm text-slate-700">
+                    <strong>Note:</strong> The maps above show the distribution patterns for <em>{selectedSpecies}</em> based on environmental factors across ocean regions. Gradient rendering highlights areas of higher probability and density.
+                  </div>
+                </>
+              )}
+
+              {!showMaps && !isProcessing && (
+                <div className="text-center py-12 text-slate-500">
+                  <Map className="h-12 w-12 mx-auto text-slate-300 mb-4" />
+                  <p>Submit environmental parameters to generate species distribution maps</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );

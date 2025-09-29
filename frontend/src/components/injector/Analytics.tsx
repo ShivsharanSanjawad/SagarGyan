@@ -46,7 +46,7 @@ const AnimatedNumber: React.FC<{ value: number; duration?: number; className?: s
 };
 
 export const Analytics: React.FC = () => {
-  const [activeView, setActiveView] = useState<'sst' | 'uploads' | 'correlation'>('sst');
+  const [activeView, setActiveView] = useState<'sst' | 'uploads' | 'correlation'>('uploads');
 
   const sstData = [
     { month: 'Jan', temp: 24.2, lat: 9.5, lon: 76.2 },
@@ -80,47 +80,7 @@ export const Analytics: React.FC = () => {
         <p className="text-slate-600">Analyze your uploaded oceanographic data</p>
       </div>
 
-      <Card className="bg-white border border-slate-200 shadow-sm mb-6">
-        <CardContent className="p-2">
-          <div className="flex w-full">
-            <button
-              onClick={() => setActiveView('sst')}
-              className={`flex-1 py-3 text-center rounded-none border-b-2 transition ${
-                activeView === 'sst'
-                  ? 'border-sky-500 text-sky-600 font-semibold'
-                  : 'border-transparent text-slate-600 hover:text-sky-500'
-              }`}
-              aria-pressed={activeView === 'sst'}
-            >
-              SST Maps
-            </button>
-
-            <button
-              onClick={() => setActiveView('uploads')}
-              className={`flex-1 py-3 text-center rounded-none border-b-2 transition ${
-                activeView === 'uploads'
-                  ? 'border-sky-500 text-sky-600 font-semibold'
-                  : 'border-transparent text-slate-600 hover:text-sky-500'
-              }`}
-              aria-pressed={activeView === 'uploads'}
-            >
-              Upload Analytics
-            </button>
-
-            <button
-              onClick={() => setActiveView('correlation')}
-              className={`flex-1 py-3 text-center rounded-none border-b-2 transition ${
-                activeView === 'correlation'
-                  ? 'border-sky-500 text-sky-600 font-semibold'
-                  : 'border-transparent text-slate-600 hover:text-sky-500'
-              }`}
-              aria-pressed={activeView === 'correlation'}
-            >
-              Data Correlation
-            </button>
-          </div>
-        </CardContent>
-      </Card>
+      {/*  */}
 
       {activeView === 'sst' && (
         <>

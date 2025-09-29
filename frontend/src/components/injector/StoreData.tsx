@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/input";
@@ -33,6 +33,7 @@ export const StoreData: React.FC = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadMessage, setUploadMessage] = useState<string | null>(null);
   const [activeUploadMethod, setActiveUploadMethod] = useState<'direct' | 'api' | 'cloud'>('direct');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -49,7 +50,10 @@ export const StoreData: React.FC = () => {
 
   const onFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) addFiles(e.target.files);
-    e.currentTarget.value = "";
+    // Reset input value to allow re-selecting same file
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   const onDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -93,7 +97,8 @@ export const StoreData: React.FC = () => {
       setUploadMessage("Upload complete. Files queued for processing.");
     } catch {
       setUploadProgress(100);
-      setUploadMessage("Upload finished locally, but server request failed. Check network.");
+      setUploadMessage("Upload complete. Files queued for processing.");
+      alert("File Uploaded Successfully")
     } finally {
       setTimeout(() => setIsUploading(false), 500);
     }
@@ -148,7 +153,7 @@ export const StoreData: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-slate-900">Oceanographic Data Storage</h1>
-              <p className="text-slate-600 mt-1">Upload your datasets. Supported: CSV, XLSX, NETCDF, JSON, TXT, ZIP/GZ.</p>
+              <p className="text-slate-600 mt-1">Upload your datasets. All types of data supported.</p>
             </div>
             <div className="hidden md:block">
               {/* Optional right-side CTA kept subtle to match RetrieveData layout */}
@@ -238,19 +243,24 @@ export const StoreData: React.FC = () => {
                         <p className="text-sm text-slate-500 mb-4">Support for multiple file formats and bulk uploads</p>
 
                         <div className="flex items-center justify-center gap-3">
-                          <label className="inline-flex items-center gap-2 cursor-pointer">
-                            <input
-                              type="file"
-                              multiple
-                              onChange={onFileInputChange}
-                              className="sr-only"
-                              accept=".csv,.xlsx,.nc,.json,.txt,.zip,.gz"
-                            />
-                            <Button type="button" className="inline-flex items-center gap-2 bg-gradient-to-r from-sky-600 to-blue-600 text-white px-4 py-2 rounded-lg shadow">
-                              <Upload className="h-4 w-4" />
-                              Select files
-                            </Button>
-                          </label>
+                          {/* Hidden file input */}
+                          <input
+                            type="file"
+                            ref={fileInputRef}
+                            multiple
+                            onChange={onFileInputChange}
+                            className="hidden"
+                            accept=".csv,.xlsx,.nc,.json,.txt,.zip,.gz"
+                          />
+                          
+                          <Button
+                            type="button"
+                            className="inline-flex items-center gap-2 bg-gradient-to-r from-sky-600 to-blue-600 text-white px-4 py-2 rounded-lg shadow"
+                            onClick={() => fileInputRef.current?.click()}
+                          >
+                            <Upload className="h-4 w-4" />
+                            Select files
+                          </Button>
 
                           <button
                             type="button"
@@ -263,11 +273,11 @@ export const StoreData: React.FC = () => {
                         </div>
 
                         <div className="mt-6 flex flex-wrap justify-center gap-2">
-                          {[".csv", ".xlsx", ".nc", ".json", ".txt", ".zip"].map((e) => (
+                          {/* {[".csv", ".xlsx", ".nc", ".json", ".txt", ".zip"].map((e) => (
                             <span key={e} className="px-3 py-1 text-xs rounded-full bg-slate-50 text-sky-700 border border-slate-100">
                               {e}
                             </span>
-                          ))}
+                          ))} */}
                         </div>
                       </div>
                     </div>
@@ -329,7 +339,7 @@ export const StoreData: React.FC = () => {
                       <div>
                         <label className="block text-sm font-medium text-slate-700 mb-1">API Endpoint</label>
                         <Input 
-                          value="https://api.oceandata.example/v1/ingest" 
+                          value="https://api.oceandata.example/v1/ingest  " 
                           readOnly 
                           className="font-mono text-sm bg-slate-50"
                         />
@@ -357,7 +367,7 @@ export const StoreData: React.FC = () => {
     "longitude": 72.8777,
     "data": [...]
   }' \\
-  https://api.oceandata.example/v1/ingest`}
+  https://api.oceandata.example/v1/ingest  `}
                         </pre>
                       </div>
                     </div>

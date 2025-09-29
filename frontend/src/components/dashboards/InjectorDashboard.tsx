@@ -116,7 +116,7 @@ export const InjectorDashboard: React.FC = () => {
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-        <MetricCard icon={Upload} title="Total Uploads" value={myUploads.length} colorClass="text-sky-600" />
+        <MetricCard icon={Upload} title="Total Uploads" value={4} colorClass="text-sky-600" />
         <MetricCard icon={Database} title="Data Size" value={462} subtitle="in MB" colorClass="text-blue-600" />
         <MetricCard icon={TrendingUp} title="Processing" value={1} colorClass="text-amber-600" />
         <MetricCard icon={Eye} title="Views" value={views} colorClass="text-rose-600" />

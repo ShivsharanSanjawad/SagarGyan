@@ -194,6 +194,21 @@ export const ScientistDashboard = () => {
           <CardContent className="px-6 py-4">
             <div className="flex items-center justify-between">
               <div>
+                <p className="text-sm text-slate-500">Active Projects</p>
+                <p className="text-2xl font-extrabold text-amber-600"><AnimatedNumber value={metrics.activeProjects} /></p>
+                <p className="text-xs text-slate-400">In progress</p>
+              </div>
+              <div className="p-3 rounded-full bg-slate-50 shadow-sm">
+                <Activity className="h-6 w-6 text-amber-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition">
+          <CardContent className="px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div>
                 <p className="text-sm text-slate-500">Queries Run</p>
                 <p className="text-2xl font-extrabold text-sky-600"><AnimatedNumber value={metrics.queries} /></p>
                 <p className="text-xs text-slate-400">This month</p>
@@ -235,20 +250,7 @@ export const ScientistDashboard = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition">
-          <CardContent className="px-6 py-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-500">Active Projects</p>
-                <p className="text-2xl font-extrabold text-amber-600"><AnimatedNumber value={metrics.activeProjects} /></p>
-                <p className="text-xs text-slate-400">In progress</p>
-              </div>
-              <div className="p-3 rounded-full bg-slate-50 shadow-sm">
-                <Activity className="h-6 w-6 text-amber-600" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        
       </div>
 
       {/* Recent Activity */}

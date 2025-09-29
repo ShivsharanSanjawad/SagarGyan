@@ -673,7 +673,7 @@ export const Classification: React.FC = () => {
                     {/* Sample Information */}
                     <Card className="shadow-sm rounded-lg bg-white border border-slate-100">
                       <CardHeader>
-                        <CardTitle className="text-sky-700">Sample Information</CardTitle>
+                        <CardTitle className="text-sky-700">Information</CardTitle>
                       </CardHeader>
                       <CardContent>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-slate-800">
@@ -852,7 +852,7 @@ export const Classification: React.FC = () => {
                             <CardHeader><CardTitle className="text-sky-700">Primary Otolith</CardTitle></CardHeader>
                             <CardContent>
                               <div className="w-full h-64 border rounded overflow-hidden flex items-center justify-center bg-white">
-                                <img src={previewUrl || demoResult.image?.previewUrl} alt="primary otolith" className="object-contain max-h-full" />
+                                <img src={'/otolith1.jpg' } alt="primary otolith" className="object-contain max-h-full" />
                               </div>
                               <div className="mt-3 text-sm text-slate-700">
                                 <div><strong>ID:</strong> {demoResult.otolithId}</div>

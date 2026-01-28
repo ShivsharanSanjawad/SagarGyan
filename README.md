@@ -1,5 +1,4 @@
 # SagarGyan
-## सागर ान - भारतीय महासागरात् अमृतं ान्म्
 
 ![SagarGyan Logo](https://img.shields.io/badge/SagarGyan-Marine%20Science%20Platform-blue)
 ![Python](https://img.shields.io/badge/Python-3.8%2B-brightgreen)
@@ -8,7 +7,7 @@
 
 ## Overview
 
-**SagarGyan** (सागर ान - "Ocean Knowledge") is an AI-Driven Unified Data Platform designed to revolutionize marine ecosystem research, fisheries management, and molecular biodiversity insights in India. The platform integrates advanced machine learning, real-time data analytics, and interactive visualization to provide comprehensive oceanographic and biodiversity intelligence.
+**SagarGyan** ("Ocean Knowledge") is an AI-Driven Unified Data Platform designed to revolutionize marine ecosystem research, fisheries management, and molecular biodiversity insights in India. The platform integrates advanced machine learning, real-time data analytics, and interactive visualization to provide comprehensive oceanographic and biodiversity intelligence.
 
 ### What We Aim For
 
